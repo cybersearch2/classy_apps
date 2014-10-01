@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.cybersearch2</groupId>
   <artifactId>classyapps</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <packaging>pom</packaging>
   <name>ClassyApps</name>
   <description>Android applications built with ClassyTools</description>

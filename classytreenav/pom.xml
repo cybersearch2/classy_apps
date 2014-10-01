@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classyapps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 	<artifactId>classytreenav</artifactId>
 	<packaging>apk</packaging>
@@ -34,14 +34,14 @@
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>app_compat_v7</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.1</version>
       <type>aar</type>
     </dependency>
 
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.1</version>
      </dependency>
     <dependency>
       <groupId>com.google.android</groupId>
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.1</version>
      </dependency>
     <dependency>
       <groupId>com.j256.ormlite</groupId>
