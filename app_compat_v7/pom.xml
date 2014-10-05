@@ -10,17 +10,12 @@
   <artifactId>app_compat_v7</artifactId>
   <name>app_compat_v7</name>
   <url>http://maven.apache.org</url>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
- </properties>
-
   <packaging>aar</packaging>
-  
   <dependencies>
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
-      <version>${platform.version}</version>
+      <version>${android.sdk.version}</version>
       <scope>provided</scope>
     </dependency>  
   </dependencies>
@@ -30,6 +25,7 @@
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
+		    	<version>${android.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <release>false</release>

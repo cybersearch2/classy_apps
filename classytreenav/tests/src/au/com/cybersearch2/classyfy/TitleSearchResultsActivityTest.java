@@ -125,17 +125,17 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
         setActivityIntent(intent); 
         TitleSearchResultsActivity activity = getActivity();
         assertThat(activity).isNotNull();
-        if ((activity.taskHandle.getStatus() == WorkStatus.RUNNING) || (activity.taskHandle.getStatus() == WorkStatus.PENDING))
-	        synchronized(activity.taskHandle)
+ 	        synchronized(activity.taskHandle)
 	        {
-	            try
-	            {
-	                activity.taskHandle.wait(10000);
-	            }
-	            catch (InterruptedException e)
-	            {
-	                e.printStackTrace();
-	            }
+ 	            if ((activity.taskHandle.getStatus() == WorkStatus.RUNNING) || (activity.taskHandle.getStatus() == WorkStatus.PENDING))
+		            try
+		            {
+		                activity.taskHandle.wait(10000);
+		            }
+		            catch (InterruptedException e)
+		            {
+		                e.printStackTrace();
+		            }
 	        }
         assertThat(activity.taskHandle.getStatus()).isEqualTo(WorkStatus.FAILED);
     }

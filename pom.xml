@@ -9,8 +9,13 @@
   <description>Android applications built with ClassyTools</description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <classy.version>1.0.1</classy.version>
     <android.plugin.version>4.0.0-rc.1</android.plugin.version>
-    <platform.version>18</platform.version>
+    <android.sdk.version>18</android.sdk.version>
+    <android.support.version>19.1</android.support.version>
+    <robolectric.version>2.3</robolectric.version>
+    <ormlite.version>4.49-SNAPSHOT</ormlite.version>
+    <dagger.version>1.2.2</dagger.version>
  </properties>
   <modules>
     <module>classytreenav</module>
@@ -29,7 +34,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                   <source>1.6</source>
+                    <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
               </plugin>
