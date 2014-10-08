@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import au.com.cybersearch2.robolectric.ClassyTestRunner;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowIntent;
 import org.robolectric.util.ActivityController;
@@ -63,7 +63,7 @@ import org.apache.commons.beanutils.PropertyUtils;
  * @author Andrew Bowley
  * 29/04/2014
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(ClassyTestRunner.class)
 public class TitleSearchResultsActivityTest
 {
     static class TestTitleSearchResultsActivity extends TitleSearchResultsActivity

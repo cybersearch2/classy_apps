@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import au.com.cybersearch2.robolectric.ClassyTestRunner;
 
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanXmlParser;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(ClassyTestRunner.class)
 public class XmlParserTest
 {
     interface NodeFunction

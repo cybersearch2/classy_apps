@@ -23,21 +23,13 @@
 	  <version>3.2</version>
       <scope>provided</scope>
     </dependency>
-    <!---->
-    <dependency>
-      <groupId>au.com.cybersearch2</groupId>
-      <artifactId>app_compat_v7</artifactId>
-      <version>${classy.version}</version>
-      <type>aar</type>
-    </dependency>
-
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
       <version>${classy.version}</version>
      </dependency>
     <dependency>
-      <groupId>com.google.android</groupId>
+      <groupId>android</groupId>
       <artifactId>android</artifactId>
       <version>${android.sdk.version}</version>
       <scope>provided</scope>
@@ -48,18 +40,32 @@
       <version>${classy.version}</version>
      </dependency>
     <dependency>
+      <groupId>au.com.cybersearch2</groupId>
+      <artifactId>classyandroid</artifactId>
+      <version>${classy.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+     </dependency>
+    <dependency>
       <groupId>com.j256.ormlite</groupId>
       <artifactId>ormlite-android</artifactId>
       <version>${ormlite.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.google.android</groupId>
-      <artifactId>support-v7-appcompat</artifactId>
+      <groupId>android.support</groupId>
+      <artifactId>compatibility-v7-appcompat</artifactId>
       <version>${android.support.version}</version>
+      <type>apklib</type>
+    </dependency>  
+     <dependency>
+      <groupId>android.support</groupId>
+      <artifactId>compatibility-v7-appcompat</artifactId>
+      <version>${android.support.version}</version>
+      <type>jar</type>
     </dependency>  
     <dependency>
-      <groupId>com.google.android</groupId>
-      <artifactId>support-v4</artifactId>
+      <groupId>android.support</groupId>
+      <artifactId>compatibility-v4</artifactId>
       <version>${android.support.version}</version>
     </dependency>  
     <dependency>

@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import au.com.cybersearch2.robolectric.ClassyTestRunner;
 import org.robolectric.util.ActivityController;
 
 import android.content.Intent;
@@ -42,7 +42,7 @@ import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
  * @author Andrew Bowley
  * 26/05/2014
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(ClassyTestRunner.class)
 public class IntegrateMainActivityTest
 {
     //private static final String TITLE = "Corporate Management";

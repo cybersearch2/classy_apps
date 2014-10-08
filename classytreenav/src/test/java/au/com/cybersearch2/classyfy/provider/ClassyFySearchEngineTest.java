@@ -28,7 +28,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import au.com.cybersearch2.robolectric.ClassyTestRunner;
 
 import dagger.Module;
 import android.content.ContentResolver;
@@ -56,7 +56,7 @@ import au.com.cybersearch2.classyinject.DI;
  * @author Andrew Bowley
  * 11/07/2014
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(ClassyTestRunner.class)
 public class ClassyFySearchEngineTest
 {
     @Module(includes = ClassyFyEnvironmentModule.class) 

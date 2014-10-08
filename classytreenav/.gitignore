@@ -1,10 +1,10 @@
-/bin/**
-/gen/**
+/gen/
 /target/apidocs/**
 /target/classes/**
 /target/generated-sources/**
 /target/generated-test-sources/**
 /target/maven-archiver
+/target/maven-status
 /target/surefire-reports
 /target/test-classes/**
 /target/unpacked-libs
@@ -12,3 +12,6 @@
 /tests/bin/**
 tests/gen/**
 /.apt_generated/**
+/target/
+/.apt_generated/
+/bin/

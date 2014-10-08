@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import au.com.cybersearch2.robolectric.ClassyTestRunner;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -52,7 +52,7 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
  * @author Andrew Bowley
  * 14/05/2014
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(ClassyTestRunner.class)
 public class MainActivityTest
 {
     public static class TestMainActivity extends MainActivity

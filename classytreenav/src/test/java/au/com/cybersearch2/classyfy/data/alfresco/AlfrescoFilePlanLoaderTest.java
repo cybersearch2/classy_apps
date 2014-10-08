@@ -8,18 +8,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.sql.SQLException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import au.com.cybersearch2.robolectric.ClassyTestRunner;
 
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
 
 import android.net.Uri;
 import au.com.cybersearch2.classyfy.TestClassyFyApplication;
@@ -30,44 +27,10 @@ import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanLoader;
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanXmlParser;
 import au.com.cybersearch2.classyfy.test.AndroidEnvironmentFile;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
-import au.com.cybersearch2.classytask.Executable;
-import au.com.cybersearch2.classytask.WorkStatus;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(ClassyTestRunner.class)
 public class AlfrescoFilePlanLoaderTest
 {
-    static class TestAlfrescoFilePlanLoader extends AlfrescoFilePlanLoader
-    {
-        DatabaseConnection databaseConnection;
-        
-        @Override
-        protected Executable executeTask(ConnectionSource connectionSource)
-        {
-            databaseConnection = mock(DatabaseConnection.class);
-            final boolean[] success =  { false };
-            try
-            {
-                writeToDatabase(databaseConnection);
-                success[0] = true;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
-            }
-            return new Executable(){
-
-                @Override
-                public WorkStatus getStatus() 
-                {
-                    return success[0] ? WorkStatus.FINISHED : WorkStatus.FAILED;
-                }};
-        }
-
-    }
     private static String PUBLIC_DOWNLOADS_PATH = "src/test/java/External/Download";
     private static String DATA_FILENAME = "cybersearch2-fileplan.xml";
     private static AndroidEnvironmentFile testFile;

@@ -23,7 +23,6 @@ import javax.inject.Named;
 import au.com.cybersearch2.classyfy.data.DataStreamParser;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyfy.data.TestDataStreamParser;
-import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanLoaderTest.TestAlfrescoFilePlanLoader;
 import au.com.cybersearch2.classyinject.DependencyProvider;
 import static org.mockito.Mockito.*;
 
