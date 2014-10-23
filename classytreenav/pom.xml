@@ -120,6 +120,44 @@
                     <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
                 </configuration>
             </plugin>
+       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.9</version>
+            <configuration>
+              <outputDirectory>libs</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <includeArtifactIds>
+                commons-logging,
+                commons-collections,
+                fest-util,objenesis,
+                openbeans,
+                persistence-api,
+                javax.inject,
+                commons-beanutils,
+                kxml2,
+                dagger,
+                ormlite-core,
+                ormlite-android,
+                classyandroid,
+                classyjava,
+                compatibility-v4
+              </includeArtifactIds>
+              <excludeArtifactIds>
+                easymock,
+                mockito-core,
+                fest-assert-core,
+                ormlite-jdbc,
+                junit,
+                dagger-compiler,
+                compatibility-v7-appcompat,
+                android
+              </excludeArtifactIds>
+              <includeScope>runtime</includeScope>
+            </configuration>
+        </plugin>
 	  </plugins>
 	</build>
 </project>
