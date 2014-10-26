@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="test-libs/fest-util-1.2.5.jar"/>
 	<classpathentry kind="lib" path="test-libs/mockito-core-1.9.5.jar"/>
 	<classpathentry kind="lib" path="test-libs/objenesis-1.3.jar"/>
+	<classpathentry kind="lib" path="/classyandroid/test-libs/robolectric-2.3-jar-with-dependencies.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
