@@ -4,7 +4,8 @@
 /target/generated-sources/**
 /target/generated-test-sources/**
 /target/maven-archiver
-/target/maven-status/**
+/target/maven-status/maven-compiler-plugin/compile/default-compile/
+/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/
 /target/surefire-reports
 /target/test-classes/**
 /target/unpacked-libs
@@ -17,3 +18,4 @@ tests/gen/**
 /bin/
 /libs/
 /test-libs/
+/target/R.txt

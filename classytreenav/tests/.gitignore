@@ -1,3 +1,5 @@
 /local.properties
 /bin
 /.apt_generated
+/target/R.txt
+/gen
