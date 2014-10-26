@@ -67,11 +67,11 @@
                 junit,
                 compatibility-v7-appcompat,
                 compatibility-v4,
-                dagger-compiler,
+                dagger-compiler
               </excludeArtifactIds>
               <includeArtifactIds>
                 classyandroid,
-                classyjava
+                classyjava,
                 mockito-core,
                 fest-assert-core,
                 fest-util,
@@ -148,6 +148,13 @@
       <version>${classy.version}</version>
      </dependency>
     <dependency>
+      <groupId>au.com.cybersearch2</groupId>
+      <artifactId>classyjava</artifactId>
+      <version>${classy.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+     </dependency>
+    <dependency>
       <groupId>android</groupId>
       <artifactId>android</artifactId>
       <version>${android.sdk.version}</version>
@@ -187,10 +194,17 @@
       <artifactId>compatibility-v4</artifactId>
       <version>${android.support.version}</version>
     </dependency>  
+    <!-- Exclude objenesis here in favour of Robolectric's later version -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>1.9.5</version>
+       <exclusions>
+        <exclusion>
+          <groupId>org.objenesis</groupId>
+          <artifactId>objenesis</artifactId>        
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
     <dependency>

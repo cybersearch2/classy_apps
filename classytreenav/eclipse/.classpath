@@ -13,13 +13,12 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/test/robolectric-2.3-SNAPSHOT-jar-with-dependencies.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="libs/test/classyandroid-tests.jar"/>
-	<classpathentry kind="lib" path="libs/test/classyjava-tests.jar"/>
-	<classpathentry kind="lib" path="libs/test/fest-assert-core-2.0M10.jar"/>
-	<classpathentry kind="lib" path="libs/test/fest-util-1.2.5.jar"/>
-	<classpathentry kind="lib" path="libs/test/mockito-core-1.9.5.jar"/>
-	<classpathentry kind="lib" path="libs/test/objenesis-1.3.jar"/>
+	<classpathentry kind="lib" path="test-libs/classyandroid-1.0.1-tests.jar"/>
+	<classpathentry kind="lib" path="test-libs/classyjava-1.0.1-tests.jar"/>
+	<classpathentry kind="lib" path="test-libs/fest-assert-core-2.0M10.jar"/>
+	<classpathentry kind="lib" path="test-libs/fest-util-1.2.5.jar"/>
+	<classpathentry kind="lib" path="test-libs/mockito-core-1.9.5.jar"/>
+	<classpathentry kind="lib" path="test-libs/objenesis-1.3.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

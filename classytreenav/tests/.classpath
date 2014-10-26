@@ -18,6 +18,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/classytreenav"/>
-	<classpathentry kind="var" path="ANDROID_HOME/platforms/android-18/android.jar"/>
+	<classpathentry kind="lib" path="/classytreenav/test-libs/android-4.3.1_r3.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
