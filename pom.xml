@@ -7,9 +7,35 @@
   <packaging>pom</packaging>
   <name>ClassyApps</name>
   <description>Android applications built with ClassyTools</description>
+  <url>http://cybersearch2.com.au</url>
+  <licenses>
+     <license>
+       <name>GPLv3</name>
+       <url>http://www.gnu.org/licenses/</url>
+       <distribution>repo</distribution>
+     </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/j256/ormlite-core</url>
+    <connection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</developerConnection>
+  </scm>
+  <developers>
+    <developer>
+      <id>andrew-bowley</id>
+      <name>Andrew Bowley</name>
+      <url>http://cybersearch2.com.au/</url>
+      <organization>cybersearch2</organization>
+      <organizationUrl>http://cybersearch2.com.au/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+10</timezone>
+    </developer>
+  </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <classy.version>1.0.1</classy.version>
     <android.plugin.version>4.0.0-rc.1</android.plugin.version>
     <android.sdk.version>4.3.1_r3</android.sdk.version>
     <android.support.version>20.0.0</android.support.version>
@@ -17,10 +43,12 @@
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <dagger.version>1.2.2</dagger.version>
  </properties>
-  <modules>
+ <modules>
+    <module>as_compatibility-v7-appcompat</module>
     <module>classytreenav</module>
-    </modules>
-	<build>
+    <module>classyfy_test</module>
+ </modules>
+ <build>
 		<finalName>${project.artifactId}</finalName>
 		<pluginManagement>
 			<plugins>
@@ -50,5 +78,5 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	</build>
+  </build>
 </project>

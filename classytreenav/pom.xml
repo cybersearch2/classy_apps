@@ -145,13 +145,12 @@
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
-      <version>${classy.version}</version>
-      <scope>compile</scope>
+      <version>${project.version}</version>
      </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
-      <version>${classy.version}</version>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
      </dependency>
@@ -164,13 +163,12 @@
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>
-      <version>${classy.version}</version>
-      <scope>compile</scope>
+      <version>${project.version}</version>
      </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>
-      <version>${classy.version}</version>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
      </dependency>
