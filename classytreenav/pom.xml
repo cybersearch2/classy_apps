@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-        <artifactId>classyapps</artifactId>
+        <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
         <version>1.0.1</version>
     </parent>
@@ -247,6 +247,7 @@
 		    <version>${android.plugin.version}</version>
             <extensions>true</extensions>
             <configuration>
+                <sdk><platform>21</platform></sdk>
                 <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                 <resourceDirectory>${project.basedir}/res</resourceDirectory>
                 <assetsDirectory>${project.basedir}/assets</assetsDirectory> 
