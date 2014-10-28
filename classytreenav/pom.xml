@@ -146,6 +146,7 @@
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
       <version>${classy.version}</version>
+      <scope>compile</scope>
      </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
@@ -164,6 +165,7 @@
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>
       <version>${classy.version}</version>
+      <scope>compile</scope>
      </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
