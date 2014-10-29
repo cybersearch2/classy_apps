@@ -46,7 +46,6 @@
  <modules>
     <module>as_compatibility-v7-appcompat</module>
     <module>classytreenav</module>
-    <module>classyfy_test</module>
  </modules>
  <build>
 		<finalName>${project.artifactId}</finalName>

@@ -1,21 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>au.com.cybersearch2</groupId>
-        <artifactId>classy_apps</artifactId>
-        <version>1.0.1</version>
-    </parent>
-  <artifactId>classyfy_test</artifactId>
+    <groupId>au.com.cybersearch2</groupId>
+    <artifactId>classyfy_test</artifactId>
+     <version>1.0.1</version>
+	<packaging>apk</packaging>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <android.plugin.version>4.0.0-rc.1</android.plugin.version>
+    <android.sdk.version>4.3.1_r3</android.sdk.version>
+    <android.support.version>20.0.0</android.support.version>
+ </properties>
   <build>
-    <sourceDirectory>src</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -25,21 +20,66 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      <plugin>
+            <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+            <artifactId>android-maven-plugin</artifactId>
+		    <version>${android.plugin.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+                <sdk><platform>21</platform></sdk>
+                <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+                <resourceDirectory>${project.basedir}/res</resourceDirectory>
+                <assetsDirectory>${project.basedir}/assets</assetsDirectory> 
+                <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
+           <test>
+                        <!--<skip>true|false|auto</skip>-->
+                        <!--<instrumentationPackage>packageName</instrumentationPackage>-->
+                        <!--<instrumentationRunner>className</instrumentationRunner>-->
+                        <!--<debug>true|false</debug>-->
+                        <!--<coverage>true|false</coverage>-->
+                        <!--<logonly>true|false</logonly>  avd-->
+                        <!--<testsize>small|medium|large</testsize>-->
+            <testSize>small</testSize>
+            <createReport>true</createReport>
+                        <!--<classes>-->
+                            <!--<class>your.package.name.YourTestClass</class>-->
+                        <!--</classes>-->
+                        <!--<packages>-->
+                            <!--<package>your.package.name</package>-->
+                        <!--</packages>-->
+          </test>
+            </configuration>
+        </plugin>
     </plugins>
   </build>
   <dependencies>
+  <!--
+    <dependency>
+       <groupId>au.com.cybersearch2</groupId>
+       <artifactId>classytreenav</artifactId>
+       <version>${project.version}</version>
+       <type>apk</type>
+    </dependency>
+
+      <dependency>
+       <groupId>au.com.cybersearch2</groupId>
+       <artifactId>classytreenav</artifactId>
+       <version>${project.version}</version>
+       <scope>provided</scope>
+       <type>jar</type>
+    </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
       <version>${project.version}</version>
+       <exclusions>
+        <exclusion>
+          <groupId>com.j256.ormlite</groupId>
+          <artifactId>ormlite-jdbc</artifactId>        
+        </exclusion>
+      </exclusions>
       <scope>compile</scope>
      </dependency>
-    <dependency>
-      <groupId>android</groupId>
-      <artifactId>android</artifactId>
-      <version>${android.sdk.version}</version>
-      <scope>provided</scope>
-    </dependency>  
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>
@@ -50,13 +90,37 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>1.9.5</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert-core</artifactId>
       <version>2.0M10</version>
-      <scope>test</scope>
     </dependency>
+    -->
+      <dependency>
+      <groupId>android</groupId>
+      <artifactId>android</artifactId>
+      <version>${android.sdk.version}</version>
+      <scope>provided</scope>
+    </dependency>  
+    <!--
+    <dependency>
+      <groupId>android.support</groupId>
+      <artifactId>compatibility-v7-appcompat</artifactId>
+      <version>${android.support.version}</version>
+      <type>apklib</type>
+    </dependency>  
+     <dependency>
+      <groupId>android.support</groupId>
+      <artifactId>compatibility-v7-appcompat</artifactId>
+      <version>${android.support.version}</version>
+      <type>jar</type>
+    </dependency>  
+    <dependency>
+      <groupId>android.support</groupId>
+      <artifactId>compatibility-v4</artifactId>
+      <version>${android.support.version}</version>
+    </dependency>  
+    -->
   </dependencies>
 </project>
