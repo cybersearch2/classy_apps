@@ -32,6 +32,16 @@
                   <sourceDirectory>${sdk.compatibility.v7.path}/src</sourceDirectory>
                   <resourceDirectory>${sdk.compatibility.v7.path}/res</resourceDirectory>
 			    </configuration>
+    		    <executions>
+    		      <execution>
+    		      	<id>default-generate-sources</id>
+                    <phase/>
+    		      </execution>
+    		      <execution>
+    		      	<id>default-apklib</id>
+                    <phase>install</phase>
+    		      </execution>
+    		    </executions>
 				<extensions>true</extensions>
 			</plugin>
  	        <plugin>
@@ -63,6 +73,18 @@
                             <packaging>jar</packaging>
                             <version>${android.support.version}</version>
                             <file>${sdk.compatibility.v7.jar.path}</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>apklib-zip-file</id>
+                        <phase>install</phase>
+                        <goals><goal>install-file</goal></goals>
+                        <configuration>
+                            <groupId>android.support</groupId>
+                            <artifactId>compatibility-v7-appcompat</artifactId>
+                            <packaging>zip</packaging>
+                            <version>${android.support.version}</version>
+                            <file>target/compatibility-v7-appcompat.apklib</file>
                         </configuration>
                     </execution>
                     <execution>

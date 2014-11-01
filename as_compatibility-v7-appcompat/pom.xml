@@ -8,6 +8,7 @@
     <version>1.0.1</version>
   </parent>
   <artifactId>as_compatibility-v7-appcompat</artifactId>
+  <packaging>pom</packaging>
   <name>as_compatibility-v7-appcompat</name>
   <description>Android Support Library</description>
   <url>http://cybersearch2.com.au</url>
@@ -39,21 +40,56 @@
   </developers>
   <build>
     <plugins>
-       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.9</version>
-            <configuration>
-              <outputDirectory>libs</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <includeArtifactIds>
-                compatibility-v4,
-                compatibility-v7-appcompat
-              </includeArtifactIds>
-              <excludeArtifactIds></excludeArtifactIds>
-            </configuration>
+	    <plugin>
+			<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+			<artifactId>android-maven-plugin</artifactId>
+			<version>${android.plugin.version}</version>
+			<extensions>true</extensions>
+		</plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.9</version>
+            <executions>
+              <execution>
+                <id>unpack-dependencies</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>unpack-dependencies</goal>
+                </goals>
+                <configuration>
+                  <type>zip</type>
+                  <excludeTypes>jar</excludeTypes>
+                  <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+                  <includeArtifactIds>
+                    compatibility-v7-appcompat
+                  </includeArtifactIds>
+                  <excludeArtifactIds>
+                    compatibility-v4,
+                  </excludeArtifactIds>
+                  <outputDirectory>${basedir}</outputDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>libs</outputDirectory>
+                  <overWriteReleases>false</overWriteReleases>
+                  <overWriteSnapshots>false</overWriteSnapshots>
+                  <overWriteIfNewer>true</overWriteIfNewer>
+                  <type>jar</type>
+                  <excludeTypes>zip</excludeTypes>
+                  <includeArtifactIds>
+                    compatibility-v4,
+                    compatibility-v7-appcompat
+                  </includeArtifactIds>
+                </configuration>
+              </execution>
+            </executions>
         </plugin>
     </plugins>
   </build>
@@ -62,12 +98,19 @@
       <groupId>android.support</groupId>
       <artifactId>compatibility-v4</artifactId>
       <version>${android.support.version}</version>
+      <type>jar</type>
     </dependency>
      <dependency>
       <groupId>android.support</groupId>
       <artifactId>compatibility-v7-appcompat</artifactId>
       <version>${android.support.version}</version>
       <type>jar</type>
+    </dependency>  
+    <dependency>
+      <groupId>android.support</groupId>
+      <artifactId>compatibility-v7-appcompat</artifactId>
+      <version>${android.support.version}</version>
+      <type>zip</type>
     </dependency>  
   </dependencies>
 </project>
