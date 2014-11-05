@@ -9,10 +9,10 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/net/sf/kxml/kxml2/2.3.0/kxml2-2.3.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/squareup/dagger/dagger/1.2.2/dagger-1.2.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/j256/ormlite/ormlite-android/4.49-SNAPSHOT/ormlite-android-4.49-SNAPSHOT.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/android/support/compatibility-v7-appcompat/20.0.0/compatibility-v7-appcompat-20.0.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/android/support/compatibility-v4/20.0.0/compatibility-v4-20.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/android/support/compatibility-v7-appcompat/21.0.1/compatibility-v7-appcompat-21.0.1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/android/support/compatibility-v4/21.0.1/compatibility-v4-21.0.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/squareup/dagger/dagger-compiler/1.2.2/dagger-compiler-1.2.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/squareup/javawriter/2.5.0/javawriter-2.5.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/google/guava/guava/15.0/guava-15.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/android/android/4.4W_r2/android-4.4W_r2.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/android/android/5.0.0/android-5.0.0.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>
