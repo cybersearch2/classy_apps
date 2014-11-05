@@ -19,3 +19,4 @@ tests/gen/**
 /libs/
 /test-libs/
 /target/R.txt
+/target\generated-sources\annotations/
