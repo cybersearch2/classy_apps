@@ -183,7 +183,6 @@
     <dependency>
       <groupId>android.support</groupId>
       <artifactId>compatibility-v7-appcompat</artifactId>
-      <version>${android.support.version}</version>
       <type>apklib</type>
     </dependency>  
      <dependency>
