@@ -61,11 +61,11 @@ public class XmlParserTest
             public boolean onNode(Node node) {
                 ++countHolder[0];
                 assertThat(node.getProperties().size() > 0);
-                System.out.println("--- " + node.getTitle() + " ---");
-                System.out.println(node.getProperties().toString());
+                //System.out.println("--- " + node.getTitle() + " ---");
+                //System.out.println(node.getProperties().toString());
                 return true;
             }});
-        System.out.println("Count = " + countHolder[0]);
+        //System.out.println("Count = " + countHolder[0]);
         List<Node> children = rootNode.getChildren();
         assertThat(children).hasSize(1);
         Node level1Node = children.get(0);
