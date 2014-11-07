@@ -38,6 +38,38 @@
       <timezone>+10</timezone>
     </developer>
   </developers>
+	<profiles>
+	    <profile>
+	        <id>classic</id>
+	        <build>
+	            <plugins>
+                   <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                     <configuration>
+                       <skip>true</skip>
+                    </configuration>
+                   </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+	    <profile>
+	        <id>classic-test</id>
+	        <build>
+	            <plugins>
+                   <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                     <configuration>
+                       <skip>true</skip>
+                    </configuration>
+                   </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+	</profiles>
   <build>
     <plugins>
       <plugin>
