@@ -36,6 +36,67 @@
       <timezone>+10</timezone>
     </developer>
   </developers>
+	<profiles>
+	    <profile>
+	        <id>classic</id>
+	        <build>
+	            <plugins>
+                   <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                     <configuration>
+                      <outputDirectory>libs</outputDirectory>
+                      <overWriteReleases>false</overWriteReleases>
+                      <overWriteSnapshots>false</overWriteSnapshots>
+                      <overWriteIfNewer>true</overWriteIfNewer>
+              <excludeArtifactIds>
+                commons-logging,
+                commons-collections,
+                openbeans,
+                persistence-api,
+                javax.inject,
+                commons-beanutils,
+                kxml2,
+                dagger,
+                ormlite-core,
+                ormlite-android,
+                ormlite-jdbc,
+                junit,
+                compatibility-v7-appcompat,
+                compatibility-v4,
+                dagger-compiler
+                classyandroid,
+                classyjava,
+              </excludeArtifactIds>
+              <includeArtifactIds>
+                mockito-core,
+                fest-assert-core,
+                fest-util,
+                objenesis,
+                android
+              </includeArtifactIds>
+                    </configuration>
+                   </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+	    <profile>
+	        <id>classic-test</id>
+	        <build>
+	            <plugins>
+                   <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                     <configuration>
+                       <skip>true</skip>
+                     </configuration>
+                   </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+      </profiles>
   <build>
     <plugins>
       <plugin>
