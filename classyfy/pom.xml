@@ -63,8 +63,7 @@
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
           <version>4.8.2</version>
-          <scope>test</scope>
-        </dependency>  
+         </dependency>  
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
@@ -107,18 +106,10 @@
           <artifactId>compatibility-v4</artifactId>
           <version>${android.support.version}</version>
         </dependency>  
-        <!-- Exclude objenesis here in favour of Robolectric's later version -->
-        <dependency>
+         <dependency>
           <groupId>org.mockito</groupId>
           <artifactId>mockito-core</artifactId>
           <version>1.9.5</version>
-           <exclusions>
-            <exclusion>
-              <groupId>org.objenesis</groupId>
-              <artifactId>objenesis</artifactId>        
-            </exclusion>
-          </exclusions>
-          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.easytesting</groupId>
