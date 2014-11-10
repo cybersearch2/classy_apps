@@ -51,38 +51,10 @@
                       <overWriteReleases>false</overWriteReleases>
                       <overWriteSnapshots>false</overWriteSnapshots>
                       <overWriteIfNewer>true</overWriteIfNewer>
-                      <excludeScope>compile</excludeScope>
-		        <excludeArtifactIds>
-                          junit
-		         </excludeArtifactIds>
-<!--
                       <excludeScope>runtime</excludeScope>
-              <excludeArtifactIds>
-                commons-logging,
-                commons-collections,
-                openbeans,
-                persistence-api,
-                javax.inject,
-                commons-beanutils,
-                kxml2,
-                dagger,
-                ormlite-core,
-                ormlite-android,
-                ormlite-jdbc,
-                junit,
-                compatibility-v7-appcompat,
-                compatibility-v4,
-                dagger-compiler
-              </excludeArtifactIds>
-              <includeArtifactIds>
-                classyandroid,
-                classyjava,
-                mockito-core,
-                fest-assert-core,
-                fest-util,
-                objenesis,
-                android
-              </includeArtifactIds>-->
+		              <excludeArtifactIds>
+                          junit
+		              </excludeArtifactIds>
                     </configuration>
                    </plugin>
 	            </plugins>
