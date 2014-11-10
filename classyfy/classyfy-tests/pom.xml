@@ -59,6 +59,7 @@
                         <!--<coverage>true|false</coverage>-->
                         <!--<logonly>true|false</logonly>  avd-->
                         <!--<testsize>small|medium|large</testsize>-->
+            <skip>false</skip>
             <testSize>small</testSize>
             <createReport>true</createReport>
                         <!--<classes>-->
