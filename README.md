@@ -7,7 +7,7 @@ For information on Classy Apps and install instructions, go to our support site 
 
 
 "ClassFy" is a working Android application which searches data structured as a tree.
-It showcases Classy Tools separate Android library whic provides an Android SQLite adapter 
+It showcases Classy Tools separate Android library which provides an Android SQLite adapter 
 and other features including an Android-specific Persistence Container 
 and a Fast Text Search engine to support automatic search suggestions.
 
