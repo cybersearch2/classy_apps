@@ -11,7 +11,7 @@ It showcases Classy Tools separate Android library which provides an Android SQL
 and other features including an Android-specific Persistence Container 
 and a Fast Text Search engine to support automatic search suggestions.
 
-It also provides an exmaple of Android development using Maven, Robolectric and Eclipse ADT.  
+It also provides an example of Android development using Maven, Robolectric and Eclipse ADT.  
 
 Classy Tools features
 
