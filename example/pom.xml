@@ -6,11 +6,11 @@
         <groupId>au.com.cybersearch2</groupId>
         <version>1.0.2</version>
     </parent>
-	<artifactId>classyfy_parent</artifactId>
+	<artifactId>example_parent</artifactId>
     <packaging>pom</packaging>
 
   <name>ClassyFy Parent</name>
-  <description>ClassyFy Android application demonstrates Classy Tools in action</description>
+  <description>Example Android applications demonstrate Classy Tools in action</description>
   <url>http://cybersearch2.com.au</url>
   <licenses>
      <license>
@@ -40,8 +40,7 @@
   </developers>
   <!-- Modules arranged according to android-maven-plugin convention -->
   <modules>
-    <module>classyfy-application</module>
-    <module>classyfy-tests</module>
+    <module>android-hello-two-dbs</module>
   </modules>
 
   <dependencyManagement>
@@ -63,7 +62,8 @@
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
           <version>4.8.2</version>
-         </dependency>  
+          <scope>test</scope>
+        </dependency>  
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
@@ -74,8 +74,6 @@
               <artifactId>ormlite-jdbc</artifactId>
             </exclusion>
           </exclusions>
-          <type>jar</type>
-          <scope>compile</scope>
          </dependency>
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
@@ -89,6 +87,7 @@
           <artifactId>ormlite-android</artifactId>
           <version>${ormlite.version}</version>
         </dependency>
+        <!--
         <dependency>
           <groupId>android.support</groupId>
           <artifactId>compatibility-v7-appcompat</artifactId>
@@ -101,15 +100,24 @@
           <version>${android.support.version}</version>
           <type>jar</type>
         </dependency>  
+        -->
         <dependency>
           <groupId>android.support</groupId>
           <artifactId>compatibility-v4</artifactId>
           <version>${android.support.version}</version>
         </dependency>  
-         <dependency>
+        <!-- Exclude objenesis here in favour of Robolectric's later version -->
+        <dependency>
           <groupId>org.mockito</groupId>
           <artifactId>mockito-core</artifactId>
           <version>1.9.5</version>
+           <exclusions>
+            <exclusion>
+              <groupId>org.objenesis</groupId>
+              <artifactId>objenesis</artifactId>        
+            </exclusion>
+          </exclusions>
+          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.easytesting</groupId>
