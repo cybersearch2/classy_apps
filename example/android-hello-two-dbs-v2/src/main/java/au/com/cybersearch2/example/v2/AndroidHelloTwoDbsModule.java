@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example;
+package au.com.cybersearch2.example.v2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +49,10 @@ import au.com.cybersearch2.classytask.WorkerRunnable;
         AndroidHelloTwoDbs.class, 
         PersistenceContainer.class,
         EntityTransactionImpl.class,
-        ClassyOpenHelperCallbacks.class
+        ClassyOpenHelperCallbacks.class,
+        AndroidDatabaseUpgrader.class,
+        SimpleOpenHelperCallbacks.class,
+        ComplexOpenHelperCallbacks.class
         })
 public class AndroidHelloTwoDbsModule implements ApplicationModule
 {
@@ -68,7 +71,7 @@ public class AndroidHelloTwoDbsModule implements ApplicationModule
                     throws IOException
             {
                 ApplicationContext applicationContext = new ApplicationContext();
-                return applicationContext.getContext().getAssets().open("v1/" + resourceName);
+                return applicationContext.getContext().getAssets().open("v2/" + resourceName);
             }
 
             @Override
