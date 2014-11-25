@@ -15,12 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.example.v2;
 
-import com.j256.ormlite.support.ConnectionSource;
-
 import android.content.Context;
 import au.com.cybersearch2.classyapp.ContextModule;
 import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classyjpa.persist.ConnectionSourceFactory;
 import au.com.cybersearch2.classyapp.ApplicationContext;
 
 /**
@@ -41,32 +38,6 @@ public class AndroidHelloTwoDbs extends HelloTwoDbsMain
        this.context = context;
     }
 
-   /**
-    * Initialize entity tables ensuring version is correct and contains initial data. 
-    * Call this before doing any queries. 
-    * Note the calling thread is suspended while the work is performed on a background thread. 
-    * @throws InterruptedException
-    */
-    public void setUp() throws InterruptedException
-    {
-    	// Do not call super setUp() as it handles change of database version, for which Android has other arrangements
-	   	if (!applicationInitialized)
-	   	{
-	   		initializeApplication();
-	   		/*
-	   		// Get a connectionSource to trigger potential database create/update
-			ConnectionSourceFactory connectionSourceFactory = persistenceFactory.getPersistenceUnit(PU_NAME1).getPersistenceAdmin();
-			connectionSourceFactory.getConnectionSource();
-			connectionSourceFactory = persistenceFactory.getPersistenceUnit(PU_NAME2).getPersistenceAdmin();
-			connectionSourceFactory.getConnectionSource();
-			*/
-			initializeDatabase();
-			populateDatabase1();
-			populateDatabase2();
-	   		applicationInitialized = true;
-	   	}
-    }
-    
     @Override
     protected void createObjectGraph()
     {

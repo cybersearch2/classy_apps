@@ -28,13 +28,12 @@ import java.sql.SQLException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityTransaction;
 
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
 import android.net.Uri;
-import au.com.cybersearch2.classydb.DatabaseWorkerTask;
-import au.com.cybersearch2.classydb.DatabaseWork;
 import au.com.cybersearch2.classydb.SqlParser;
 import au.com.cybersearch2.classydb.SqlParser.StatementCallback;
 import au.com.cybersearch2.classyfy.data.DataLoader;
@@ -43,7 +42,11 @@ import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
+import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
+import au.com.cybersearch2.classyjpa.transaction.TransactionCallable;
 import au.com.cybersearch2.classytask.Executable;
+import au.com.cybersearch2.classytask.WorkStatus;
+import au.com.cybersearch2.classytask.WorkTracker;
 import au.com.cybersearch2.classyfy.helper.FileUtils;
 
 /**
@@ -63,7 +66,7 @@ public class AlfrescoFilePlanLoader implements DataLoader
     }
     
     @Override
-    public Executable loadData(final Uri uri, PersistenceAdmin persistenceAdmin) throws IOException 
+    public Executable loadData(final Uri uri, final PersistenceAdmin persistenceAdmin) throws IOException 
     {
         FileUtils.validateUri(uri, ".*\\.xml");
         File dataFile = new File(uri.getPath());
@@ -75,43 +78,58 @@ public class AlfrescoFilePlanLoader implements DataLoader
         sqlFromNodeGenerator.generateSql(rootNode, writer); 
         writer.flush();
         instream = new ByteArrayInputStream(baos.toByteArray());
-        ConnectionSource connectionSource = persistenceAdmin.getConnectionSource();
-        return executeTask(connectionSource);
-    }
+    	// Database work is executed in a transaction
+        final TransactionCallable processFilesCallable = new TransactionCallable()
+        {
 
-    boolean writeToDatabase(final DatabaseConnection databaseConnection) throws IOException, SQLException
-    {
-        StatementCallback callback = new StatementCallback(){
-            
-            @Override
-            public void onStatement(String statement) throws SQLException {
-                databaseConnection.executeStatement(statement, DatabaseConnection.DEFAULT_RESULT_FLAGS);
-            }};
-            SqlParser sqlParser = new SqlParser();
-            sqlParser.parseStream(instream, callback);
-            //if (log.isLoggable(TAG, Level.FINE))
-            //    log.debug(TAG, "Executed " + sqlParser.getCount() + " statements from " + uri.toString());
-        return true;
-    }
-    
-    /**
-     * Execute SQL statements contain in specified files
-     * @param filenames List of filenames containing SQL statements
-     * @return boolean Result - success or not
-     */
-    protected Executable executeTask(ConnectionSource connectionSource)
-    {
-        DatabaseWork processSql = new DatabaseWork(connectionSource){
+			@Override
+			public Boolean call(final DatabaseConnection databaseConnection)
+					throws Exception 
+			{
+		        StatementCallback callback = new StatementCallback(){
+		            
+		            @Override
+		            public void onStatement(String statement) throws SQLException {
+		                databaseConnection.executeStatement(statement, DatabaseConnection.DEFAULT_RESULT_FLAGS);
+		            }};
+		            SqlParser sqlParser = new SqlParser();
+		            sqlParser.parseStream(instream, callback);
+		            //if (log.isLoggable(TAG, Level.FINE))
+		            //    log.debug(TAG, "Executed " + sqlParser.getCount() + " statements from " + uri.toString());
+		        return true;
+			}
+        };
+        final WorkTracker workTracker = new WorkTracker();
+        Runnable runnable = new Runnable()
+        {
 
-            @Override
-            public Boolean doInBackground(final DatabaseConnection databaseConnection) throws Exception 
-            {
-                return writeToDatabase(databaseConnection);
-            }};
-        // Execute task on transaction commit using Callable
-        DatabaseWorkerTask databaseWorkerTask = new DatabaseWorkerTask();
-        return databaseWorkerTask.executeTask(processSql);
+			@Override
+			public void run() 
+			{
+				try
+				{
+					workTracker.setStatus(WorkStatus.RUNNING);
+			        // Execute task on transaction commit using Callable
+			        ConnectionSource connectionSource = persistenceAdmin.getConnectionSource();
+			     	EntityTransaction transaction = new EntityTransactionImpl(connectionSource, processFilesCallable);
+			        transaction.begin();
+			        transaction.commit();
+					workTracker.setStatus(WorkStatus.FINISHED);
+				}
+				finally
+				{
+					if (workTracker.getStatus() != WorkStatus.FINISHED)
+						workTracker.setStatus(WorkStatus.FAILED);
+				}
+				synchronized(workTracker)
+				{
+					workTracker.notifyAll();
+				}
+			}
+        	
+        };
+        new Thread(runnable).start();
+        return workTracker;
     }
-    
 
 }

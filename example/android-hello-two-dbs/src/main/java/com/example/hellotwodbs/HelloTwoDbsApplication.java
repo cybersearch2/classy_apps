@@ -31,6 +31,14 @@ public class HelloTwoDbsApplication extends Application
     {
         super.onCreate();
         androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
+        try 
+        {
+			androidHelloTwoDbsSingleton.setUp();
+		} 
+        catch (InterruptedException e) 
+        {   // This not expected to ever happen
+			throw new IllegalStateException("onCreate()  interrupted in AndroidHelloTwoDbs setUp()", e);
+		}
    }
 
    public static AndroidHelloTwoDbs getAndroidHelloTwoDbsSingleton()

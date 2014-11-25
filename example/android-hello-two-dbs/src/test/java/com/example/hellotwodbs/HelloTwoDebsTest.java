@@ -13,32 +13,25 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example.v2;
+package com.example.hellotwodbs;
 
-import javax.inject.Inject;
-
-import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
-
-import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.db.SqliteAndroidDatabaseType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 /**
- * AndroidDatabaseUpgrader
+ * HelloTwoDebsTest
  * @author Andrew Bowley
- * 21 Nov 2014
+ * 24 Nov 2014
  */
-public class AndroidDatabaseUpgrader extends DatabaseUpgrader 
+@RunWith(RobolectricTestRunner.class)
+public class HelloTwoDebsTest 
 {
-    /** Factory object to create "simple" and "complex" Persistence Unit implementations */
-    @Inject PersistenceFactory persistenceFactory;
 
-	public AndroidDatabaseUpgrader() 
+	@Test
+	public void test_doSampleDatabaseStuff()
 	{
-		super();
+		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
+		System.out.println(helloTwoDbs.doSampleDatabaseStuff("robolectric"));
 	}
-	
-    protected boolean isSupportedDatabaseType(DatabaseType databaseType)
-    {
-    	return databaseType instanceof SqliteAndroidDatabaseType ? true : super.isSupportedDatabaseType(databaseType);
-    }
 }

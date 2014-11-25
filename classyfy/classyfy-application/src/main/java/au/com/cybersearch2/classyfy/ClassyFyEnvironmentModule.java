@@ -20,8 +20,9 @@ import javax.inject.Singleton;
 import au.com.cybersearch2.classyapp.ApplicationLocale;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
-import au.com.cybersearch2.classydb.ClassyOpenHelperCallbacks;
+import au.com.cybersearch2.classydb.DatabaseAdminImpl;
 import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
+import au.com.cybersearch2.classydb.OpenHelperCallbacksImpl;
 import au.com.cybersearch2.classyjpa.AndroidPersistenceFactory;
 import au.com.cybersearch2.classyjpa.entity.LoaderPersistenceContainer;
 import au.com.cybersearch2.classyjpa.entity.PersistenceContainer;
@@ -46,13 +47,14 @@ import dagger.Provides;
                     NativeScriptDatabaseWork.class,
                     EntityTransactionImpl.class,
                     PersistenceAdminImpl.class,
+                    DatabaseAdminImpl.class,
                     UserTaskContext.class,
                     PersistenceFactory.class,
                     AndroidPersistenceFactory.class, 
                     PersistenceContainer.class,
                     UserPersistenceContainer.class,
                     LoaderPersistenceContainer.class,
-                    ClassyOpenHelperCallbacks.class,
+                    OpenHelperCallbacksImpl.class,
                     ApplicationLocale.class
 })
 public class ClassyFyEnvironmentModule

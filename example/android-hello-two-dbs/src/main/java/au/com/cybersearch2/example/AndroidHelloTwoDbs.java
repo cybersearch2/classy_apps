@@ -19,7 +19,6 @@ import android.content.Context;
 
 import au.com.cybersearch2.classyapp.ContextModule;
 import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classyapp.ApplicationContext;
 
 /**
  * AndroidHelloTwoDbs
@@ -34,8 +33,6 @@ public class AndroidHelloTwoDbs extends HelloTwoDbsMain
    public AndroidHelloTwoDbs(final Context context)
    {
        super();
-       if (context == null)
-            throw new IllegalArgumentException("Paramemter \"context\" is null");
        this.context = context;
    }
 
@@ -47,10 +44,5 @@ public class AndroidHelloTwoDbs extends HelloTwoDbsMain
         androidHelloTwoDbsModule = new AndroidHelloTwoDbsModule();
         ContextModule contextModule = new ContextModule(context);
         new DI(androidHelloTwoDbsModule, contextModule).validate();
-        ApplicationContext applicationContex = new ApplicationContext();
-       if (applicationContex.getContext() == null)
-            throw new IllegalStateException("ApplicationContext \"context\" is null");
-       if (applicationContex.getContext().getAssets() == null)
-            throw new IllegalStateException("ApplicationContext \"assets\" is null");
     }
 }

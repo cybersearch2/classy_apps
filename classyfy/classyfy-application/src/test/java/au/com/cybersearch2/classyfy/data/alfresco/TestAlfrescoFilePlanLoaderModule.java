@@ -31,8 +31,8 @@ import static org.mockito.Mockito.*;
  * @author Andrew Bowley
  * 14/04/2014
  */
-@Module(injects = TestAlfrescoFilePlanLoader.class, complete = false)
-public class TestAlfrescoFilePlanLoaderModule implements DependencyProvider<TestAlfrescoFilePlanLoader>
+@Module(injects = AlfrescoFilePlanLoader.class, complete = false)
+public class TestAlfrescoFilePlanLoaderModule implements DependencyProvider<AlfrescoFilePlanLoader>
 {
     private TestDataStreamParser alfrescoFilePlanXmlParser;
     private SqlFromNodeGenerator sqlFromNodeGenerator;

@@ -146,7 +146,6 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>${project.version}</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
@@ -159,7 +158,6 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>${project.version}</version>
            <exclusions>
             <exclusion>
               <groupId>au.com.cybersearch2</groupId>
@@ -176,10 +174,10 @@
          <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>hello-two-dbs-example</artifactId>
-           <exclusions>
+          <exclusions>
             <exclusion>
-              <groupId>au.com.cybersearch2</groupId>
-              <artifactId>classyjava</artifactId>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
           <version>${project.version}</version>
@@ -187,12 +185,10 @@
         <dependency>
           <groupId>com.j256.ormlite</groupId>
           <artifactId>ormlite-android</artifactId>
-          <version>${ormlite.version}</version>
         </dependency>
         <dependency>
           <groupId>android.support</groupId>
           <artifactId>compatibility-v4</artifactId>
-          <version>${android.support.version}</version>
         </dependency>  
         <!-- Exclude objenesis here in favour of Robolectric's later version -->
         <dependency>
@@ -230,22 +226,14 @@
           <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>au.com.cybersearch2</groupId>
-          <artifactId>classyandroid</artifactId>
-          <version>${project.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-          </dependency>
-        <dependency>
           <groupId>android</groupId>
           <artifactId>android</artifactId>
           <scope>provided</scope>
         </dependency>  
-            <dependency>
-              <groupId>com.squareup.dagger</groupId>
-              <artifactId>dagger-compiler</artifactId>
-              <version>${dagger.version}</version>
-             <optional>true</optional>
+        <dependency>
+          <groupId>com.squareup.dagger</groupId>
+          <artifactId>dagger-compiler</artifactId>
+          <optional>true</optional>
         </dependency>
  	</dependencies>
 	<build>

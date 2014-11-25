@@ -13,8 +13,13 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example.v2;
+package au.com.cybersearch2.example;
 
+/**
+ * HellowoDbsEnvironmentModule
+ * @author Andrew Bowley
+ * 22 Nov 2014
+ */
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -30,7 +35,6 @@ import au.com.cybersearch2.classydb.DatabaseAdminImpl;
 import au.com.cybersearch2.classydb.OpenHelperCallbacksImpl;
 import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
 import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
-import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.entity.PersistenceContainer;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
@@ -44,20 +48,19 @@ import au.com.cybersearch2.classytask.WorkerRunnable;
  * 23 Sep 2014
  */
 @Module(injects = { 
+        AndroidHelloTwoDbs.class, 
         WorkerRunnable.class,
         PersistenceFactory.class,
         NativeScriptDatabaseWork.class,
-        AndroidHelloTwoDbs.class, 
         PersistenceContainer.class,
         EntityTransactionImpl.class,
         OpenHelperCallbacksImpl.class,
-        DatabaseAdminImpl.class,
-        SimpleOpenHelperCallbacks.class,
-        ComplexOpenHelperCallbacks.class
+        DatabaseAdminImpl.class
         })
-public class AndroidHelloTwoDbsModule implements ApplicationModule
+public class HelloTwoDbsEnvironmentModule 
 {
 	ConnectionType CONNECTION_TYPE = ConnectionType.file;
+	
     @Provides @Singleton ThreadHelper provideSystemEnvironment()
     {
         return new AppThreadHelper();
@@ -72,7 +75,7 @@ public class AndroidHelloTwoDbsModule implements ApplicationModule
                     throws IOException
             {
                 ApplicationContext applicationContext = new ApplicationContext();
-                return applicationContext.getContext().getAssets().open("v2/" + resourceName);
+                return applicationContext.getContext().getAssets().open("v1/" + resourceName);
             }
 
             @Override
@@ -85,6 +88,11 @@ public class AndroidHelloTwoDbsModule implements ApplicationModule
     @Provides @Singleton PersistenceFactory providePersistenceModule()
     {
         return new PersistenceFactory(new AndroidDatabaseSupport());
+    }
+
+    @Provides @Singleton ConnectionType provideConnectionType()
+    {
+    	return CONNECTION_TYPE;
     }
 
 }

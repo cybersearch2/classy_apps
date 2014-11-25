@@ -80,6 +80,16 @@
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
           <version>${project.version}</version>
+           <exclusions>
+            <exclusion>
+              <groupId>au.com.cybersearch2</groupId>
+              <artifactId>classyjava</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>many2many-example</artifactId>
+            </exclusion>
+          </exclusions>
           <type>jar</type>
           <scope>compile</scope>
          </dependency>

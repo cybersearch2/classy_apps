@@ -72,6 +72,7 @@ public class ClassyFyStartup
         DI dependencyInjection = new DI(classyFyApplicationModule, new ContextModule(context));
         dependencyInjection.validate();
         DI.inject(this);
+        persistenceFactory.initializeAllDatabases();
         Persistence persistence = persistenceFactory.getPersistenceUnit(ClassyFyApplication.PU_NAME);
         persistenceAdmin = persistence.getPersistenceAdmin();
         databaseAdmin = persistence.getDatabaseAdmin();
@@ -148,8 +149,10 @@ public class ClassyFyStartup
             Log.e(TAG, "Database error on startup", e);
             return false;
         }
-        WorkStatus status = databaseAdmin.waitForTask(0);
-        return (status == WorkStatus.FINISHED) || (status == WorkStatus.PENDING);
+        // TODO - Implement synchronization
+        //WorkStatus status = databaseAdmin.waitForTask(0);
+        //return (status == WorkStatus.FINISHED) || (status == WorkStatus.PENDING);
+        return true;
     }
 
 }
