@@ -15,27 +15,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.example.v2;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-
 import javax.inject.Singleton;
+
+import au.com.cybersearch2.classyinject.ApplicationModule;
+
+import com.example.hellotwodbs.HelloTwoDbs;
+import com.example.hellotwodbs.HelloTwoDbsApplication;
 
 import dagger.Module;
 import dagger.Provides;
-import au.com.cybersearch2.classyapp.ApplicationContext;
-import au.com.cybersearch2.classyapp.ResourceEnvironment;
-import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
-import au.com.cybersearch2.classydb.DatabaseAdminImpl;
-import au.com.cybersearch2.classydb.OpenHelperCallbacksImpl;
-import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
-import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
-import au.com.cybersearch2.classyinject.ApplicationModule;
-import au.com.cybersearch2.classyjpa.entity.PersistenceContainer;
-import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
-import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
-import au.com.cybersearch2.classytask.ThreadHelper;
-import au.com.cybersearch2.classytask.WorkerRunnable;
 
 /**
  * AndroidHelloTwoDbsModule
@@ -43,48 +31,15 @@ import au.com.cybersearch2.classytask.WorkerRunnable;
  * @author Andrew Bowley
  * 23 Sep 2014
  */
-@Module(injects = { 
-        WorkerRunnable.class,
-        PersistenceFactory.class,
-        NativeScriptDatabaseWork.class,
-        AndroidHelloTwoDbs.class, 
-        PersistenceContainer.class,
-        EntityTransactionImpl.class,
-        OpenHelperCallbacksImpl.class,
-        DatabaseAdminImpl.class,
-        SimpleOpenHelperCallbacks.class,
-        ComplexOpenHelperCallbacks.class
-        })
+@Module(injects = { HelloTwoDbs.class, AndroidHelloTwoDbs.class, SimpleOpenHelperCallbacks.class, ComplexOpenHelperCallbacks.class },
+        includes = HelloTwoDbsEnvironmentModule.class) 
 public class AndroidHelloTwoDbsModule implements ApplicationModule
 {
-	ConnectionType CONNECTION_TYPE = ConnectionType.file;
-    @Provides @Singleton ThreadHelper provideSystemEnvironment()
-    {
-        return new AppThreadHelper();
-    }
-    
-    @Provides @Singleton ResourceEnvironment provideResourceEnvironment()
-    {
-        return new ResourceEnvironment(){
-
-            @Override
-            public InputStream openResource(String resourceName)
-                    throws IOException
-            {
-                ApplicationContext applicationContext = new ApplicationContext();
-                return applicationContext.getContext().getAssets().open("v2/" + resourceName);
-            }
-
-            @Override
-            public Locale getLocale()
-            {
-                return new Locale("en", "AU");
-            }};
-    }
-
-    @Provides @Singleton PersistenceFactory providePersistenceModule()
-    {
-        return new PersistenceFactory(new AndroidDatabaseSupport());
-    }
-
+	@Provides @Singleton AndroidHelloTwoDbs provideAndroidHelloTwoDbs()
+	{
+		return HelloTwoDbsApplication.getAndroidHelloTwoDbsSingleton();
+	}
+	
 }
+
+

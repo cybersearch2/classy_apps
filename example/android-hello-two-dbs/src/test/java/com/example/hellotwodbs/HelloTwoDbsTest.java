@@ -15,35 +15,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package com.example.hellotwodbs;
 
-import android.app.Application;
-import au.com.cybersearch2.example.v2.AndroidHelloTwoDbs;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 /**
- * HelloTwoDbsApplication
+ * HelloTwoDebsTest
  * @author Andrew Bowley
- * 20 Nov 2014
+ * 24 Nov 2014
  */
-public class HelloTwoDbsApplication extends Application 
+@RunWith(RobolectricTestRunner.class)
+public class HelloTwoDbsTest 
 {
-	static AndroidHelloTwoDbs androidHelloTwoDbsSingleton;
-	
-    @Override public void onCreate() 
-    {
-        super.onCreate();
-        androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
-        try 
-        {
-			androidHelloTwoDbsSingleton.setUp();
-		} 
-        catch (InterruptedException e) 
-        {   // This not expected to ever happen
-			throw new IllegalStateException("onCreate()  interrupted in AndroidHelloTwoDbs setUp()", e);
-		}
-   }
 
-   public static AndroidHelloTwoDbs getAndroidHelloTwoDbsSingleton()
-   {
-	   return androidHelloTwoDbsSingleton;
-   }
-    
+	@Test
+	public void test_doSampleDatabaseStuff()
+	{
+		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
+		System.out.println(helloTwoDbs.doSampleDatabaseStuff("robolectric"));
+	}
 }

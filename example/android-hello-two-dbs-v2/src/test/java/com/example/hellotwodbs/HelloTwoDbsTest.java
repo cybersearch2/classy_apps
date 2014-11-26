@@ -13,22 +13,25 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example.v2;
+package com.example.hellotwodbs;
 
-import android.os.Process;
-import au.com.cybersearch2.classytask.ThreadHelper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 /**
- * AppThreadHelper
+ * HelloTwoDebsTest
  * @author Andrew Bowley
- * 07/07/2014
+ * 24 Nov 2014
  */
-public class AppThreadHelper implements ThreadHelper
+@RunWith(RobolectricTestRunner.class)
+public class HelloTwoDbsTest 
 {
-    @Override
-    public void setBackgroundPriority() 
-    {
-        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-    }
 
+	@Test
+	public void test_doSampleDatabaseStuff()
+	{
+		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
+		System.out.println(helloTwoDbs.doSampleDatabaseStuff("robolectric"));
+	}
 }
