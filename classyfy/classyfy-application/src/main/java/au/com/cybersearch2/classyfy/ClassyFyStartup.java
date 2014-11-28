@@ -15,8 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy;
 
-import java.sql.SQLException;
-
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 
@@ -39,10 +37,11 @@ import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classytask.WorkTracker;
 
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * ClassyFyStartup
+ * Creates application Object Graph for Dependency Injection and
+ * Initializes persistence. 
  * @author Andrew Bowley
  * 23/07/2014
  */
@@ -50,32 +49,38 @@ public class ClassyFyStartup
 {
    
     public static final String TAG = "ClassyFyStartup";
+    /** Application  Dependency Injection configuration */
     protected ClassyFyApplicationModule classyFyApplicationModule;
+    /** Tracks progress of start up and signals completion */
     protected WorkTracker applicationSetup;
-    protected PersistenceAdmin persistenceAdmin;
-    protected DatabaseAdmin databaseAdmin;
+    /** Persistence system configured by persistence.xml contains one or more Persistence Units */
     @Inject PersistenceFactory persistenceFactory;
+    /** Allows thread priority to be adjusted for background priority */
     @Inject ThreadHelper threadHelper;
 
     /**
-     * 
+     * Construct ClassyFyStartup object
      */
     public ClassyFyStartup()
     {
         applicationSetup = new WorkTracker();
     }
-    
+
+    /**
+     * Start application
+     * @param context Android Context
+     */
     public void start(final Context context)
     {
+    	// Clear out ORMLite internal caches.
         DaoManager.clearCache();
+        // Create application Object Graph for Dependency Injection
         classyFyApplicationModule = new ClassyFyApplicationModule();
         DI dependencyInjection = new DI(classyFyApplicationModule, new ContextModule(context));
         dependencyInjection.validate();
+        // Inject persistenceFactory and threadHelper
         DI.inject(this);
-        persistenceFactory.initializeAllDatabases();
-        Persistence persistence = persistenceFactory.getPersistenceUnit(ClassyFyApplication.PU_NAME);
-        persistenceAdmin = persistence.getPersistenceAdmin();
-        databaseAdmin = persistence.getDatabaseAdmin();
+        // Set up thread to initialize persistence
         Runnable setupInBackground = new Runnable()
         {
             @Override
@@ -84,19 +89,21 @@ public class ClassyFyStartup
                 threadHelper.setBackgroundPriority();
                 applicationSetup.setStatus(WorkStatus.RUNNING);
                 WorkStatus status = WorkStatus.FAILED;
-                if (setUpDatabase())
+                try
                 {
-                    try
-                    {
-                        EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
-                        persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
-                        persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
-                        status = WorkStatus.FINISHED;
-                    }
-                    catch (PersistenceException e)
-                    {
-                        Log.e(TAG, "Database failed last stage of set up", e);
-                    }
+                	// Persistence system configured by persistence.xml contains one or more Persistence Unitst
+                    persistenceFactory.initializeAllDatabases();
+                    // Set up named queries to find Category and Folder by Node ID
+                    Persistence persistence = persistenceFactory.getPersistenceUnit(ClassyFyApplication.PU_NAME);
+                    PersistenceAdmin persistenceAdmin = persistence.getPersistenceAdmin();
+                    EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
+                    persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
+                    persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
+                    status = WorkStatus.FINISHED;
+                }
+                catch (PersistenceException e)
+                {   // All SQLExceptions are rethrown as PersistenceExceptions
+                    Log.e(TAG, "Database initialisation failed", e);
                 }
                 applicationSetup.setStatus(status);
                 synchronized(applicationSetup)
@@ -115,11 +122,19 @@ public class ClassyFyStartup
         thread.start();
     }
 
+    /**
+     * Returns read-only application WorkTracker
+     * @return Executable
+     */
     Executable getApplicationSetup()
     {
         return applicationSetup;
     }
 
+    /**
+     * Wait for start up to complete
+     * @return WorkStatus indicating final status of finished or failed
+     */
     public WorkStatus waitForApplicationSetup()
     {
         if ((applicationSetup.getStatus() != WorkStatus.FINISHED) &&
@@ -137,22 +152,4 @@ public class ClassyFyStartup
         return applicationSetup.getStatus();
     }
     
-    public boolean setUpDatabase() 
-    {
-        ConnectionSource connectionSource = persistenceAdmin.getConnectionSource();
-        try
-        {
-            connectionSource.getReadWriteConnection();
-        }
-        catch (SQLException e)
-        {
-            Log.e(TAG, "Database error on startup", e);
-            return false;
-        }
-        // TODO - Implement synchronization
-        //WorkStatus status = databaseAdmin.waitForTask(0);
-        //return (status == WorkStatus.FINISHED) || (status == WorkStatus.PENDING);
-        return true;
-    }
-
 }

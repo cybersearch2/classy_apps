@@ -14,11 +14,9 @@ import java.io.Writer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import au.com.cybersearch2.robolectric.ClassyTestRunner;
-
-import com.j256.ormlite.support.ConnectionSource;
-
 import android.net.Uri;
+
+import au.com.cybersearch2.robolectric.ClassyTestRunner;
 import au.com.cybersearch2.classyfy.TestClassyFyApplication;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
@@ -26,7 +24,6 @@ import au.com.cybersearch2.classyfy.data.TestDataStreamParser;
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanLoader;
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanXmlParser;
 import au.com.cybersearch2.classyfy.test.AndroidEnvironmentFile;
-import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 
 @RunWith(ClassyTestRunner.class)
 public class AlfrescoFilePlanLoaderTest
@@ -50,7 +47,7 @@ public class AlfrescoFilePlanLoaderTest
             testFile = new AndroidEnvironmentFile(PUBLIC_DOWNLOADS_PATH,DATA_FILENAME);
         }
     }
-/**
+
     @Test
     public void testAlfrescoFilePlanLoader() throws Exception
     {
@@ -62,14 +59,12 @@ public class AlfrescoFilePlanLoaderTest
         when(alfrescoFilePlanXmlParser.parseDataStream(isA(InputStream.class))).thenReturn(rootNode);
         dataStreamLoader.setDataStreamParser(alfrescoFilePlanXmlParser);
         Uri dataUri = Uri.fromFile(testFile.getTestFile());
-        PersistenceAdmin persistenceAdmin = mock(PersistenceAdmin.class);
-        ConnectionSource connectionSource = mock(ConnectionSource.class);
-        when(persistenceAdmin.getConnectionSource()).thenReturn(connectionSource);
 
-        alfrescoFilePlanLoader.loadData(dataUri, persistenceAdmin);
+        alfrescoFilePlanLoader.loadData(dataUri);
         SqlFromNodeGenerator sqlFromNodeGenerator = testAlfrescoFilePlanLoaderModule.getSqlFromNodeGenerator();
         verify(alfrescoFilePlanXmlParser).parseDataStream(isA(InputStream.class));
         verify(sqlFromNodeGenerator).generateSql(eq(rootNode), isA(Writer.class));
+        assertThat(((TestAlfrescoFilePlanLoader)alfrescoFilePlanLoader).processFilesCallable).isNotNull();
     }
-*/  
+  
 }

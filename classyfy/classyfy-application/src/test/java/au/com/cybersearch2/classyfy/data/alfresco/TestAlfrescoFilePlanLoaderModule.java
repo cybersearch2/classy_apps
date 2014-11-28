@@ -20,6 +20,7 @@ import dagger.Provides;
 
 import javax.inject.Named;
 
+
 import au.com.cybersearch2.classyfy.data.DataStreamParser;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyfy.data.TestDataStreamParser;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Andrew Bowley
  * 14/04/2014
  */
-@Module(injects = AlfrescoFilePlanLoader.class, complete = false)
+@Module(injects = TestAlfrescoFilePlanLoader.class, complete = false)
 public class TestAlfrescoFilePlanLoaderModule implements DependencyProvider<AlfrescoFilePlanLoader>
 {
     private TestDataStreamParser alfrescoFilePlanXmlParser;
@@ -52,7 +53,6 @@ public class TestAlfrescoFilePlanLoaderModule implements DependencyProvider<Alfr
         return sqlFromNodeGenerator;
     }
 
-    
     public TestDataStreamParser getTestDataStreamLoader()
     {
         return alfrescoFilePlanXmlParser;

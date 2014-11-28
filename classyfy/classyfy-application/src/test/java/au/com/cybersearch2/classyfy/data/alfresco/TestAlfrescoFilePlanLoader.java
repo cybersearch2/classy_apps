@@ -13,15 +13,28 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
+package au.com.cybersearch2.classyfy.data.alfresco;
 
-package au.com.cybersearch2.classyfy.data;
-
-import java.io.IOException;
-
-import android.net.Uri;
+import au.com.cybersearch2.classyjpa.transaction.TransactionCallable;
 import au.com.cybersearch2.classytask.Executable;
+import au.com.cybersearch2.classytask.WorkStatus;
+import au.com.cybersearch2.classytask.WorkTracker;
 
-public interface DataLoader
+/**
+ * TestAlfrescoFilePlanLoader
+ * @author Andrew Bowley
+ * 28 Nov 2014
+ */
+public class TestAlfrescoFilePlanLoader extends AlfrescoFilePlanLoader 
 {
-    Executable loadData(Uri uri) throws IOException;
+
+	public TransactionCallable processFilesCallable;
+	
+    protected Executable executeTask(final TransactionCallable processFilesCallable) 
+    {
+    	this.processFilesCallable = processFilesCallable;
+        final WorkTracker workTracker = new WorkTracker();
+        workTracker.setStatus(WorkStatus.FINISHED);
+    	return workTracker;
+    }
 }

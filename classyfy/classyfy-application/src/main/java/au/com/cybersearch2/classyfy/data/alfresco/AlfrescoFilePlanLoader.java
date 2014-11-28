@@ -36,12 +36,15 @@ import com.j256.ormlite.support.DatabaseConnection;
 import android.net.Uri;
 import au.com.cybersearch2.classydb.SqlParser;
 import au.com.cybersearch2.classydb.SqlParser.StatementCallback;
+import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.data.DataLoader;
 import au.com.cybersearch2.classyfy.data.DataStreamParser;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyinject.DI;
+import au.com.cybersearch2.classyjpa.persist.Persistence;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
+import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
 import au.com.cybersearch2.classyjpa.transaction.TransactionCallable;
 import au.com.cybersearch2.classytask.Executable;
@@ -57,16 +60,20 @@ import au.com.cybersearch2.classyfy.helper.FileUtils;
 public class AlfrescoFilePlanLoader implements DataLoader
 {
     protected ByteArrayInputStream instream;
+    protected PersistenceAdmin persistenceAdmin;
     @Inject @Named("AlfrescoFilePlan") DataStreamParser dataStreamParser;
     @Inject SqlFromNodeGenerator sqlFromNodeGenerator;
+    @Inject PersistenceFactory persistenceFactory;
     
     public AlfrescoFilePlanLoader()
     {
         DI.inject(new AlfrescoFilePlanLoaderModule(), this);
+        Persistence persistence = persistenceFactory.getPersistenceUnit(ClassyFyApplication.PU_NAME);
+        persistenceAdmin = persistence.getPersistenceAdmin();
     }
     
     @Override
-    public Executable loadData(final Uri uri, final PersistenceAdmin persistenceAdmin) throws IOException 
+    public Executable loadData(final Uri uri) throws IOException 
     {
         FileUtils.validateUri(uri, ".*\\.xml");
         File dataFile = new File(uri.getPath());
@@ -99,8 +106,14 @@ public class AlfrescoFilePlanLoader implements DataLoader
 		        return true;
 			}
         };
+        return executeTask(processFilesCallable);
+    }
+    
+    
+    protected Executable executeTask(final TransactionCallable processFilesCallable) 
+    {
         final WorkTracker workTracker = new WorkTracker();
-        Runnable runnable = new Runnable()
+		Runnable runnable = new Runnable()
         {
 
 			@Override
