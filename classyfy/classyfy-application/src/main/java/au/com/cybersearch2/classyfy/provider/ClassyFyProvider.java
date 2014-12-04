@@ -28,20 +28,40 @@ import au.com.cybersearch2.classyjpa.AndroidPersistenceEnvironment;
 
 
 /**
- * @author andrew
- *
+ * ClassyFyProvider
+ * Implements android.content.ContentProvider and binds to persistence implementation through Dagger Dependency Injection.
+ * This class is only a shell delegating the Provider implementation to ClassyFySearchEngine which implements SearchEngineBase. 
+ * Note that Android calls onCreate() before the ClassyFyApplication onCreate() is called where Dependency Injection is
+ * initialized. Therefore, any attempt access to an injected variable when onCreate() in this class is called fails with a
+ * NullPointerException. Therefore, a dynamic approach has to be used where the dependency binding is delayed until the first 
+ * call to this Content Provider is made. This call is orchestrated by  ClassyFyStartup class which upon completion of database
+ * initilazation, calls ContentResolver getType() to get the ball rolling.  
+ * 
+ * @author Andrew Bowley
+ * 12/07/2014
+ * @see au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine
+ * @see au.com.cybersearch2.classyfts.SearchEngineBase
+ * @see au.com.cybersearch2.classyfy.ClassyFyStartup
  */
 public class ClassyFyProvider extends ContentProvider
 {
+	/** The actual ContentProvider implementation */
     protected ClassyFySearchEngine classyFySearchEngine;
+    /** Flag to control ContentProvider initialization */
     protected volatile boolean searchEngineAvailable;
+    /** Android Persistence implementation which has a custom feature of providing the underlying SQLiteOpenHelper */
     @Inject @Named(ClassyFyApplication.PU_NAME) AndroidPersistenceEnvironment androidPersistenceEnvironment;
 
+    /**
+     * Create a ClassyFyProvider object
+     */
     public ClassyFyProvider()
     {
 
     }
-	/* (non-Javadoc)
+    
+	/**
+	 * onCreate() called before Application onCreate(), so can do nothing as DI not initialized.
 	 * @see android.content.ContentProvider#onCreate()
 	 */
 	@Override
@@ -50,32 +70,35 @@ public class ClassyFyProvider extends ContentProvider
         return true;
 	}
 
+	/**
+	 * Nothing to do on shutdown. The Application object is responsible for Persistence implementation.
+	 * @see android.content.ContentProvider#shutdown()
+	 */
 	@Override
     public void shutdown() 
-	{   //  TODO - Work out appropriate cleanup
-	    //if (androidPersistenceEnvironment != null)
-	    //    androidPersistenceEnvironment.getSQLiteOpenHelper().close();
+	{
 	}
 
-	   /**
-	    * This is called when a client calls {@link android.content.ContentResolver#getType(Uri)}.
-	    * Returns the "custom" or "vendor-specific" MIME data type of the URI given as a parameter.
-	    * MIME types have the format "type/subtype". The type value is always "vnd.android.cursor.dir"
-        * for multiple rows, or "vnd.android.cursor.item" for a single row. 
-	    *
-	    * @param uri The URI whose MIME type is desired.
-	    * @return The MIME type of the URI.
-	    * @throws IllegalArgumentException if the incoming URI pattern is invalid.
-	    */
+   /**
+    * This is called when a client calls {@link android.content.ContentResolver#getType(Uri)}.
+    * Returns the "custom" or "vendor-specific" MIME data type of the URI given as a parameter.
+    * MIME types have the format "type/subtype". The type value is always "vnd.android.cursor.dir"
+    * for multiple rows, or "vnd.android.cursor.item" for a single row. 
+    *
+    * @param uri The URI whose MIME type is desired.
+    * @return The MIME type of the URI.
+    * @throws IllegalArgumentException if the incoming URI pattern is invalid.
+    */
     @Override
     public String getType(Uri uri)
-    {
+    {   // ClassyFyStartup class upon completion of database initilazation will call this to start the Provider
         if (!searchEngineAvailable)
             startSearchEngine();
         return classyFySearchEngine.getType(uri);
     }
 
-	/* (non-Javadoc)
+	/**
+	 * Perform query with given SQL search parameters
 	 * @see android.content.ContentProvider#query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)
 	 */
 	@Override
@@ -87,7 +110,8 @@ public class ClassyFyProvider extends ContentProvider
 	    return classyFySearchEngine.query(uri, projection, selection, selectionArgs, sortOrder);
 	}
 
-    /* (non-Javadoc)
+    /**
+     * Insert content
 	 * @see android.content.ContentProvider#insert(android.net.Uri, android.content.ContentValues)
 	 */
 	@Override
@@ -98,7 +122,8 @@ public class ClassyFyProvider extends ContentProvider
 	    return classyFySearchEngine.insert(uri, values);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Delete content
 	 * @see android.content.ContentProvider#delete(android.net.Uri, java.lang.String, java.lang.String[])
 	 */
 	@Override
@@ -109,7 +134,8 @@ public class ClassyFyProvider extends ContentProvider
 	    return classyFySearchEngine.delete(uri, selection, selectionArgs);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Update content
 	 * @see android.content.ContentProvider#update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[])
 	 */
 	@Override
@@ -121,12 +147,17 @@ public class ClassyFyProvider extends ContentProvider
 	    return classyFySearchEngine.update(uri, values, selection, selectionArgs);
 	}
 
+	/**
+	 * Start ContentProvider implemetation. This is delayed until first ContentProvider call
+	 * because this class's onCreate() is called before Application onCreate(), when DI is not initialized.
+	 */
 	protected synchronized void startSearchEngine()
 	{
 	    if (!searchEngineAvailable)
 	    {
 	        DI.inject(this);
 	        classyFySearchEngine = new ClassyFySearchEngine(); 
+	        // Get the Android SQLiteOpenHelper for "classyfy" persistence unit
 	        classyFySearchEngine.onCreate(androidPersistenceEnvironment.getSQLiteOpenHelper());
 	        searchEngineAvailable = true;
 	    }
