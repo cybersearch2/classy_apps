@@ -42,10 +42,11 @@ import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classynode.NodeFinder;
 import au.com.cybersearch2.classyjpa.entity.LoaderPersistenceContainer;
 import au.com.cybersearch2.classytask.Executable;
+import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyfy.data.Model;
+import au.com.cybersearch2.classyfy.data.RecordModel;
 
 public class MainActivity extends ActionBarActivity 
 {
@@ -102,7 +103,6 @@ public class MainActivity extends ActionBarActivity
 		nodeDetailsFragment = (NodeDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.node_details_fragment);
 		adapter = new PropertiesListAdapter(this);
 		nodeDetailsFragment.setListAdapter(adapter);
-		persistenceContainer = new LoaderPersistenceContainer(ClassyFyApplication.PU_NAME);
 		parseIntent(getIntent());
 	}
 
@@ -171,6 +171,10 @@ public class MainActivity extends ActionBarActivity
                 return;
             }
             MainActivityNodeFinder nodeFinder = new MainActivityNodeFinder(nodeId);
+            if (persistenceContainer == null)
+            {
+        		persistenceContainer = new LoaderPersistenceContainer(ClassyFyApplication.PU_NAME);
+            }
             taskHandle = persistenceContainer.executeTask(nodeFinder);
             if (spinner != null)
                 spinner.setVisibility(View.VISIBLE);
@@ -209,7 +213,7 @@ public class MainActivity extends ActionBarActivity
         Bundle args = new Bundle();
         //args.putLong(ClassyFySearchEngine.KEY_ID, nodeId);
         args.putString(ClassyFySearchEngine.KEY_TITLE, data.getTitle());
-        args.putString(ClassyFySearchEngine.KEY_MODEL, Model.getNameByNode(data));
+        args.putString(ClassyFySearchEngine.KEY_MODEL, RecordModel.getNameByNode(data));
         dialog = showDialog(getSupportFragmentManager(), args);
     }
     
@@ -225,7 +229,7 @@ public class MainActivity extends ActionBarActivity
     {
         Map<String,Object> valueMap = data.getProperties();
         List<Value> fieldList = new ArrayList<Value>();
-        fieldList.add(new Value(data.getTitle(), Model.getNameByNode(data)));
+        fieldList.add(new Value(data.getTitle(), RecordModel.getNameByNode(data)));
         FieldDescriptor descriptionField = new FieldDescriptor();
         descriptionField.setOrder(1);
         descriptionField.setName("description");

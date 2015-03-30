@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classyfy_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
 	<artifactId>classyfy</artifactId>
 	<packaging>apk</packaging>
@@ -181,15 +181,8 @@
     </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyjava</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.3</version>
       <type>test-jar</type>
       <scope>test</scope>
       </dependency>

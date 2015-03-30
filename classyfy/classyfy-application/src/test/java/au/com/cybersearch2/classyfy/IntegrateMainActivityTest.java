@@ -66,12 +66,6 @@ public class IntegrateMainActivityTest
     @Before
     public void setUp() throws Exception 
     {
-        if (firstTime)
-        {
-            firstTime = false;
-            TestClassyFyApplication.getTestInstance().startup();
-            assertThat(TestClassyFyApplication.getTestInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
-        }
         controller = Robolectric.buildActivity(MainActivity.class);
         try
         {
@@ -107,7 +101,7 @@ public class IntegrateMainActivityTest
     public void test_OnCreate() throws Exception
     {
          // Test onCreateLoader returns null if args parameter is null
-        assertThat(mainActivity.persistenceContainer).isNotNull();
+        assertThat(mainActivity.persistenceContainer).isNull();
         assertThat(mainActivity.menuOptionsHandler).isNotNull();
         Menu menu = mock(Menu.class);
         MenuItem searchMenuItem = mock(MenuItem.class);
@@ -123,6 +117,12 @@ public class IntegrateMainActivityTest
     @Test
     public void test_parseIntent_action_view()
     {
+        if (firstTime)
+        {
+            firstTime = false;
+            TestClassyFyApplication.getTestInstance().startup();
+            assertThat(TestClassyFyApplication.getTestInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
+        }
         Intent intent = getNewIntent();
         intent.setAction(Intent.ACTION_VIEW);
         Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "34");

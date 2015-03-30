@@ -17,7 +17,7 @@ package au.com.cybersearch2.classyfy;
 
 import android.app.Application;
 import android.content.Context;
-import au.com.cybersearch2.classyfy.data.Model;
+import au.com.cybersearch2.classyfy.data.RecordModel;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.classytask.WorkStatus;
@@ -26,8 +26,8 @@ public class ClassyFyApplication extends Application
 {
 
     public static final String PU_NAME = "classyfy";
-    public static final String CATEGORY_BY_NODE_ID = Node.NODE_BY_PRIMARY_KEY_QUERY + Model.recordCategory.ordinal();
-    public static final String FOLDER_BY_NODE_ID = Node.NODE_BY_PRIMARY_KEY_QUERY + Model.recordFolder.ordinal();
+    public static final String CATEGORY_BY_NODE_ID = Node.NODE_BY_PRIMARY_KEY_QUERY + RecordModel.recordCategory.ordinal();
+    public static final String FOLDER_BY_NODE_ID = Node.NODE_BY_PRIMARY_KEY_QUERY + RecordModel.recordFolder.ordinal();
     public static final int SEARCH_RESULTS_LIMIT = 50; // Same as Android
     
     public static final String TAG = "ClassyFyApplication";

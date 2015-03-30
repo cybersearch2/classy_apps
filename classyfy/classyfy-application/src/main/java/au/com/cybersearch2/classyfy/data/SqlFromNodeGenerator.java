@@ -67,7 +67,7 @@ public class SqlFromNodeGenerator
         String insertNode = MessageFormat.format(INSERT_NODE, parent_id, name, title, modelId, level);
         writer.write(insertNode + System.getProperty("line.separator"));
         int primaryKey = nodeIndex++;
-        String[] values = new String[filePlanNodeType.getModel() == Model.recordCategory ? 8 : 12];
+        String[] values = new String[filePlanNodeType.getModel() == RecordModel.recordCategory ? 8 : 12];
         // Set ManagedRecord fields shared by both models
         // node_id
         values[0] = Integer.toString(primaryKey);
@@ -84,7 +84,7 @@ public class SqlFromNodeGenerator
         values[5] = Node.getProperty(node, RecordField.modifier.toString(), null);
         // identifier
         values[6] = Node.getProperty(node, RecordField.identifier.toString(), "");
-        if (filePlanNodeType.getModel() == Model.recordFolder)
+        if (filePlanNodeType.getModel() == RecordModel.recordFolder)
         {
             // location (optional)
             values[7] = Node.getProperty(node, RecordField.location.toString(), null);

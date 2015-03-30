@@ -17,11 +17,13 @@ package au.com.cybersearch2.example.v2;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import au.com.cybersearch2.example.HelloTwoDbsMain_v1;
+
 import com.example.hellotwodbs.TestHelloTwoDbsApplication;
 
 
@@ -74,6 +76,7 @@ public class HelloTwoDbsUpgradeTest
     	helloTwoDbsMain.shutdown();
     }
  
+    @Ignore
     @Test 
     public void test_hello_two_dbs_serial_jpa() throws Exception
     {

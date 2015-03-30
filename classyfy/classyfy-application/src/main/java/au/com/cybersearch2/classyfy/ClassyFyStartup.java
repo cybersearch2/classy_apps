@@ -30,7 +30,7 @@ import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.Persistence;
-import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.classytask.ThreadHelper;
 import au.com.cybersearch2.classytask.WorkStatus;
@@ -54,7 +54,7 @@ public class ClassyFyStartup
     /** Tracks progress of start up and signals completion */
     protected WorkTracker applicationSetup;
     /** Persistence system configured by persistence.xml contains one or more Persistence Units */
-    @Inject PersistenceFactory persistenceFactory;
+    protected PersistenceContext persistenceContext;
     /** Allows thread priority to be adjusted for background priority */
     @Inject ThreadHelper threadHelper;
 
@@ -78,7 +78,8 @@ public class ClassyFyStartup
         classyFyApplicationModule = new ClassyFyApplicationModule();
         DI dependencyInjection = new DI(classyFyApplicationModule, new ContextModule(context));
         dependencyInjection.validate();
-        // Inject persistenceFactory and threadHelper
+        persistenceContext = new PersistenceContext();
+        // Inject threadHelper
         DI.inject(this);
         // Set up thread to initialize persistence
         Runnable setupInBackground = new Runnable()
@@ -92,10 +93,9 @@ public class ClassyFyStartup
                 try
                 {
                 	// Persistence system configured by persistence.xml contains one or more Persistence Unitst
-                    persistenceFactory.initializeAllDatabases();
+                    persistenceContext.initializeAllDatabases();
                     // Set up named queries to find Category and Folder by Node ID
-                    Persistence persistence = persistenceFactory.getPersistenceUnit(ClassyFyApplication.PU_NAME);
-                    PersistenceAdmin persistenceAdmin = persistence.getPersistenceAdmin();
+                    PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
                     EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
                     persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
                     persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);

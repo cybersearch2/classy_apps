@@ -23,9 +23,9 @@ import au.com.cybersearch2.classynode.NodeType;
  * @author Andrew Bowley
  * 05/09/2014
  */
-public class FilePlanNodeType implements NodeType<Model>
+public class FilePlanNodeType implements NodeType<RecordModel>
 {
-    protected Model model;
+    protected RecordModel model;
     
     /**
      * @param nodeEntity
@@ -38,23 +38,23 @@ public class FilePlanNodeType implements NodeType<Model>
 
 
     @Override
-    public Model root() {
-        return Model.root;
+    public RecordModel root() {
+        return RecordModel.root;
     }
 
     @Override
-    public Model valueOf(String name) 
+    public RecordModel valueOf(String name) 
     {
-        return Model.valueOf(name);
+        return RecordModel.valueOf(name);
     }
 
     @Override
-    public Model valueOf(int ordinal) 
+    public RecordModel valueOf(int ordinal) 
     {
-        return Model.values()[ordinal];
+        return RecordModel.values()[ordinal];
     }
 
-    public Model getModel() 
+    public RecordModel getModel() 
     {
         return model;
     }

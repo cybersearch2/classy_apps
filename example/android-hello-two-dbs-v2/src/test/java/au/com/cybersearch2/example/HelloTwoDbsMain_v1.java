@@ -34,6 +34,7 @@ import au.com.cybersearch2.classyjpa.entity.PersistenceDao;
 import au.com.cybersearch2.classyjpa.persist.ConnectionSourceFactory;
 import au.com.cybersearch2.classyjpa.persist.Persistence;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.entity.PersistenceTask;
 
 /**
@@ -79,6 +80,26 @@ public class HelloTwoDbsMain_v1 extends au.com.cybersearch2.example.HelloTwoDbsM
     	}
     	super.setUp();
     }
+    
+    /**
+     * Populate entity tables. Call this before doing any queries. 
+     * Note the calling thread is suspended while the work is performed on a background thread. 
+     * @throws InterruptedException
+     */
+    public void setUpNoDI() throws InterruptedException
+    {
+        DI.inject(this);
+        persistenceContext = new PersistenceContext();
+		dropDatabaseTables();
+		initializeDatabase();
+		if (connectionType != ConnectionType.memory)
+		{
+			clearDatabaseTables();
+		}
+		applicationInitialized = true;
+     	super.setUp();
+    }
+
 	/**
 	 * Set up dependency injection, which creates an ObjectGraph from a HelloTwoDbsModule_v1 configuration object.
 	 */

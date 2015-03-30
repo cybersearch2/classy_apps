@@ -42,9 +42,8 @@ import au.com.cybersearch2.classyfy.data.DataStreamParser;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classyjpa.persist.Persistence;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
-import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
 import au.com.cybersearch2.classyjpa.transaction.TransactionCallable;
 import au.com.cybersearch2.classytask.Executable;
@@ -63,13 +62,11 @@ public class AlfrescoFilePlanLoader implements DataLoader
     protected PersistenceAdmin persistenceAdmin;
     @Inject @Named("AlfrescoFilePlan") DataStreamParser dataStreamParser;
     @Inject SqlFromNodeGenerator sqlFromNodeGenerator;
-    @Inject PersistenceFactory persistenceFactory;
     
     public AlfrescoFilePlanLoader()
     {
         DI.inject(new AlfrescoFilePlanLoaderModule(), this);
-        Persistence persistence = persistenceFactory.getPersistenceUnit(ClassyFyApplication.PU_NAME);
-        persistenceAdmin = persistence.getPersistenceAdmin();
+        persistenceAdmin = new PersistenceContext().getPersistenceAdmin(ClassyFyApplication.PU_NAME);
     }
     
     @Override

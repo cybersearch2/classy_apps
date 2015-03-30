@@ -28,7 +28,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import au.com.cybersearch2.classyfy.data.DataStreamParser;
 import au.com.cybersearch2.classyfy.data.RecordField;
 import au.com.cybersearch2.classynode.Node;
-import au.com.cybersearch2.classyfy.data.Model;
+import au.com.cybersearch2.classyfy.data.RecordModel;
 
 /**
  * AlfrescoFilePlanXmlParser
@@ -87,10 +87,10 @@ public class AlfrescoFilePlanXmlParser implements DataStreamParser
                 else if (eventType == XmlPullParser.START_TAG) 
                 {
                     if ("recordCategory".equals(xpp.getName()))
-                        if (!addNode(new Node(Model.recordCategory.ordinal(), root)))
+                        if (!addNode(new Node(RecordModel.recordCategory.ordinal(), root)))
                             break;
                     else if ("recordFolder".equals(xpp.getName()))
-                        if (!addNode(new Node(Model.recordFolder.ordinal(), root)))
+                        if (!addNode(new Node(RecordModel.recordFolder.ordinal(), root)))
                             break;
                 } 
                 /*
@@ -127,9 +127,9 @@ public class AlfrescoFilePlanXmlParser implements DataStreamParser
                 if (eventType == XmlPullParser.START_TAG) 
                 {
                     if ("recordCategory".equals(xpp.getName()))
-                        addNode(new Node(Model.recordCategory.ordinal(), node));
+                        addNode(new Node(RecordModel.recordCategory.ordinal(), node));
                     else if ("recordFolder".equals(xpp.getName()))
-                        addNode(new Node(Model.recordFolder.ordinal(), node));
+                        addNode(new Node(RecordModel.recordFolder.ordinal(), node));
                     else if (!skipList(xpp.getName(), SKIP_LIST))
                         break;
                     else if ("properties".equals(xpp.getName()) && !addProperties(node))
@@ -137,9 +137,9 @@ public class AlfrescoFilePlanXmlParser implements DataStreamParser
                 } 
                 else if (eventType == XmlPullParser.END_TAG) 
                 {
-                    if ((node.getModel() == Model.recordCategory.ordinal()) && "recordCategory".equals(xpp.getName()))
+                    if ((node.getModel() == RecordModel.recordCategory.ordinal()) && "recordCategory".equals(xpp.getName()))
                         return true;
-                    if ((node.getModel() == Model.recordFolder.ordinal()) && "recordFolder".equals(xpp.getName()))
+                    if ((node.getModel() == RecordModel.recordFolder.ordinal()) && "recordFolder".equals(xpp.getName()))
                         return true;
                 } 
                 else if (eventType == XmlPullParser.TEXT) 

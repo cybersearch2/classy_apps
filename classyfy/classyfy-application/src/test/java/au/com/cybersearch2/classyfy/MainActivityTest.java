@@ -41,7 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import au.com.cybersearch2.classybean.BeanMap;
-import au.com.cybersearch2.classyfy.data.Model;
+import au.com.cybersearch2.classyfy.data.RecordModel;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
@@ -106,7 +106,7 @@ public class MainActivityTest
     {
         mainActivity = controller.create().get();
         // Test onCreateLoader returns null if ars parameter is null
-        assertThat(mainActivity.persistenceContainer).isNotNull();
+        assertThat(mainActivity.persistenceContainer).isNull();
         assertThat(mainActivity.menuOptionsHandler).isNotNull();
         assertThat(mainActivity.progressFragment).isNotNull();
         assertThat(mainActivity.nodeDetailsFragment).isNotNull();
@@ -116,13 +116,13 @@ public class MainActivityTest
         Map<String, Object> testNodeProperties = getNodeProperties();
         when(node.getProperties()).thenReturn(testNodeProperties);
         when(node.getTitle()).thenReturn(TITLE);
-        when(node.getModel()).thenReturn(Model.recordCategory.ordinal());
+        when(node.getModel()).thenReturn(RecordModel.recordCategory.ordinal());
         mainActivity.updateDetails(node);
         assertThat(mainActivity.adapter.getCount()).isEqualTo(7);
         Value item1 = (Value) mainActivity.adapter.getItem(0);
         assertThat(item1).isNotNull();
         assertThat(item1.getName()).isEqualTo(TITLE);
-        assertThat(item1.getValue()).isEqualTo(Model.recordCategory.toString());
+        assertThat(item1.getValue()).isEqualTo(RecordModel.recordCategory.toString());
     }
     
     @Test
@@ -203,7 +203,7 @@ public class MainActivityTest
                 .visible()
                 .get();
         Node root = Node.rootNodeNewInstance();
-        Node data = new Node(Model.recordCategory.ordinal(), root);
+        Node data = new Node(RecordModel.recordCategory.ordinal(), root);
         data.setTitle(TITLE);
         data.setProperties(getNodeProperties());
         mainActivity.showDetailsDialog(data);
@@ -213,7 +213,7 @@ public class MainActivityTest
         TextView tv1 = (TextView) ShadowDialog.getLatestDialog().findViewById(R.id.node_detail_title);
         assertThat(tv1.getText()).isEqualTo(TITLE);
         TextView tv2 = (TextView) ShadowDialog.getLatestDialog().findViewById(R.id.node_detail_model);
-        assertThat(tv2.getText()).isEqualTo(Model.recordCategory.toString());
+        assertThat(tv2.getText()).isEqualTo(RecordModel.recordCategory.toString());
         assertThat(mainActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.GONE);
     }
 

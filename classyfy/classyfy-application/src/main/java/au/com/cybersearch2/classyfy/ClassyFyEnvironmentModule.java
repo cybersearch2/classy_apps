@@ -22,18 +22,12 @@ import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
 import au.com.cybersearch2.classydb.DatabaseAdminImpl;
 import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
-import au.com.cybersearch2.classydb.OpenHelperCallbacksImpl;
-import au.com.cybersearch2.classyjpa.AndroidPersistenceFactory;
-import au.com.cybersearch2.classyjpa.entity.LoaderPersistenceContainer;
-import au.com.cybersearch2.classyjpa.entity.PersistenceContainer;
-import au.com.cybersearch2.classyjpa.entity.UserPersistenceContainer;
-import au.com.cybersearch2.classyjpa.persist.PersistenceAdminImpl;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classytask.InternalHandler;
 import au.com.cybersearch2.classytask.ThreadHelper;
 import au.com.cybersearch2.classytask.UserTaskContext;
 import au.com.cybersearch2.classytask.WorkerRunnable;
-import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
 import dagger.Module;
 import dagger.Provides;
 
@@ -45,16 +39,10 @@ import dagger.Provides;
  */
 @Module(injects = { WorkerRunnable.class,
                     NativeScriptDatabaseWork.class,
-                    EntityTransactionImpl.class,
-                    PersistenceAdminImpl.class,
                     DatabaseAdminImpl.class,
                     UserTaskContext.class,
                     PersistenceFactory.class,
-                    AndroidPersistenceFactory.class, 
-                    PersistenceContainer.class,
-                    UserPersistenceContainer.class,
-                    LoaderPersistenceContainer.class,
-                    OpenHelperCallbacksImpl.class,
+                    PersistenceContext.class,
                     ApplicationLocale.class
 })
 public class ClassyFyEnvironmentModule

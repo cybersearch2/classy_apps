@@ -23,7 +23,7 @@ package au.com.cybersearch2.classyfy.data;
 public class FieldDescriptor implements Comparable<FieldDescriptor>
 {
     protected int _id;
-    protected Model model;
+    protected RecordModel model;
     protected int order;
     protected String title;
     protected String name;
@@ -82,12 +82,12 @@ public class FieldDescriptor implements Comparable<FieldDescriptor>
         this.name = name;
     }
 
-    public Model getModel() 
+    public RecordModel getModel() 
     {
         return model;
     }
 
-    public void setModel(Model model) 
+    public void setModel(RecordModel model) 
     {
         this.model = model;
     }
