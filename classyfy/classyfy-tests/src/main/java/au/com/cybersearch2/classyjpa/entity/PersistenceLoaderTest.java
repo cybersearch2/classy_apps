@@ -33,10 +33,10 @@ import au.com.cybersearch2.classyutil.Transcript;
  * @author Andrew Bowley
  * 16/07/2014
  */
-public class LoaderPersistenceContainerTest extends InstrumentationTestCase
+public class PersistenceLoaderTest extends InstrumentationTestCase
 {
     private Transcript transcript;
-    private LoaderPersistenceContainer testContainer;
+    private PersistenceLoader testLoaderTask;
 
     @Override
     protected void setUp() throws Exception 
@@ -44,13 +44,14 @@ public class LoaderPersistenceContainerTest extends InstrumentationTestCase
         System.setProperty( "dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath() );
         System.setProperty("java.util.logging.config.file", "src/logging.properties");
         super.setUp();
+        testLoaderTask = new PersistenceLoader(getInstrumentation().getContext());
         assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
     }
 
     protected void doSetup()
     {
         transcript = new Transcript();
-        testContainer = new LoaderPersistenceContainer(ClassyFyApplication.PU_NAME);
+        //testContainer = new LoaderPersistenceContainer(ClassyFyApplication.PU_NAME);
     }
     
     public void test_all() throws Throwable
@@ -70,7 +71,7 @@ public class LoaderPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                exeHolder[0] = testContainer.executeTask(persistenceWork);
+                 exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
             }});
         synchronized(exeHolder[0])
         {
@@ -96,7 +97,7 @@ public class LoaderPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                exeHolder[0] = testContainer.executeTask(persistenceWork);
+                exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
             }});
         synchronized(exeHolder[0])
         {
@@ -122,7 +123,7 @@ public class LoaderPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                exeHolder[0] = testContainer.executeTask(persistenceWork);
+                exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
             }});
         synchronized(exeHolder[0])
         {
@@ -150,7 +151,7 @@ public class LoaderPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                exeHolder[0] = testContainer.executeTask(persistenceWork);
+                exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
             }});
         synchronized(exeHolder[0])
         {
@@ -177,8 +178,8 @@ public class LoaderPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                testContainer.setUserTransactionMode(true);
-                exeHolder[0] = testContainer.executeTask(persistenceWork);
+            	testLoaderTask.setUserTransactionMode(true);
+                exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
             }});
         synchronized(exeHolder[0])
         {

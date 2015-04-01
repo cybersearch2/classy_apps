@@ -95,7 +95,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertThat(activity.progressFragment.getActivity()).isEqualTo(activity);
         assertThat(activity.nodeDetailsFragment).isNotNull();
         assertThat(activity.nodeDetailsFragment.getListAdapter()).isEqualTo(activity.adapter);
-        assertThat(activity.persistenceContainer).isNotNull();
     }
     
     public void test_parseIntent_action_view() throws Throwable

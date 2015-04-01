@@ -173,6 +173,7 @@
        <scope>provided</scope>
        <type>jar</type>
     </dependency>
+    <!--
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
@@ -189,6 +190,7 @@
       <artifactId>classyandroid</artifactId>
       <scope>compile</scope>
      </dependency>
+     -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>

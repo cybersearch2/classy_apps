@@ -101,7 +101,6 @@ public class IntegrateMainActivityTest
     public void test_OnCreate() throws Exception
     {
          // Test onCreateLoader returns null if args parameter is null
-        assertThat(mainActivity.persistenceContainer).isNull();
         assertThat(mainActivity.menuOptionsHandler).isNotNull();
         Menu menu = mock(Menu.class);
         MenuItem searchMenuItem = mock(MenuItem.class);

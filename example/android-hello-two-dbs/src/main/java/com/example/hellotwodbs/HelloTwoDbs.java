@@ -10,17 +10,9 @@ import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.example.AndroidHelloTwoDbs;
 import au.com.cybersearch2.example.HelloTwoDbsMain;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-
 /**
  * Sample Android UI activity which displays a text window when it is run.
  * 
- * <p>
- * <b>NOTE:</b> This does <i>not</i> extend the {@link OrmLiteBaseActivity} but instead manages the helper itself
- * locally using the {@link #databaseHelper1} field, the {@link #getHelper1()} private method, and the call to
- * {@link OpenHelperManager#releaseHelper()} inside of the {@link #onDestroy()} method.
- * </p>
  */
 public class HelloTwoDbs extends Activity 
 {

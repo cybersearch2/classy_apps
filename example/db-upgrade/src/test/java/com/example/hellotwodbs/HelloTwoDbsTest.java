@@ -13,28 +13,27 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example;
+package com.example.hellotwodbs;
 
-
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
-import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
-import au.com.cybersearch2.classyinject.ApplicationModule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 /**
- * HelloTwoDbsModule_v1
- * Dependency injection data object. @see HelloTwoDbsMain_v1.
+ * HelloTwoDebsTest
  * @author Andrew Bowley
- * 23 Sep 2014
+ * 24 Nov 2014
  */
-@Module(injects = HelloTwoDbsMain_v1.class, includes = HelloTwoDbsEnvironmentModule.class) 
-public class HelloTwoDbsModule_v1 implements ApplicationModule
+@RunWith(RobolectricTestRunner.class)
+public class HelloTwoDbsTest 
 {
-	@Provides @Singleton ConnectionType providesConnectionType()
+
+	@Test
+	public void test_doSampleDatabaseStuff()
 	{
-		return ConnectionType.file;
+		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
+		System.out.println(helloTwoDbs.doSampleDatabaseV1Stuff("robolectric"));
+		System.out.println(helloTwoDbs.doDatabaseUpgradeV1ToV2("robolectric"));
+		System.out.println(helloTwoDbs.doSampleDatabaseV2Stuff("robolectric"));
 	}
 }
- 

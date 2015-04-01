@@ -106,7 +106,6 @@ public class MainActivityTest
     {
         mainActivity = controller.create().get();
         // Test onCreateLoader returns null if ars parameter is null
-        assertThat(mainActivity.persistenceContainer).isNull();
         assertThat(mainActivity.menuOptionsHandler).isNotNull();
         assertThat(mainActivity.progressFragment).isNotNull();
         assertThat(mainActivity.nodeDetailsFragment).isNotNull();

@@ -50,8 +50,7 @@
   <modules>
     <module>as_compatibility-v7-appcompat</module>
     <module>classyfy</module>
-    <!-- Needs fixing 
-    <module>example</module>-->
+    <module>example</module>
  </modules>
   <build>
 	<finalName>${project.artifactId}</finalName>

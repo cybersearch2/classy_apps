@@ -42,6 +42,7 @@
   <modules>
     <module>android-hello-two-dbs</module>
     <module>android-hello-two-dbs-v2</module>
+    <module>db-upgrade</module>
   </modules>
 
   <dependencyManagement>
