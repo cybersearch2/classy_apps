@@ -28,7 +28,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
+
 import au.com.cybersearch2.robolectric.ClassyTestRunner;
+
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -98,7 +102,7 @@ public class MainActivityTest
 
     private Intent getNewIntent()
     {
-        return new Intent(Robolectric.application, MainActivity.class);
+        return new Intent(RuntimeEnvironment.application, MainActivity.class);
     }
     
     @Test
@@ -206,7 +210,7 @@ public class MainActivityTest
         data.setTitle(TITLE);
         data.setProperties(getNodeProperties());
         mainActivity.showDetailsDialog(data);
-        ShadowDialog dialog = Robolectric.shadowOf(ShadowDialog.getLatestDialog());
+        ShadowDialog dialog = Shadows.shadowOf(ShadowDialog.getLatestDialog());
         assertThat(dialog.getTitle()).isEqualTo("Node Details");
         assertThat(dialog.isCancelableOnTouchOutside()).isTrue();
         TextView tv1 = (TextView) ShadowDialog.getLatestDialog().findViewById(R.id.node_detail_title);

@@ -17,7 +17,7 @@ package com.example.hellotwodbs;
 
 import java.lang.reflect.Method;
 
-import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
 
 import android.app.Application;
@@ -35,7 +35,7 @@ public class TestHelloTwoDbsApplication extends Application implements TestLifec
 	public TestHelloTwoDbsApplication()
 	{
 		singleton = this;
-		Robolectric.application = singleton;
+		RuntimeEnvironment.application = singleton;
 	}
 	
     @Override 

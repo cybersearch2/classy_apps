@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
     </parent>
 	<artifactId>android-hello-two-dbs-v2</artifactId>
 	<packaging>apk</packaging>
@@ -180,7 +180,7 @@
               <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
-          <version>1.0.3</version>
+          <version>1.0.4</version>
         </dependency>
         <dependency>
           <groupId>com.j256.ormlite</groupId>

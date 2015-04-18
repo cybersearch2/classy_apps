@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.cybersearch2</groupId>
   <artifactId>classy_apps</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <packaging>pom</packaging>
   <name>Classy Apps Parent</name>
   <description>Android applications built with ClassyTools</description>
@@ -40,10 +40,10 @@
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
     <android.platform.version>21</android.platform.version>
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
-    <android.sdk.version>5.0.0</android.sdk.version>
+    <android.sdk.version>5.0.1</android.sdk.version>
     <!-- Android Suport Library version - always 3-part -->
-    <android.support.version>21.0.1</android.support.version>
-    <robolectric.version>2.4</robolectric.version>
+    <android.support.version>22.0.0</android.support.version>
+    <robolectric.version>3.0-rc2</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <dagger.version>1.2.2</dagger.version>
   </properties>
@@ -66,10 +66,10 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.2</version>
             <configuration>
-                <source>1.6</source>
-                <target>1.6</target>
-                <testSource>1.6</testSource>
-                <testTarget>1.6</testTarget>
+                <source>1.7</source>
+                <target>1.7</target>
+                <testSource>1.7</testSource>
+                <testTarget>1.7</testTarget>
            </configuration>
           </plugin>
 		  <plugin>

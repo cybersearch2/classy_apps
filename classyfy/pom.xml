@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
     </parent>
 	<artifactId>classyfy_parent</artifactId>
     <packaging>pom</packaging>
@@ -67,7 +67,7 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>1.0.3</version>
+          <version>1.0.4</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
@@ -80,7 +80,7 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>1.0.3</version>
+          <version>1.0.4</version>
           <type>jar</type>
           <scope>compile</scope>
          </dependency>
@@ -109,7 +109,7 @@
          <dependency>
           <groupId>org.mockito</groupId>
           <artifactId>mockito-core</artifactId>
-          <version>1.9.5</version>
+          <version>1.10.19</version>
         </dependency>
         <dependency>
           <groupId>org.easytesting</groupId>

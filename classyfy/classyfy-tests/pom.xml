@@ -3,7 +3,7 @@
   <parent>
      <artifactId>classyfy_parent</artifactId>
      <groupId>au.com.cybersearch2</groupId>
-     <version>1.0.3</version>
+     <version>1.0.4</version>
   </parent>
   <artifactId>classyfy_tests</artifactId>
   <packaging>apk</packaging>
@@ -169,7 +169,7 @@
     <dependency>
        <groupId>au.com.cybersearch2</groupId>
        <artifactId>classyfy</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
        <scope>provided</scope>
        <type>jar</type>
     </dependency>

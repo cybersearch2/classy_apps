@@ -17,7 +17,7 @@ package au.com.cybersearch2.classyfy;
 
 import java.lang.reflect.Method;
 
-import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
 
 import android.app.Application;
@@ -42,7 +42,7 @@ public class TestClassyFyApplication extends Application implements TestLifecycl
     public TestClassyFyApplication()
     {
         singleton = this;
-        Robolectric.application = singleton;
+        RuntimeEnvironment.application = singleton;
         startup = new ClassyFyStartup();
     }
 

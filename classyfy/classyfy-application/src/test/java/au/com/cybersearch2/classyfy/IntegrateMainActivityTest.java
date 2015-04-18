@@ -23,10 +23,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
+
 import au.com.cybersearch2.robolectric.ClassyTestRunner;
+
 import org.robolectric.util.ActivityController;
-import org.robolectric.annotation.Config;
-import java.util.Properties;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -89,12 +90,12 @@ public class IntegrateMainActivityTest
     @After
     public void tearDown() 
     {
-        Robolectric.reset(Config.Implementation.fromProperties(new Properties()));
+        Robolectric.reset();
     }
 
     private Intent getNewIntent()
     {
-        return new Intent(Robolectric.application, MainActivity.class);
+        return new Intent(RuntimeEnvironment.application, MainActivity.class);
     }
     
     @Test

@@ -32,7 +32,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
+
 import au.com.cybersearch2.robolectric.ClassyTestRunner;
+
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowIntent;
 import org.robolectric.util.ActivityController;
@@ -134,7 +138,7 @@ public class TitleSearchResultsActivityTest
 
     private Intent getNewIntent()
     {
-        return new Intent(Robolectric.application, TitleSearchResultsActivity.class);
+        return new Intent(RuntimeEnvironment.application, TitleSearchResultsActivity.class);
     }
     @Test
     public void test_Intents() 
@@ -175,11 +179,11 @@ public class TitleSearchResultsActivityTest
         Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "44");
         intent.setData(actionUri);
         titleSearchResultsActivity.onNewIntent(intent);
-        ShadowActivity shadowActivity = Robolectric.shadowOf(titleSearchResultsActivity);
+        ShadowActivity shadowActivity = Shadows.shadowOf(titleSearchResultsActivity);
         Intent startedIntent = shadowActivity.getNextStartedActivity();
         assertThat(startedIntent.getAction()).isEqualTo(Intent.ACTION_VIEW);
         assertThat(startedIntent.getData()).isEqualTo(actionUri);
-        ShadowIntent shadowIntent = Robolectric.shadowOf(startedIntent);
+        ShadowIntent shadowIntent = Shadows.shadowOf(startedIntent);
         assertThat(shadowIntent.getComponent().getClassName()).isEqualTo("au.com.cybersearch2.classyfy.MainActivity");
     }
    /*
@@ -257,7 +261,6 @@ public class TitleSearchResultsActivityTest
         fieldSet.add(modifiedField);
         fieldSet.add(modifier);
         fieldSet.add(identifierField);
-        @SuppressWarnings("unchecked")
         Map<String,Object> valueMap = PropertyUtils.describe(recordCategory);
         titleSearchResultsActivity = (TitleSearchResultsActivity) controller.create().get(); 
         LinearLayout dynamicLayout = new LinearLayout(titleSearchResultsActivity);
