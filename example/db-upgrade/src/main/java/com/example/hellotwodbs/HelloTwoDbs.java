@@ -63,6 +63,8 @@ public class HelloTwoDbs extends Activity
 		Log.i(LOG_TAG, "creating " + getClass() + " at " + System.currentTimeMillis());
 		TextView tv = new TextView(this);
 		tv.append(doSampleDatabaseV1Stuff("onCreate"));
+		tv.append(doDatabaseUpgradeV1ToV2("onCreate"));
+		tv.append(doSampleDatabaseV2Stuff("onCreate"));
 		Log.i(LOG_TAG, "Done with page at " + System.currentTimeMillis());
 		setContentView(tv);
 	}

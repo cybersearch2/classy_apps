@@ -3,11 +3,12 @@
   <parent>
     <groupId>au.com.cybersearch2</groupId>
     <artifactId>classy_apps</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
   </parent>
+  <groupId>android.support</groupId>
   <artifactId>compatibility-v7-appcompat</artifactId>
-  <packaging>apklib</packaging>
-  <name>Install Support APKLIB</name>
+  <packaging>aar</packaging>
+  <name>Install Support AAR</name>
   <licenses>
      <license>
        <name>GPLv3</name>
@@ -65,8 +66,9 @@
                             <file>${sdk.compatibility.v7.jar.path}</file>
                         </configuration>
                     </execution>
+                    <!-- Zip file required because there is no Maven archiver for aar !!! -->
                     <execution>
-                        <id>apklib-zip-file</id>
+                        <id>aar-zip-file</id>
                         <phase>install</phase>
                         <goals><goal>install-file</goal></goals>
                         <configuration>
@@ -74,19 +76,19 @@
                             <artifactId>compatibility-v7-appcompat</artifactId>
                             <packaging>zip</packaging>
                             <version>${android.support.version}</version>
-                            <file>target/compatibility-v7-appcompat.apklib</file>
+                            <file>target/compatibility-v7-appcompat.aar</file>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>apklib-file</id>
+                        <id>aar-file</id>
                         <phase>install</phase>
                         <goals><goal>install-file</goal></goals>
                         <configuration>
                             <groupId>android.support</groupId>
                             <artifactId>compatibility-v7-appcompat</artifactId>
-                            <packaging>apklib</packaging>
+                            <packaging>aar</packaging>
                             <version>${android.support.version}</version>
-                            <file>target/compatibility-v7-appcompat.apklib</file>
+                            <file>target/compatibility-v7-appcompat.aar</file>
                         </configuration>
                     </execution>
                 </executions>

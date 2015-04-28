@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.cybersearch2</groupId>
   <artifactId>classy_apps</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <packaging>pom</packaging>
   <name>Classy Apps Parent</name>
   <description>Android applications built with ClassyTools</description>
@@ -42,7 +42,7 @@
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
     <android.sdk.version>5.1.1_r2</android.sdk.version>
     <!-- Android Suport Library version - always 3-part -->
-    <android.support.version>22.0.0</android.support.version>
+    <android.support.version>22.1.1</android.support.version>
     <robolectric.version>3.0-rc2</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <dagger.version>1.2.2</dagger.version>

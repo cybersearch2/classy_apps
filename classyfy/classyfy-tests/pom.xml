@@ -3,7 +3,7 @@
   <parent>
      <artifactId>classyfy_parent</artifactId>
      <groupId>au.com.cybersearch2</groupId>
-     <version>1.0.4</version>
+     <version>1.0.5</version>
   </parent>
   <artifactId>classyfy_tests</artifactId>
   <packaging>apk</packaging>
@@ -74,64 +74,6 @@
                     </plugins>
                 </build>
             </profile>
- 	    <profile>
-	        <id>classic</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                      <outputDirectory>libs</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>false</overWriteSnapshots>
-                      <overWriteIfNewer>true</overWriteIfNewer>
-              <excludeArtifactIds>
-                commons-logging,
-                commons-collections,
-                openbeans,
-                persistence-api,
-                javax.inject,
-                commons-beanutils,
-                kxml2,
-                dagger,
-                ormlite-core,
-                ormlite-android,
-                ormlite-jdbc,
-                junit,
-                compatibility-v7-appcompat,
-                compatibility-v4,
-                dagger-compiler,
-                classyandroid,
-                classyjava,
-              </excludeArtifactIds>
-              <includeArtifactIds>
-                mockito-core,
-                fest-assert-core,
-                fest-util,
-                objenesis
-              </includeArtifactIds>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
-	    <profile>
-	        <id>classic-test</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                       <skip>true</skip>
-                     </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
       </profiles>
   <build>
     <plugins>
@@ -165,32 +107,20 @@
        <artifactId>classyfy</artifactId>
        <version>${project.version}</version>
        <type>apk</type>
+       <exclusions>
+       	<exclusion>
+       	  <groupId>*</groupId>
+       	  <artifactId>*</artifactId>
+       	</exclusion>
+       </exclusions>
     </dependency>
     <dependency>
        <groupId>au.com.cybersearch2</groupId>
        <artifactId>classyfy</artifactId>
-        <version>1.0.4</version>
+       <version>${project.version}</version>
        <scope>provided</scope>
        <type>jar</type>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyjava</artifactId>
-       <exclusions>
-        <exclusion>
-          <groupId>com.j256.ormlite</groupId>
-          <artifactId>ormlite-jdbc</artifactId>        
-        </exclusion>
-      </exclusions>
-      <scope>compile</scope>
-     </dependency>
-    <dependency>
-      <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyandroid</artifactId>
-      <scope>compile</scope>
-     </dependency>
-     -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
@@ -202,12 +132,12 @@
     <dependency>
       <groupId>android</groupId>
       <artifactId>android</artifactId>
-       <scope>provided</scope>
+      <scope>provided</scope>
     </dependency>  
-    <dependency>
+     <dependency>
       <groupId>android.support</groupId>
       <artifactId>compatibility-v7-appcompat</artifactId>
-      <type>apklib</type>
+      <type>aar</type>
       <scope>provided</scope>
     </dependency>  
      <dependency>
@@ -220,26 +150,6 @@
       <groupId>android.support</groupId>
       <artifactId>compatibility-v4</artifactId>
       <scope>provided</scope>
-    </dependency>  
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-ant-tasks</artifactId>
-      <version>2.1.3</version>
-     <!-- This artefact is a kind of jar-with-dependencies already,
-          we don't need any of its dependencies -->
-      <exclusions>
-         <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-      <scope>test</scope>
-   </dependency>
-    <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.8.0</version>
-      <scope>test</scope>
-   </dependency>
+    </dependency> 
   </dependencies>
 </project>

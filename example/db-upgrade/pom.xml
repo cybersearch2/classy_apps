@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
     </parent>
 	<artifactId>db-upgrade</artifactId>
 	<packaging>apk</packaging>
@@ -37,95 +37,6 @@
       <timezone>+10</timezone>
     </developer>
     </developers>
-	<profiles>
-	    <profile>
-	        <id>classic-test</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                      <outputDirectory>test-libs</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>false</overWriteSnapshots>
-                      <overWriteIfNewer>true</overWriteIfNewer>
-                      <excludeScope>runtime</excludeScope>
-              <excludeArtifactIds>
-                commons-logging,
-                commons-collections,
-                openbeans,
-                persistence-api,
-                javax.inject,
-                commons-beanutils,
-                kxml2,
-                dagger,
-                ormlite-core,
-                ormlite-android,
-                ormlite-jdbc,
-                junit,
-                compatibility-v4,
-                dagger-compiler
-              </excludeArtifactIds>
-              <includeArtifactIds>
-                classyandroid,
-                classyjava,
-                mockito-core,
-                fest-assert-core,
-                fest-util,
-                objenesis,
-                android
-              </includeArtifactIds>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
-	    <profile>
-	        <id>classic</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                      <outputDirectory>libs</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>false</overWriteSnapshots>
-                      <overWriteIfNewer>true</overWriteIfNewer>
-                      <includeScope>runtime</includeScope>
-              <includeArtifactIds>
-                commons-logging,
-                commons-collections,
-                fest-util,objenesis,
-                openbeans,
-                persistence-api,
-                javax.inject,
-                commons-beanutils,
-                kxml2,
-                dagger,
-                ormlite-core,
-                ormlite-android,
-                classyandroid,
-                classyjava
-              </includeArtifactIds>
-              <excludeArtifactIds>
-                mockito-core,
-                fest-assert-core,
-                ormlite-jdbc,
-                junit,
-                dagger-compiler,
-                compatibility-v4,
-                android
-              </excludeArtifactIds>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
-	</profiles>
 	<dependencies>
     <!-- Prevent "Ignoring InnerClasses attribute for an anonymous inner class" Dex warning -->
         <dependency>
@@ -145,13 +56,13 @@
         </dependency>  
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
-          <artifactId>classyjava</artifactId>
-          <type>jar</type>
-          <scope>compile</scope>
-         </dependency>
-        <dependency>
-          <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
+           <exclusions>
+            <exclusion>
+              <groupId>com.j256.ormlite</groupId>
+              <artifactId>ormlite-jdbc</artifactId>
+            </exclusion>
+          </exclusions>
           <type>jar</type>
           <scope>compile</scope>
          </dependency>
@@ -164,7 +75,7 @@
               <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
-          <version>1.0.4</version>
+          <version>1.0.5</version>
         </dependency>
         <dependency>
           <groupId>com.j256.ormlite</groupId>

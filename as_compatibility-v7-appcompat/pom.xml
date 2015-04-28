@@ -5,9 +5,10 @@
   <parent>
     <groupId>au.com.cybersearch2</groupId>
     <artifactId>classy_apps</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
   </parent>
-  <artifactId>as_compatibility-v7-appcompat</artifactId>
+  <groupId>android.support</groupId>
+  <artifactId>compatibility-v7-appcompat</artifactId>
   <packaging>pom</packaging>
   <name>as_compatibility-v7-appcompat</name>
   <description>Android Support Library</description>
@@ -39,36 +40,6 @@
     </developer>
   </developers>
 	<profiles>
-	    <profile>
-	        <id>classic</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                       <skip>true</skip>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
-	    <profile>
-	        <id>classic-test</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                       <skip>true</skip>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
 	</profiles>
   <build>
     <plugins>
@@ -135,6 +106,13 @@
               </execution>
             </executions>
         </plugin>
+        <plugin>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>2.5.1</version>
+              <configuration>
+              	<skip>true</skip>
+              </configuration>
+		</plugin>
     </plugins>
   </build>
   <dependencies>

@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
     </parent>
 	<artifactId>example_parent</artifactId>
     <packaging>pom</packaging>
@@ -42,6 +42,7 @@
   <modules>
     <module>android-hello-two-dbs</module>
     <module>android-hello-two-dbs-v2</module>
+    <module>db-upgrade</module>
   </modules>
 
   <dependencyManagement>
@@ -68,7 +69,7 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>1.0.4</version>
+          <version>1.0.5</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
@@ -81,7 +82,7 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>1.0.4</version>
+          <version>1.0.5</version>
           <type>jar</type>
           <scope>compile</scope>
          </dependency>
@@ -148,6 +149,38 @@
           </configuration>
           <extensions>true</extensions>
         </plugin>
+	  		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+	  		<plugin>
+	  			<groupId>org.eclipse.m2e</groupId>
+	  			<artifactId>lifecycle-mapping</artifactId>
+	  			<version>1.0.0</version>
+	  			<configuration>
+	  				<lifecycleMappingMetadata>
+	  					<pluginExecutions>
+	  						<pluginExecution>
+	  							<pluginExecutionFilter>
+	  								<groupId>
+	  									com.jayway.maven.plugins.android.generation2
+	  								</groupId>
+	  								<artifactId>
+	  									android-maven-plugin
+	  								</artifactId>
+	  								<versionRange>
+	  									[4.0.0-rc.2,)
+	  								</versionRange>
+	  								<goals>
+	  									<goal>generate-sources</goal>
+	  									<goal>proguard</goal>
+	  								</goals>
+	  							</pluginExecutionFilter>
+	  							<action>
+	  								<ignore></ignore>
+	  							</action>
+	  						</pluginExecution>
+	  					</pluginExecutions>
+	  				</lifecycleMappingMetadata>
+	  			</configuration>
+	  		</plugin>
       </plugins>
     </pluginManagement>
   </build>

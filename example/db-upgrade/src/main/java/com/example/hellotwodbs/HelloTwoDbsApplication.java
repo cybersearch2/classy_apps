@@ -33,7 +33,8 @@ public class HelloTwoDbsApplication extends Application
         androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
         try 
         {
-			androidHelloTwoDbsSingleton.setUp();
+        	// Set up v1 from start which causes the database tables to be dropped and the version reset to 0
+			androidHelloTwoDbsSingleton.setUp(true);
 		} 
         catch (InterruptedException e) 
         {   // This not expected to ever happen

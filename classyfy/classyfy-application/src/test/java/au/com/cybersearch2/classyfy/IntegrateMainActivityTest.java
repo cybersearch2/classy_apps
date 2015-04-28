@@ -48,8 +48,6 @@ import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 @RunWith(ClassyTestRunner.class)
 public class IntegrateMainActivityTest
 {
-    //private static final String TITLE = "Corporate Management";
-    //private static final String TOP_TITLE = "Cybersearch2 Records";
     private static final String[][] RECORD_DETAILS_ARRAY =
     {
         { "description", "" },
@@ -59,25 +57,16 @@ public class IntegrateMainActivityTest
         { "modifier", "admin" },
         { "identifier", "2014-1392163053802" }
     };
-    private ActivityController<MainActivity> controller;
+    private  ActivityController<MainActivity> controller;
     private MainActivity mainActivity;
     private MenuOptionsHandler menuOptionsHandler;
-    private static boolean firstTime = true;
 
     @Before
     public void setUp() throws Exception 
     {
         controller = Robolectric.buildActivity(MainActivity.class);
-        try
-        {
-            mainActivity = controller.create().get();
-        }
-        catch(IllegalStateException e)
-        {
-            // Ignore this first-time exception. Cause unknown.
-        }
-        if (mainActivity == null)
-            mainActivity = controller.create().get();
+        mainActivity = controller.create().get();
+    		
         menuOptionsHandler = mainActivity.menuOptionsHandler;
         // Prevent NPE caused by Robolectric lack of support for SearchView
         mainActivity.menuOptionsHandler = new MenuOptionsHandler(){
@@ -99,9 +88,9 @@ public class IntegrateMainActivityTest
     }
     
     @Test
-    public void test_OnCreate() throws Exception
+    public void test_parseIntent_action_view()
     {
-         // Test onCreateLoader returns null if args parameter is null
+        // Test onCreateLoader returns null if args parameter is null
         assertThat(mainActivity.menuOptionsHandler).isNotNull();
         Menu menu = mock(Menu.class);
         MenuItem searchMenuItem = mock(MenuItem.class);
@@ -112,17 +101,8 @@ public class IntegrateMainActivityTest
         // Shadow SearchManager returns null for SearchablInfo
         //verify(searchView).setSearchableInfo(isA(SearchableInfo.class));
         verify(searchView).setIconifiedByDefault(false);
-    }
-    
-    @Test
-    public void test_parseIntent_action_view()
-    {
-        if (firstTime)
-        {
-            firstTime = false;
-            TestClassyFyApplication.getTestInstance().startup();
-            assertThat(TestClassyFyApplication.getTestInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
-        }
+        TestClassyFyApplication.getTestInstance().startup();
+        assertThat(TestClassyFyApplication.getTestInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         Intent intent = getNewIntent();
         intent.setAction(Intent.ACTION_VIEW);
         Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "34");
@@ -137,60 +117,5 @@ public class IntegrateMainActivityTest
             assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
             assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
         }
-        /*
-        Node node = (Node) args.get("NODE_KEY");
-        assertThat(node).isNotNull();
-        assertThat(node.get_id()).isEqualTo(34);
-        assertThat(node.get_parent_id()).isEqualTo(1);
-        assertThat(node.getChildren()).isNotNull();
-        assertThat(node.getChildren().size()).isEqualTo(8);
-        assertThat(node.getParent()).isNotNull();
-        assertThat(node.getParent() instanceof Node).isTrue();
-        Node parent = (Node)node.getParent();
-        assertThat(parent.get_id()).isEqualTo(1);
-        assertThat(parent.get_parent_id()).isEqualTo(1);
-        assertThat(parent.getChildren().size()).isEqualTo(7);
-        assertThat(parent.getChildren().contains(node)).isTrue();
-        assertThat(parent.getTitle()).isEqualTo(TOP_TITLE);
-        assertThat(parent.getModel()).isEqualTo(Model.recordCategory);
-        Node root = (Node)parent.getParent();
-        assertThat(root.getChildren().size()).isEqualTo(1);
-        assertThat(root.getChildren().contains(parent)).isTrue();
-        assertThat(root.getModel()).isEqualTo(Model.root);
-        Map<String,Object> properties = node.getProperties();
-        assertThat(properties).isNotNull();
-        verifyStringProperty(properties, RecordField.identifier, "2014-1392163053802");
-        verifyStringProperty(properties, RecordField.creator, "admin");
-        verifyStringProperty(properties, RecordField.modifier, "admin");
-        verifyStringProperty(properties, RecordField.description, "");
-        verifyDateProperty(properties, RecordField.created, "2014-02-12 10:58:00.000000");
-        verifyDateProperty(properties, RecordField.modified, "2014-02-12 11:28:35.000000");
-        */
      }
-/*
-    private void verifyStringProperty(Map<String,Object> properties, RecordField key, String validValue)
-    {
-        Object value = properties.get(key.toString());
-        if (value == null)
-            assertThat(validValue).isNull();
-        else
-        {
-            assertThat(value instanceof String);
-            assertThat(value).isEqualTo(validValue);
-        }
-    }
-
-    private void verifyDateProperty(Map<String,Object> properties, RecordField key, String validValue)
-    {
-        Object value = properties.get(key.toString());
-        if (value == null)
-            assertThat(validValue).isNull();
-        else
-        {
-            assertThat(value instanceof Date);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS"); //, new Locale("en", "AU"));
-            assertThat(sdf.format((Date)value)).isEqualTo(validValue);
-        }
-    }
-*/    
 }
