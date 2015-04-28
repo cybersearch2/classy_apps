@@ -37,6 +37,64 @@
       <timezone>+10</timezone>
     </developer>
     </developers>
+	<profiles>
+	    <profile>
+	        <id>classic-test</id>
+	        <build>
+	            <plugins>
+                   <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                     <configuration>
+                      <outputDirectory>test-libs</outputDirectory>
+                      <overWriteReleases>false</overWriteReleases>
+                      <overWriteSnapshots>false</overWriteSnapshots>
+                      <overWriteIfNewer>true</overWriteIfNewer>
+                      <excludeScope>runtime</excludeScope>
+		              <excludeArtifactIds>
+                          junit
+		              </excludeArtifactIds>
+                    </configuration>
+                   </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+	    <profile>
+	        <id>classic</id>
+	        <build>
+	            <plugins>
+                   <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                     <configuration>
+                      <outputDirectory>libs</outputDirectory>
+                      <overWriteReleases>false</overWriteReleases>
+                      <overWriteSnapshots>false</overWriteSnapshots>
+                      <overWriteIfNewer>true</overWriteIfNewer>
+                      <includeScope>runtime</includeScope>
+		      <includeArtifactIds>
+		        openbeans,
+		        persistence-api,
+		        javax.inject,
+		        commons-beanutils,
+		        dagger,
+		        ormlite-core,
+		        ormlite-android,
+		        classyandroid,
+		        classyjava
+                compatibility-v4
+ 		      </includeArtifactIds>
+		      <excludeArtifactIds>
+		      	dagger-compiler
+		      </excludeArtifactIds>
+                    </configuration>
+                   </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+	</profiles>
 	<dependencies>
     <!-- Prevent "Ignoring InnerClasses attribute for an anonymous inner class" Dex warning -->
     <dependency>
@@ -79,7 +137,7 @@
       <artifactId>compatibility-v7-appcompat</artifactId>
       <type>aar</type>
     </dependency>  
-     <dependency>
+    <dependency>
       <groupId>android.support</groupId>
       <artifactId>compatibility-v7-appcompat</artifactId>
       <type>jar</type>
