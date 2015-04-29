@@ -164,7 +164,7 @@
        <groupId>au.com.cybersearch2</groupId>
        <artifactId>classyfy</artifactId>
        <version>${project.version}</version>
-       <type>apk</type>
+       <type>aar</type>
        <exclusions>
        	<exclusion>
        	  <groupId>*</groupId>

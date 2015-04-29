@@ -83,8 +83,9 @@
 		        ormlite-core,
 		        ormlite-android,
 		        classyandroid,
-		        classyjava
-                compatibility-v4
+		        classyjava,
+                compatibility-v4,
+                compatibility-v7-appcompat
  		      </includeArtifactIds>
 		      <excludeArtifactIds>
 		      	dagger-compiler
@@ -112,6 +113,19 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>  
+    <!-- classyjava is here only to get jar in libs folder on copy dependencies -->
+    <dependency>
+      <groupId>au.com.cybersearch2</groupId>
+      <artifactId>classyjava</artifactId>
+       <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+      <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>

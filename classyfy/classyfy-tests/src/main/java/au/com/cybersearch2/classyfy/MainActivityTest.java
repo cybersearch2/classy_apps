@@ -134,7 +134,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         final MainActivity mainActivity = getActivity(); 
         Instrumentation instrumentation = getInstrumentation();
         ActivityMonitor am = instrumentation.addMonitor(TitleSearchResultsActivity.class.getName(), null, false);
-        assertThat(instrumentation.invokeMenuActionSync(mainActivity, R.id.action_search, 0)).isTrue();
+        assertThat(instrumentation.invokeMenuActionSync(mainActivity, au.com.cybersearch2.classyfy.R.id.action_search, 0)).isTrue();
         ActionBar actionBar = mainActivity.getSupportActionBar();
         assertThat(actionBar).isNotNull();
         final FragmentManager sfm = mainActivity.getSupportFragmentManager();
