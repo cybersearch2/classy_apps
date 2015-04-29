@@ -165,12 +165,6 @@
        <artifactId>classyfy</artifactId>
        <version>${project.version}</version>
        <type>apk</type>
-       <exclusions>
-       	<exclusion>
-       	  <groupId>*</groupId>
-       	  <artifactId>*</artifactId>
-       	</exclusion>
-       </exclusions>
     </dependency>
     <dependency>
        <groupId>au.com.cybersearch2</groupId>
@@ -180,12 +174,31 @@
        <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
+      <groupId>au.com.cybersearch2</groupId>
+      <artifactId>classyjava</artifactId>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>au.com.cybersearch2</groupId>
+      <artifactId>classyandroid</artifactId>
+       <exclusions>
+        <exclusion>
+          <groupId>com.j256.ormlite</groupId>
+          <artifactId>ormlite-jdbc</artifactId>
+        </exclusion>
+        <exclusion>
+           <groupId>net.sf.kxml</groupId>
+           <artifactId>kxml2</artifactId>
+        </exclusion>
+      </exclusions>
+      <type>jar</type>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert-core</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>android</groupId>
@@ -198,14 +211,12 @@
       <type>aar</type>
       <scope>provided</scope>
     </dependency>
-    <!--  
      <dependency>
       <groupId>android.support</groupId>
       <artifactId>compatibility-v7-appcompat</artifactId>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>  
-    -->
     <dependency>
       <groupId>android.support</groupId>
       <artifactId>compatibility-v4</artifactId>

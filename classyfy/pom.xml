@@ -117,6 +117,11 @@
           <version>2.0M10</version>
         </dependency>
         <dependency>
+          <groupId>org.easytesting</groupId>
+          <artifactId>fest-util</artifactId>
+          <version>1.2.5</version>
+         </dependency>
+        <dependency>
           <groupId>com.squareup.dagger</groupId>
           <artifactId>dagger-compiler</artifactId>
           <version>${dagger.version}</version>
