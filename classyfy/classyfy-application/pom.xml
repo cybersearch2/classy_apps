@@ -118,7 +118,7 @@
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
       <type>jar</type>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
