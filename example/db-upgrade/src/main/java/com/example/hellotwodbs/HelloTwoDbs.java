@@ -8,12 +8,16 @@ import javax.inject.Inject;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 import au.com.cybersearch2.classydb.DatabaseAdmin;
 import au.com.cybersearch2.classydb.DatabaseSupport;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.example.AndroidHelloTwoDbs;
 import au.com.cybersearch2.example.HelloTwoDbsMain;
 
@@ -41,6 +45,11 @@ public class HelloTwoDbs extends Activity
 	private final String LOG_TAG = getClass().getSimpleName();
 	/** Properties containing database version set to "2" */
     protected Properties dbV2;
+    protected PropertiesListAdapter adapter;
+    protected String v1Details;
+    protected String v2Details;
+    protected String updateDetails;
+    protected TextView tv;
 
 	@Inject AndroidHelloTwoDbs androidHelloTwoDbs;
 
@@ -61,11 +70,12 @@ public class HelloTwoDbs extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		Log.i(LOG_TAG, "creating " + getClass() + " at " + System.currentTimeMillis());
-		TextView tv = new TextView(this);
-		tv.append(doSampleDatabaseV1Stuff("onCreate"));
-		tv.append(doDatabaseUpgradeV1ToV2("onCreate"));
-		tv.append(doSampleDatabaseV2Stuff("onCreate"));
+		tv = new TextView(this);
+        v1Details = doSampleDatabaseV1Stuff("onCreate");
+        updateDetails = doDatabaseUpgradeV1ToV2("onCreate");
+        v2Details = doSampleDatabaseV2Stuff("onCreate");
 		Log.i(LOG_TAG, "Done with page at " + System.currentTimeMillis());
+        tv.append(v1Details);
 		setContentView(tv);
 	}
 
@@ -76,6 +86,39 @@ public class HelloTwoDbs extends Activity
         if (androidHelloTwoDbs != null)
         	androidHelloTwoDbs.shutdown();
 	}
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        // Inflate menu from XML resource
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        String content = null;
+        switch (item.getItemId())
+        {
+            case R.id.menu_v1:
+                content = v1Details;
+                break;
+            case R.id.menu_update:
+                content = updateDetails;
+                 break;
+            case R.id.menu_v2:
+                content = v2Details;
+                break;
+            default:
+        }
+        if (content != null)
+        {
+            tv.setText(content);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 	/**
 	 * Do our sample database version 1 stuff as an example.
