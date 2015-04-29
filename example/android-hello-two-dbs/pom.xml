@@ -101,7 +101,6 @@
           <artifactId>junit</artifactId>
           <scope>test</scope>
         </dependency>  
-    <!-- classyjava is here only to get jar in libs folder on copy dependencies -->
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
@@ -112,7 +111,7 @@
         </exclusion>
       </exclusions>
       <type>jar</type>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.persistence</groupId>
