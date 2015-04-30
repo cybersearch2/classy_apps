@@ -173,6 +173,7 @@
 	  								<goals>
 	  									<goal>generate-sources</goal>
 	  									<goal>proguard</goal>
+	  									<goal>copy-dependencies</goal>
 	  								</goals>
 	  							</pluginExecutionFilter>
 	  							<action>

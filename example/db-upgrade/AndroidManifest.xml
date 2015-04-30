@@ -8,8 +8,8 @@
 	<application 
 	android:icon="@drawable/icon" 
 	android:label="@string/app_name"
-	android:name=".HelloTwoDbsApplication">
-		<activity android:name=".HelloTwoDbs" android:label="@string/app_name">
+	android:name=".upgrade.HelloTwoDbsApplication">
+		<activity android:name=".upgrade.HelloTwoDbs" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

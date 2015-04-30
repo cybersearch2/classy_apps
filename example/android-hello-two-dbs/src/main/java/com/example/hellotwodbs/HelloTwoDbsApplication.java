@@ -32,8 +32,8 @@ public class HelloTwoDbsApplication extends Application
         super.onCreate();
         androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
         try 
-        {
-			androidHelloTwoDbsSingleton.setUp();
+        {   // Start from beginning in case database at v2
+			androidHelloTwoDbsSingleton.setUp(true);
 		} 
         catch (InterruptedException e) 
         {   // This not expected to ever happen

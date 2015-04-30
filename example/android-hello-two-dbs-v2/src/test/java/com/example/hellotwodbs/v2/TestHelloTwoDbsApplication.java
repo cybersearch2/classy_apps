@@ -13,12 +13,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package com.example.hellotwodbs;
+package com.example.hellotwodbs.v2;
 
 import java.lang.reflect.Method;
 
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
+
+import com.example.hellotwodbs.v2.HelloTwoDbsApplication;
 
 import android.app.Application;
 import au.com.cybersearch2.example.v2.AndroidHelloTwoDbs;

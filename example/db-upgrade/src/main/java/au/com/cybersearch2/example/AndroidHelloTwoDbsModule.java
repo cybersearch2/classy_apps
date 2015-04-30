@@ -19,8 +19,8 @@ import javax.inject.Singleton;
 
 import au.com.cybersearch2.classyinject.ApplicationModule;
 
-import com.example.hellotwodbs.HelloTwoDbs;
-import com.example.hellotwodbs.HelloTwoDbsApplication;
+import com.example.hellotwodbs.upgrade.HelloTwoDbs;
+import com.example.hellotwodbs.upgrade.HelloTwoDbsApplication;
 
 import dagger.Module;
 import dagger.Provides;

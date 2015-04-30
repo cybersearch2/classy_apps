@@ -13,11 +13,13 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package com.example.hellotwodbs;
+package com.example.hellotwodbs.upgrade;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+
+import com.example.hellotwodbs.upgrade.HelloTwoDbs;
 
 /**
  * HelloTwoDebsTest
@@ -32,6 +34,8 @@ public class HelloTwoDbsTest
 	public void test_doSampleDatabaseStuff()
 	{
 		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
-		System.out.println(helloTwoDbs.doSampleDatabaseStuff("robolectric"));
+		System.out.println(helloTwoDbs.doSampleDatabaseV1Stuff("robolectric"));
+		System.out.println(helloTwoDbs.doDatabaseUpgradeV1ToV2("robolectric"));
+		System.out.println(helloTwoDbs.doSampleDatabaseV2Stuff("robolectric"));
 	}
 }

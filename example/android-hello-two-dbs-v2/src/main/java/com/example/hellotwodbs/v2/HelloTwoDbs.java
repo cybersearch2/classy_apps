@@ -1,4 +1,4 @@
-package com.example.hellotwodbs;
+package com.example.hellotwodbs.v2;
 
 import javax.inject.Inject;
 

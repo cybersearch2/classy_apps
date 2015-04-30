@@ -1,4 +1,4 @@
-package com.example.hellotwodbs;
+package com.example.hellotwodbs.upgrade;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -21,6 +21,7 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.example.AndroidHelloTwoDbs;
 import au.com.cybersearch2.example.HelloTwoDbsMain;
 
+import com.example.hellotwodbs.R;
 import com.j256.ormlite.support.ConnectionSource;
 
 /**
