@@ -24,66 +24,19 @@
     <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</developerConnection>
     </scm>
     <developers>
-    <developer>
-      <id>andrew-bowley</id>
-      <name>Andrew Bowley</name>
-      <url>http://cybersearch2.com.au/</url>
-      <organization>cybersearch2</organization>
-      <organizationUrl>http://cybersearch2.com.au/</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>+10</timezone>
-    </developer>
+        <developer>
+          <id>andrew-bowley</id>
+          <name>Andrew Bowley</name>
+          <url>http://cybersearch2.com.au/</url>
+          <organization>cybersearch2</organization>
+          <organizationUrl>http://cybersearch2.com.au/</organizationUrl>
+          <roles>
+            <role>architect</role>
+            <role>developer</role>
+          </roles>
+          <timezone>+10</timezone>
+        </developer>
     </developers>
-	<profiles>
-	    <profile>
-	        <id>classic</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                      <outputDirectory>libs</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>false</overWriteSnapshots>
-                      <overWriteIfNewer>true</overWriteIfNewer>
-                      <includeScope>runtime</includeScope>
-              <includeArtifactIds>
-                hello-two-dbs-example,
-                fest-util,
-                openbeans,
-                persistence-api,
-                javax.inject,
-                commons-beanutils,
-                dagger,
-                ormlite-core,
-                ormlite-android,
-                classyandroid,
-                classyjava,
-                compatibility-v4,
-                compatibility-v7-appcompat
-              </includeArtifactIds>
-              <excludeArtifactIds>
-                commons-logging,
-                commons-collections,
-                objenesis,
-                kxml2,
-                fest-assert-core,
-                ormlite-jdbc,
-                junit,
-                dagger-compiler,
-                android
-              </excludeArtifactIds>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
-	</profiles>
 	<dependencies>
     <!-- Prevent "Ignoring InnerClasses attribute for an anonymous inner class" Dex warning -->
         <dependency>
@@ -101,23 +54,23 @@
           <artifactId>junit</artifactId>
           <scope>test</scope>
         </dependency>  
-    <dependency>
-      <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyjava</artifactId>
-       <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-      <version>2.0</version>
-    </dependency>
+        <dependency>
+          <groupId>au.com.cybersearch2</groupId>
+          <artifactId>classyjava</artifactId>
+           <exclusions>
+            <exclusion>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
+            </exclusion>
+          </exclusions>
+          <type>jar</type>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax.persistence</groupId>
+          <artifactId>persistence-api</artifactId>
+          <version>2.0</version>
+        </dependency>
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
@@ -149,18 +102,11 @@
           <groupId>android.support</groupId>
           <artifactId>compatibility-v4</artifactId>
         </dependency>  
-        <!--
-    <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v7-appcompat</artifactId>
-      <type>aar</type>
-    </dependency>  
-    -->
-    <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v7-appcompat</artifactId>
-      <type>jar</type>
-    </dependency>  
+        <dependency>
+          <groupId>android.support</groupId>
+          <artifactId>compatibility-v7-appcompat</artifactId>
+          <type>jar</type>
+        </dependency>  
         <!-- Exclude Support Library as already have android.support:compatibility-v4 above -->
         <dependency>
           <groupId>org.robolectric</groupId>
@@ -206,8 +152,53 @@
                 <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
             </configuration>
         </plugin>
-       <!-- Set skipTests = "true" to bypass test phase in build -->
-       <plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.9</version>
+            <executions>
+                <execution>
+                    <id>libs</id>
+                    <phase>initialize</phase>
+                    <goals><goal>copy-dependencies</goal></goals>
+                    <configuration>
+                      <outputDirectory>libs</outputDirectory>
+                      <overWriteReleases>false</overWriteReleases>
+                      <overWriteSnapshots>false</overWriteSnapshots>
+                      <overWriteIfNewer>true</overWriteIfNewer>
+                      <includeScope>runtime</includeScope>
+                      <includeArtifactIds>
+                        hello-two-dbs-example,
+                        fest-util,
+                        openbeans,
+                        persistence-api,
+                        javax.inject,
+                        commons-beanutils,
+                        dagger,
+                        ormlite-core,
+                        ormlite-android,
+                        classyandroid,
+                        classyjava,
+                        compatibility-v4,
+                        compatibility-v7-appcompat
+                      </includeArtifactIds>
+                      <excludeArtifactIds>
+                        commons-logging,
+                        commons-collections,
+                        objenesis,
+                        kxml2,
+                        fest-assert-core,
+                        ormlite-jdbc,
+                        junit,
+                        dagger-compiler,
+                        android
+                      </excludeArtifactIds>
+                   </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <!-- Set skipTests = "true" to bypass test phase in build -->
+        <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.17</version>

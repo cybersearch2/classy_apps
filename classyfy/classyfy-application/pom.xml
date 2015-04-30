@@ -24,78 +24,19 @@
     <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</developerConnection>
     </scm>
     <developers>
-    <developer>
-      <id>andrew-bowley</id>
-      <name>Andrew Bowley</name>
-      <url>http://cybersearch2.com.au/</url>
-      <organization>cybersearch2</organization>
-      <organizationUrl>http://cybersearch2.com.au/</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>+10</timezone>
-    </developer>
+        <developer>
+          <id>andrew-bowley</id>
+          <name>Andrew Bowley</name>
+          <url>http://cybersearch2.com.au/</url>
+          <organization>cybersearch2</organization>
+          <organizationUrl>http://cybersearch2.com.au/</organizationUrl>
+          <roles>
+            <role>architect</role>
+            <role>developer</role>
+          </roles>
+          <timezone>+10</timezone>
+        </developer>
     </developers>
-	<profiles>
-	    <profile>
-	        <id>classic-test</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                      <outputDirectory>test-libs</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>false</overWriteSnapshots>
-                      <overWriteIfNewer>true</overWriteIfNewer>
-                      <excludeScope>runtime</excludeScope>
-		              <excludeArtifactIds>
-                          junit
-		              </excludeArtifactIds>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
-	    <profile>
-	        <id>classic</id>
-	        <build>
-	            <plugins>
-                   <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                     <configuration>
-                      <outputDirectory>libs</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>false</overWriteSnapshots>
-                      <overWriteIfNewer>true</overWriteIfNewer>
-                      <includeScope>runtime</includeScope>
-		      <includeArtifactIds>
-		        openbeans,
-		        persistence-api,
-		        javax.inject,
-		        commons-beanutils,
-		        dagger,
-		        ormlite-core,
-		        ormlite-android,
-		        classyandroid,
-		        classyjava,
-                compatibility-v4,
-                compatibility-v7-appcompat
- 		      </includeArtifactIds>
-		      <excludeArtifactIds>
-		      	dagger-compiler
-		      </excludeArtifactIds>
-                    </configuration>
-                   </plugin>
-	            </plugins>
-	        </build>
-	    </profile>
-	</profiles>
 	<dependencies>
     <!-- Prevent "Ignoring InnerClasses attribute for an anonymous inner class" Dex warning -->
     <dependency>
@@ -197,7 +138,7 @@
         </exclusion>
       </exclusions>
       <scope>test</scope>
-   </dependency>  
+    </dependency>  
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-ant-tasks</artifactId>
@@ -211,13 +152,13 @@
         </exclusion>
       </exclusions>
       <scope>test</scope>
-   </dependency>
+    </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
       <version>1.8.0</version>
       <scope>test</scope>
-   </dependency>
+    </dependency>
     <dependency>
       <groupId>android</groupId>
       <artifactId>android</artifactId>
@@ -227,28 +168,63 @@
 	<build>
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
-	<plugin>
-	    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-	    <artifactId>android-maven-plugin</artifactId>
-	    <extensions>true</extensions>
-	    <configuration>
-		<sdk><platform>${android.platform.version}</platform></sdk>
-		<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
-		<resourceDirectory>${project.basedir}/res</resourceDirectory>
-		<assetsDirectory>${project.basedir}/assets</assetsDirectory> 
-		<nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
-	    </configuration>
-	</plugin>
-	<!-- Set skipTests = "true" to bypass test phase in build -->
-	<plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-surefire-plugin</artifactId>
-	    <version>2.17</version>
-	    <configuration>
-	     <argLine> -XX:-UseSplitVerifier</argLine>
-	     <skipTests>false</skipTests>
-	    </configuration>
-	</plugin>
+    	<plugin>
+    	    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+    	    <artifactId>android-maven-plugin</artifactId>
+    	    <extensions>true</extensions>
+    	    <configuration>
+    		<sdk><platform>${android.platform.version}</platform></sdk>
+    		<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+    		<resourceDirectory>${project.basedir}/res</resourceDirectory>
+    		<assetsDirectory>${project.basedir}/assets</assetsDirectory> 
+    		<nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
+    	    </configuration>
+    	</plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.9</version>
+            <executions>
+                <execution>
+                    <id>libs</id>
+                    <phase>initialize</phase>
+                    <goals><goal>copy-dependencies</goal></goals>
+                    <configuration>
+                      <outputDirectory>libs</outputDirectory>
+                      <overWriteReleases>false</overWriteReleases>
+                      <overWriteSnapshots>false</overWriteSnapshots>
+                      <overWriteIfNewer>true</overWriteIfNewer>
+                      <includeScope>runtime</includeScope>
+        		      <includeArtifactIds>
+        		        openbeans,
+        		        persistence-api,
+        		        javax.inject,
+        		        commons-beanutils,
+        		        dagger,
+        		        ormlite-core,
+        		        ormlite-android,
+        		        classyandroid,
+        		        classyjava,
+                        compatibility-v4,
+                        compatibility-v7-appcompat
+         		      </includeArtifactIds>
+        		      <excludeArtifactIds>
+        		      	dagger-compiler
+        		      </excludeArtifactIds>
+                   </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    	<!-- Set skipTests = "true" to bypass test phase in build -->
+    	<plugin>
+    	    <groupId>org.apache.maven.plugins</groupId>
+    	    <artifactId>maven-surefire-plugin</artifactId>
+    	    <version>2.17</version>
+    	    <configuration>
+    	     <argLine> -XX:-UseSplitVerifier</argLine>
+    	     <skipTests>false</skipTests>
+    	    </configuration>
+    	</plugin>
 	  </plugins>
 	</build>
 </project>
