@@ -14,7 +14,6 @@
 tests/gen/**
 /.apt_generated/**
 /target/
-/.apt_generated/
 /bin/
 /libs/
 /test-libs/
