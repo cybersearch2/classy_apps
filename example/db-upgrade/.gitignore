@@ -1,6 +1,6 @@
 .project
 .settings
 bin
-/gen
+/gen/
 /target/
 /libs/

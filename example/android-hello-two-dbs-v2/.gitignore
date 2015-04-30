@@ -1,7 +1,7 @@
 .project
 .settings
 bin
-/gen
+/gen/
 /target/
 /.apt_generated/
 /libs/
