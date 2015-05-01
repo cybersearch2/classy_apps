@@ -56,11 +56,6 @@
          </filesets>
        </configuration>
      </plugin>
-	    <plugin>
-			<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-			<artifactId>android-maven-plugin</artifactId>
-			<extensions>true</extensions>
-		</plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
@@ -79,29 +74,7 @@
                   <includeArtifactIds>
                     compatibility-v7-appcompat
                   </includeArtifactIds>
-                  <excludeArtifactIds>
-                    compatibility-v4,
-                  </excludeArtifactIds>
                   <outputDirectory>${basedir}</outputDirectory>
-                </configuration>
-              </execution>
-              <execution>
-                <id>copy-dependencies</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>copy-dependencies</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>libs</outputDirectory>
-                  <overWriteReleases>false</overWriteReleases>
-                  <overWriteSnapshots>false</overWriteSnapshots>
-                  <overWriteIfNewer>true</overWriteIfNewer>
-                  <type>jar</type>
-                  <excludeTypes>zip</excludeTypes>
-                  <includeArtifactIds>
-                    compatibility-v4,
-                    compatibility-v7-appcompat
-                  </includeArtifactIds>
                 </configuration>
               </execution>
             </executions>
@@ -116,18 +89,6 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v4</artifactId>
-      <version>${android.support.version}</version>
-      <type>jar</type>
-    </dependency>
-     <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v7-appcompat</artifactId>
-      <version>${android.support.version}</version>
-      <type>jar</type>
-    </dependency>  
     <dependency>
       <groupId>android.support</groupId>
       <artifactId>compatibility-v7-appcompat</artifactId>

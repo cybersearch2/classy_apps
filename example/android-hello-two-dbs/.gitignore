@@ -1,4 +1,7 @@
-bin
+.classpath
+/bin/
 /gen/
 /target/
 /libs/
+AndroidManifest.xml
+/target/generated-sources/annotations/

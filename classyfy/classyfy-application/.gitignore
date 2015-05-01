@@ -1,3 +1,4 @@
+.classpath
 /gen/
 /target/apidocs/**
 /target/classes/**
@@ -18,4 +19,4 @@ tests/gen/**
 /libs/
 /test-libs/
 /target/R.txt
-/target\generated-sources\annotations/
+/target/generated-sources/annotations/

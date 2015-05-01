@@ -1,7 +1,8 @@
 /local.properties
 /bin
-/.apt_generated
 /target/R.txt
 /gen
 /target/
 /libs/
+/target/generated-sources/annotations/
+

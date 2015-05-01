@@ -138,7 +138,8 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+          <groupId>
+com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
 		  <version>${android.plugin.version}</version>
           <configuration>
@@ -160,7 +161,8 @@
 	  						<pluginExecution>
 	  							<pluginExecutionFilter>
 	  								<groupId>
-	  									com.jayway.maven.plugins.android.generation2
+	  									
+com.simpligility.maven.plugins
 	  								</groupId>
 	  								<artifactId>
 	  									android-maven-plugin
