@@ -2,6 +2,7 @@ R.txt
 AndroidManifest.xml
 classes.jar
 .classpath
+project.properties
 /.settings/
 /bin/
 /gen/
