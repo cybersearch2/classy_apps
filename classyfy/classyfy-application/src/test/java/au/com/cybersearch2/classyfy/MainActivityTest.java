@@ -29,7 +29,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
-import au.com.cybersearch2.robolectric.ClassyTestRunner;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -54,7 +53,6 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
  * @author Andrew Bowley
  * 14/05/2014
  */
-//@RunWith(ClassyTestRunner.class)
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest
 {

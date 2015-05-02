@@ -24,9 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-
-import au.com.cybersearch2.robolectric.ClassyTestRunner;
-
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.util.ActivityController;
 
 import android.content.Intent;
@@ -45,7 +43,7 @@ import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
  * @author Andrew Bowley
  * 26/05/2014
  */
-@RunWith(ClassyTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 public class IntegrateMainActivityTest
 {
     private static final String[][] RECORD_DETAILS_ARRAY =

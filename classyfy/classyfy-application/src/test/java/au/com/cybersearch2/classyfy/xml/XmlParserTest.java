@@ -7,13 +7,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import au.com.cybersearch2.robolectric.ClassyTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanXmlParser;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
-@RunWith(ClassyTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 public class XmlParserTest
 {
     interface NodeFunction

@@ -34,8 +34,7 @@ import org.mockito.ArgumentCaptor;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
-
-import au.com.cybersearch2.robolectric.ClassyTestRunner;
+import org.robolectric.RobolectricTestRunner;
 
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowIntent;
@@ -67,7 +66,7 @@ import org.apache.commons.beanutils.PropertyUtils;
  * @author Andrew Bowley
  * 29/04/2014
  */
-@RunWith(ClassyTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 public class TitleSearchResultsActivityTest
 {
     static class TestTitleSearchResultsActivity extends TitleSearchResultsActivity

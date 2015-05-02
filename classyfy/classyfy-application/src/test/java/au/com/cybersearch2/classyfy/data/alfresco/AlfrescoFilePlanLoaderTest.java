@@ -15,8 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import android.net.Uri;
+import org.robolectric.RobolectricTestRunner;
 
-import au.com.cybersearch2.robolectric.ClassyTestRunner;
 import au.com.cybersearch2.classyfy.TestClassyFyApplication;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
@@ -25,7 +25,7 @@ import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanLoader;
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanXmlParser;
 import au.com.cybersearch2.classyfy.test.AndroidEnvironmentFile;
 
-@RunWith(ClassyTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 public class AlfrescoFilePlanLoaderTest
 {
     private static String PUBLIC_DOWNLOADS_PATH = "src/test/java/External/Download";
