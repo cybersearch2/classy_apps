@@ -1,6 +1,5 @@
 .classpath
+/.settings/
 bin
 /gen/
 /target/
-/libs/
-/target/generated-sources/annotations/
