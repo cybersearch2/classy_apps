@@ -1,7 +1,6 @@
 .classpath
+.settings
+.factorypath
 /bin/
 /gen/
 /target/
-/libs/
-AndroidManifest.xml
-/target/generated-sources/annotations/
