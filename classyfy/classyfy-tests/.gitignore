@@ -1,8 +1,7 @@
-/local.properties
-/bin
-/target/R.txt
-/gen
+.classpath
+/.settings/
+/gen/
+/.apt_generated/
+/bin/
+/test-libs/
 /target/
-/libs/
-/target/generated-sources/annotations/
-

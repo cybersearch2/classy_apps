@@ -1,28 +1,19 @@
 #!/bin/sh
 #
-# This script copies Eclipse project files configured for Classic or Maven (default) mode to the relevant projects.
+# This script copies Eclipse ADT classpath file to the relevant Android application projects.
 #
 # Usage:
-#   setup-eclipse.sh [classic]
+#   setup-eclipse.sh
 #
-export ECLIPSE_TYPE=classic
-if [ "x$1" = "x" ]; then 
-export ECLIPSE_TYPE=maven
-fi
-echo "Set up $ECLIPSE_TYPE Eclipse"
+echo "Set up Eclipse ADT classpaths"
 
-echo "as_compatibility-v7-appcompat" 
-cd ../as_compatibility-v7-appcompat
-cp eclipse/$ECLIPSE_TYPE/project ./.project
 echo "classyfy-application"
-cd ../classyfy/classyfy-application
-cp eclipse/$ECLIPSE_TYPE/project ./.project
-cp eclipse/$ECLIPSE_TYPE/.classpath .
-cp eclipse/$ECLIPSE_TYPE/.factorypath .
+cp adt-classpath ../classyfy/classyfy-application/.classpath
 echo "classyfy-tests"
-cd ../../classyfy/classyfy-tests
-cp eclipse/$ECLIPSE_TYPE/project ./.project
-cp eclipse/$ECLIPSE_TYPE/.classpath .
-cp eclipse/$ECLIPSE_TYPE/.factorypath .
-cd ../../install
-
+cp adt-classpath ../../classyfy/classyfy-tests/.classpath
+echo "android-hello-two-dbs"
+cp adt-classpath ../../example/android-hello-two-dbs/.classpath
+echo "android-hello-two-dbs-v2"
+cp adt-classpath ../../example/android-hello-two-dbs-v2/.classpath
+echo "db-upgrade"
+cp adt-classpath ../../example/db-upgrade/.classpath
