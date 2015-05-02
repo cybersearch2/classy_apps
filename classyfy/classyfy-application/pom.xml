@@ -71,6 +71,14 @@
            <groupId>net.sf.kxml</groupId>
            <artifactId>kxml2</artifactId>
         </exclusion>
+        <exclusion>
+	      <groupId>commons-logging</groupId>
+	      <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+	      <artifactId>commons-collections</artifactId>
+        </exclusion>
       </exclusions>
       <type>jar</type>
       <scope>compile</scope>
