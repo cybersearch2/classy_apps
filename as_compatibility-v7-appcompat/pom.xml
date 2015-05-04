@@ -39,8 +39,6 @@
       <timezone>+10</timezone>
     </developer>
   </developers>
-	<profiles>
-	</profiles>
   <build>
     <plugins>
       <plugin>
@@ -53,32 +51,28 @@
               <includes><include>**/*</include></includes>
               <followSymlinks>false</followSymlinks>
             </fileset>
+            <fileset>
+              <directory>gen</directory>
+              <includes><include>**/*</include></includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>libs</directory>
+              <excludes><exclude>.gitignore</exclude></excludes>
+              <includes><include>*.jar</include></includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>/</directory>
+              <includes>
+                <include>AndroidManifest.xml</include>
+                <include>R.txt</include>
+                <include>classes.jar</include>
+              </includes>
+             </fileset>
          </filesets>
        </configuration>
      </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.9</version>
-            <executions>
-              <execution>
-                <id>unpack-dependencies</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>unpack-dependencies</goal>
-                </goals>
-                <configuration>
-                  <type>zip</type>
-                  <excludeTypes>jar</excludeTypes>
-                  <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
-                  <includeArtifactIds>
-                    compatibility-v7-appcompat
-                  </includeArtifactIds>
-                  <outputDirectory>${basedir}</outputDirectory>
-                </configuration>
-              </execution>
-            </executions>
-        </plugin>
         <plugin>
             <artifactId>maven-install-plugin</artifactId>
             <version>2.5.1</version>
@@ -96,4 +90,36 @@
       <type>zip</type>
     </dependency>  
   </dependencies>
+  <profiles>
+     <profile>
+        <id>eclipse</id>
+        <build>
+          <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.9</version>
+                <executions>
+                  <execution>
+                    <id>unpack-dependencies</id>
+                    <phase>initialize</phase>
+                    <goals>
+                      <goal>unpack-dependencies</goal>
+                    </goals>
+                    <configuration>
+                      <type>zip</type>
+                      <excludeTypes>jar</excludeTypes>
+                      <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+                      <includeArtifactIds>
+                        compatibility-v7-appcompat
+                      </includeArtifactIds>
+                      <outputDirectory>${basedir}</outputDirectory>
+                    </configuration>
+                  </execution>
+                </executions>
+            </plugin>
+          </plugins>
+        </build>
+     </profile>
+  </profiles>
 </project>
