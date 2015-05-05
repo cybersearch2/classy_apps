@@ -10,7 +10,7 @@
   <groupId>android.support</groupId>
   <artifactId>compatibility-v7-appcompat</artifactId>
   <packaging>pom</packaging>
-  <name>as_compatibility-v7-appcompat</name>
+  <name>compatibility-v7-appcompat</name>
   <description>Android Support Library</description>
   <url>http://cybersearch2.com.au</url>
   <licenses>

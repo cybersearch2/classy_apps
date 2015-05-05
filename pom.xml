@@ -48,7 +48,7 @@
     <dagger.version>1.2.2</dagger.version>
   </properties>
   <modules>
-    <module>as_compatibility-v7-appcompat</module>
+    <module>compatibility-v7-appcompat</module>
     <module>classyfy</module>
     <module>example</module>
  </modules>
