@@ -1,0 +1,9 @@
+R.txt
+AndroidManifest.xml
+classes.jar
+/.settings/
+/bin/
+/gen/
+/META-INF/
+/res/
+/target/

@@ -1,7 +1,7 @@
-/local.properties
-/bin
-/.apt_generated
-/target/R.txt
-/gen
+.classpath
+/.settings/
+/gen/
+/.apt_generated/
+/bin/
+/test-libs/
 /target/
-/libs/

@@ -1,5 +1,7 @@
-bin
+.classpath
+/.settings/
+/bin/
 /gen/
 /target/
 /.apt_generated/
-/libs/
+

@@ -36,19 +36,19 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <android.plugin.version>4.0.0-rc.2</android.plugin.version>
+    <android.plugin.version>4.2.0</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
-    <android.platform.version>22</android.platform.version>
+    <android.platform.version>21</android.platform.version>
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
-    <android.sdk.version>5.1.1_r2</android.sdk.version>
+    <android.sdk.version>5.0.1_r2</android.sdk.version>
     <!-- Android Suport Library version - always 3-part -->
-    <android.support.version>22.1.1</android.support.version>
+    <android.support.version>21.0.1</android.support.version>
     <robolectric.version>3.0-rc2</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <dagger.version>1.2.2</dagger.version>
   </properties>
   <modules>
-    <module>as_compatibility-v7-appcompat</module>
+    <module>compatibility-v7-appcompat</module>
     <module>classyfy</module>
     <module>example</module>
  </modules>
@@ -72,17 +72,17 @@
                 <testTarget>1.6</testTarget>
            </configuration>
           </plugin>
-		  <plugin>
-			<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-			<artifactId>android-maven-plugin</artifactId>
-			<version>${android.plugin.version}</version>
+          <plugin>
+            <groupId>com.simpligility.maven.plugins</groupId>
+            <artifactId>android-maven-plugin</artifactId>
+            <version></version>
 		    <configuration>
 			  <sdk>
 				<platform>${android.platform.version}</platform>
 			  </sdk>
 		    </configuration>
-			<extensions>true</extensions>
-		  </plugin>
+            <extensions>true</extensions>
+          </plugin>
 		  <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 		  <plugin>
 		  	<groupId>org.eclipse.m2e</groupId>
@@ -102,6 +102,23 @@
 		  						<versionRange>[2.9,)</versionRange>
 		  						<goals>
 		  							<goal>copy-dependencies</goal>
+		  						</goals>
+		  					</pluginExecutionFilter>
+		  					<action>
+		  						<ignore></ignore>
+		  					</action>
+		  				</pluginExecution>
+		  				<pluginExecution>
+		  					<pluginExecutionFilter>
+		  						<groupId>
+		  							com.simpligility.maven.plugins
+		  						</groupId>
+		  						<artifactId>
+		  							android-maven-plugin
+		  						</artifactId>
+		  						<versionRange>[4.2.0,)</versionRange>
+		  						<goals>
+		  							<goal>emma</goal>
 		  						</goals>
 		  					</pluginExecutionFilter>
 		  					<action>

@@ -1,23 +1,13 @@
 @echo off
 setlocal
-set TYPE=maven
-if "%1"=="" goto start_op
-set TYPE=classic
-:start_op
-@echo Set up %TYPE% Eclipse
-@echo as_compatibility-v7-appcompat
-pushd ..\as_compatibility-v7-appcompat
-xcopy /Y eclipse\%TYPE%\project .\.project
-popd
+@echo Set up Eclipse ADT classpaths
 @echo classyfy-application 
-pushd ..\classyfy\classyfy-application
-xcopy /Y eclipse\%TYPE%\project .\.project
-xcopy /Y eclipse\%TYPE%\.classpath .
-xcopy /Y eclipse\%TYPE%\.factorypath .
-popd
+xcopy /Y adt-classpath ..\classyfy\classyfy-application\.classpath
 @echo classyfy-tests
-pushd ..\classyfy\classyfy-tests
-xcopy /Y eclipse\%TYPE%\project .\.project
-xcopy /Y eclipse\%TYPE%\.classpath .
-xcopy /Y eclipse\%TYPE%\.factorypath .
-popd
+xcopy /Y adt-classpath ..\classyfy\classyfy-tests\.classpath
+@echo android-hello-two-dbs
+xcopy /Y adt-classpath ..\example\android-hello-two-dbs\.classpath
+@echo android-hello-two-dbs-v2
+xcopy /Y adt-classpath ..\example\android-hello-two-dbs-v2\.classpath
+@echo db-upgrade
+xcopy /Y adt-classpath ..\example\db-upgrade\.classpath

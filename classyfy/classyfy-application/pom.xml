@@ -38,17 +38,6 @@
         </developer>
     </developers>
 	<dependencies>
-    <!-- Prevent "Ignoring InnerClasses attribute for an anonymous inner class" Dex warning -->
-    <dependency>
-	  <groupId>commons-logging</groupId>
-	  <artifactId>commons-logging</artifactId>
-      <scope>provided</scope>
-    </dependency>    
-    <dependency>
-	  <groupId>commons-collections</groupId>
-	  <artifactId>commons-collections</artifactId>
-      <scope>provided</scope>
-    </dependency>
      <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -57,6 +46,16 @@
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyjava</artifactId>
+      <exclusions>
+        <exclusion>
+	      <groupId>commons-logging</groupId>
+	      <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+	      <artifactId>commons-collections</artifactId>
+        </exclusion>
+      </exclusions>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -71,6 +70,14 @@
         <exclusion>
            <groupId>net.sf.kxml</groupId>
            <artifactId>kxml2</artifactId>
+        </exclusion>
+        <exclusion>
+	      <groupId>commons-logging</groupId>
+	      <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+	      <artifactId>commons-collections</artifactId>
         </exclusion>
       </exclusions>
       <type>jar</type>
@@ -169,10 +176,11 @@
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
     	<plugin>
-    	    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+    	    <groupId>com.simpligility.maven.plugins</groupId>
     	    <artifactId>android-maven-plugin</artifactId>
     	    <extensions>true</extensions>
     	    <configuration>
+    	    <!--<disableConflictingDependenciesWarning>true</disableConflictingDependenciesWarning>-->
     		<sdk><platform>${android.platform.version}</platform></sdk>
     		<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
     		<resourceDirectory>${project.basedir}/res</resourceDirectory>
@@ -180,41 +188,6 @@
     		<nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
     	    </configuration>
     	</plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.9</version>
-            <executions>
-                <execution>
-                    <id>libs</id>
-                    <phase>initialize</phase>
-                    <goals><goal>copy-dependencies</goal></goals>
-                    <configuration>
-                      <outputDirectory>libs</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>false</overWriteSnapshots>
-                      <overWriteIfNewer>true</overWriteIfNewer>
-                      <includeScope>runtime</includeScope>
-        		      <includeArtifactIds>
-        		        openbeans,
-        		        persistence-api,
-        		        javax.inject,
-        		        commons-beanutils,
-        		        dagger,
-        		        ormlite-core,
-        		        ormlite-android,
-        		        classyandroid,
-        		        classyjava,
-                        compatibility-v4,
-                        compatibility-v7-appcompat
-         		      </includeArtifactIds>
-        		      <excludeArtifactIds>
-        		      	dagger-compiler
-        		      </excludeArtifactIds>
-                   </configuration>
-                </execution>
-            </executions>
-        </plugin>
     	<!-- Set skipTests = "true" to bypass test phase in build -->
     	<plugin>
     	    <groupId>org.apache.maven.plugins</groupId>
@@ -227,4 +200,61 @@
     	</plugin>
 	  </plugins>
 	</build>
+	<profiles>
+	    <profile>
+	        <id>eclipse</id>
+	        <build>
+              <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                    <executions>
+                        <execution>
+                            <id>libs</id>
+                            <phase>initialize</phase>
+                            <goals><goal>copy-dependencies</goal></goals>
+                            <configuration>
+                              <outputDirectory>libs</outputDirectory>
+                              <overWriteReleases>false</overWriteReleases>
+                              <overWriteSnapshots>false</overWriteSnapshots>
+                              <overWriteIfNewer>true</overWriteIfNewer>
+                              <includeScope>runtime</includeScope>
+                		      <includeArtifactIds>
+                		        openbeans,
+                		        persistence-api,
+                		        javax.inject,
+                		        commons-beanutils,
+                		        dagger,
+                		        ormlite-core,
+                		        ormlite-android,
+                		        classyandroid,
+                		        classyjava,
+                                compatibility-v4,
+                                compatibility-v7-appcompat
+                 		      </includeArtifactIds>
+                		      <excludeArtifactIds>
+                		      	dagger-compiler
+                		      </excludeArtifactIds>
+                           </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                  <artifactId>maven-clean-plugin</artifactId>
+                  <version>2.6.1</version>
+                  <configuration>
+                    <filesets>
+                      <fileset>
+                        <directory>libs</directory>
+                        <includes><include>*</include></includes>
+                        <followSymlinks>false</followSymlinks>
+                      </fileset>
+                   </filesets>
+                 </configuration>
+               </plugin>
+            </plugins>
+	      </build>
+	    </profile>
+	</profiles>
 </project>

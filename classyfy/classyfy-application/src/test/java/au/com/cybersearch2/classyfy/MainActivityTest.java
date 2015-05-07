@@ -17,28 +17,25 @@ package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
-
-import au.com.cybersearch2.robolectric.ClassyTestRunner;
-
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
-
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,7 +53,7 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
  * @author Andrew Bowley
  * 14/05/2014
  */
-@RunWith(ClassyTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 public class MainActivityTest
 {
     public static class TestMainActivity extends MainActivity
@@ -128,7 +125,8 @@ public class MainActivityTest
         assertThat(item1.getValue()).isEqualTo(RecordModel.recordCategory.toString());
     }
     
-    @Test
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@Test
     public void test_createSearchView()
     {
         Menu menu = mock(Menu.class);
