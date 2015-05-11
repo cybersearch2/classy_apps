@@ -70,13 +70,13 @@ public class TestPersistenceWork implements PersistenceWork
     public void onPostExecute(boolean success) 
     {
         transcript.add("onPostExecute " + success);
-   }
+    }
 
     @Override
     public void onRollback(Throwable rollbackException) 
     {
         transcript.add("onRollback " + rollbackException.toString());
-   }
+    }
 
     public void setCallable(Callable doInBackgroundCallback) 
     {

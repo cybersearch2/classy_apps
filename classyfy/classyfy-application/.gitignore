@@ -1,4 +1,5 @@
 .classpath
+.factorypath
 /.settings/
 /gen/
 /.apt_generated/

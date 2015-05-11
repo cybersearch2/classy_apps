@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
     </parent>
 	<artifactId>db-upgrade</artifactId>
 	<packaging>apk</packaging>
@@ -80,31 +80,11 @@
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
       </dependency>
       <dependency>
         <groupId>com.j256.ormlite</groupId>
         <artifactId>ormlite-android</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>android.support</groupId>
-        <artifactId>compatibility-v4</artifactId>
-      </dependency>  
-      <!-- Exclude objenesis here in favour of Robolectric's later version -->
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-         <exclusions>
-          <exclusion>
-            <groupId>org.objenesis</groupId>
-            <artifactId>objenesis</artifactId>        
-          </exclusion>
-        </exclusions>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.easytesting</groupId>
-        <artifactId>fest-assert-core</artifactId>
       </dependency>
       <!-- Exclude Support Library as already have android.support:compatibility-v4 above -->
       <dependency>

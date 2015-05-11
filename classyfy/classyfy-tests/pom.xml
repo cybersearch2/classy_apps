@@ -3,7 +3,7 @@
   <parent>
      <artifactId>classyfy_parent</artifactId>
      <groupId>au.com.cybersearch2</groupId>
-     <version>1.0.5</version>
+     <version>1.0.6</version>
   </parent>
   <artifactId>classyfy_tests</artifactId>
   <packaging>apk</packaging>
@@ -109,22 +109,11 @@
       <scope>provided</scope>
     </dependency>  
      <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v7-appcompat</artifactId>
+      <groupId>com.android.support</groupId>
+      <artifactId>appcompat-v7</artifactId>
       <type>aar</type>
       <scope>provided</scope>
     </dependency>
-     <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v7-appcompat</artifactId>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>  
-    <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v4</artifactId>
-      <scope>provided</scope>
-    </dependency> 
   </dependencies>
   <build>
     <plugins>

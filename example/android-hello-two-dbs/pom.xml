@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
     </parent>
 	<artifactId>android-hello-two-dbs</artifactId>
 	<packaging>apk</packaging>
@@ -81,21 +81,12 @@
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
       </dependency>
       <dependency>
         <groupId>com.j256.ormlite</groupId>
         <artifactId>ormlite-android</artifactId>
       </dependency>
-      <dependency>
-        <groupId>android.support</groupId>
-        <artifactId>compatibility-v4</artifactId>
-      </dependency>  
-      <dependency>
-        <groupId>android.support</groupId>
-        <artifactId>compatibility-v7-appcompat</artifactId>
-        <type>jar</type>
-      </dependency>  
       <!-- Exclude Support Library as already have android.support:compatibility-v4 above -->
       <dependency>
         <groupId>org.robolectric</groupId>

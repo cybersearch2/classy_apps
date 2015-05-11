@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
     </parent>
 	<artifactId>classyfy_parent</artifactId>
     <packaging>pom</packaging>
@@ -54,14 +54,14 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>1.0.5</version>
+          <version>1.0.6</version>
           <type>jar</type>
           <scope>runtime</scope>
         </dependency>
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>1.0.5</version>
+          <version>1.0.6</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
@@ -77,21 +77,22 @@
           <version>${ormlite.version}</version>
         </dependency>
         <dependency>
-          <groupId>android.support</groupId>
-          <artifactId>compatibility-v7-appcompat</artifactId>
+          <groupId>com.android.support</groupId>
+          <artifactId>appcompat-v7</artifactId>
           <version>${android.support.version}</version>
           <type>aar</type>
         </dependency>  
-         <dependency>
-          <groupId>android.support</groupId>
-          <artifactId>compatibility-v7-appcompat</artifactId>
+        <dependency>
+          <groupId>com.android.support</groupId>
+          <artifactId>appcompat-v7</artifactId>
           <version>${android.support.version}</version>
           <type>jar</type>
         </dependency>  
         <dependency>
-          <groupId>android.support</groupId>
-          <artifactId>compatibility-v4</artifactId>
+          <groupId>com.android.support</groupId>
+          <artifactId>support-v4</artifactId>
           <version>${android.support.version}</version>
+          <type>jar</type>
         </dependency>  
          <dependency>
           <groupId>org.mockito</groupId>
