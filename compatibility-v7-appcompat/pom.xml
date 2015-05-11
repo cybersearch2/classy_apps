@@ -7,10 +7,10 @@
     <artifactId>classy_apps</artifactId>
     <version>1.0.6</version>
   </parent>
-  <groupId>android.support</groupId>
-  <artifactId>compatibility-v7-appcompat</artifactId>
+  <groupId>com.android.support</groupId>
+  <artifactId>appcompat-v7</artifactId>
   <packaging>pom</packaging>
-  <name>compatibility-v7-appcompat</name>
+  <name>appcompat-v7</name>
   <description>Android Support Library</description>
   <url>http://cybersearch2.com.au</url>
   <licenses>
@@ -84,8 +84,8 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>android.support</groupId>
-      <artifactId>compatibility-v7-appcompat</artifactId>
+      <groupId>com.android.support</groupId>
+      <artifactId>appcompat-v7</artifactId>
       <version>${android.support.version}</version>
       <type>zip</type>
     </dependency>  
@@ -111,7 +111,7 @@
                       <excludeTypes>jar</excludeTypes>
                       <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
                       <includeArtifactIds>
-                        compatibility-v7-appcompat
+                        appcompat-v7
                       </includeArtifactIds>
                       <outputDirectory>${basedir}</outputDirectory>
                     </configuration>

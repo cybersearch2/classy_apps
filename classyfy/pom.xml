@@ -84,7 +84,7 @@
         </dependency>  
         <dependency>
           <groupId>com.android.support</groupId>
-          <artifactId>appcompat-v7</artifactId>
+          <artifactId>support-v7-appcompat</artifactId>
           <version>${android.support.version}</version>
           <type>jar</type>
         </dependency>  

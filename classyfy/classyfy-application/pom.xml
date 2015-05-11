@@ -102,19 +102,11 @@
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>appcompat-v7</artifactId>
-      <!--
-      <exclusions>
-        <exclusion>
-          <groupId>com.android.support</groupId>
-          <artifactId>support-annotations</artifactId>
-        </exclusion>
-      </exclusions>
-      -->
       <type>aar</type>
     </dependency>  
     <dependency>
       <groupId>com.android.support</groupId>
-      <artifactId>appcompat-v7</artifactId>
+      <artifactId>support-v7-appcompat</artifactId>
       <type>jar</type>
     </dependency>
     <dependency>

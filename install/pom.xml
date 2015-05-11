@@ -5,8 +5,8 @@
     <artifactId>classy_apps</artifactId>
     <version>1.0.6</version>
   </parent>
-  <groupId>android.support</groupId>
-  <artifactId>compatibility-v7-appcompat</artifactId>
+  <groupId>com.android.support</groupId>
+  <artifactId>appcompat-v7</artifactId>
   <packaging>aar</packaging>
   <name>Install Zipped Support AAR for Eclipse ADT only</name>
   <licenses>
@@ -60,7 +60,7 @@
                         <goals><goal>install-file</goal></goals>
                         <configuration>
 					        <groupId>com.android.support</groupId>
-					        <artifactId>appcompat-v7</artifactId>
+					        <artifactId>support-v7-appcompat</artifactId>
                             <packaging>jar</packaging>
                             <version>${android.support.version}</version>
                             <file>${sdk.compatibility.v7.jar.path}</file>
@@ -77,8 +77,8 @@
 					        <artifactId>appcompat-v7</artifactId>
                             <packaging>zip</packaging>
                             <version>${android.support.version}</version>
-                            <file>target/compatibility-v7-appcompat.aar</file>
-                            <generatePom>true</generatePom>
+                            <file>target/appcompat-v7.aar</file>
+                            <generatePom>false</generatePom>
                         </configuration>
                     </execution>
                     <execution>
@@ -86,11 +86,11 @@
                         <phase>install</phase>
                         <goals><goal>install-file</goal></goals>
                         <configuration>
-                            <groupId>android.support</groupId>
-                            <artifactId>compatibility-v7-appcompat</artifactId>
+                            <groupId>com.android.support</groupId>
+                            <artifactId>appcompat-v7</artifactId>
                             <packaging>aar</packaging>
                             <version>${android.support.version}</version>
-                            <file>target/compatibility-v7-appcompat.aar</file>
+                            <file>target/appcompat-v7.aar</file>
                             <generatePom>true</generatePom>
                         </configuration>
                     </execution>
@@ -183,6 +183,18 @@
                     	<skip>true</skip>
                     </configuration>
 		</plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+             </execution>
+          </executions>
+       </plugin>       
      </plugins>
       <pluginManagement>
       	<plugins>
