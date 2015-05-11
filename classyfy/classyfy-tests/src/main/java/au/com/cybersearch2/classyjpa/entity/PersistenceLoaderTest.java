@@ -17,6 +17,7 @@ package au.com.cybersearch2.classyjpa.entity;
 
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 import javax.persistence.EntityExistsException;
 
@@ -40,8 +41,8 @@ import au.com.cybersearch2.classyutil.Transcript;
  */
 public class PersistenceLoaderTest extends InstrumentationTestCase
 {
-    private Transcript transcript;
-    private PersistenceLoader testLoaderTask;
+    protected PersistenceLoader testLoaderTask;
+    protected PersistenceLoader testUserTransLoaderTask;
 
     @Override
     protected void setUp() throws Exception 
@@ -50,6 +51,8 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         System.setProperty("java.util.logging.config.file", "src/logging.properties");
         super.setUp();
         testLoaderTask = new PersistenceLoader(getInstrumentation().getContext());
+	    testUserTransLoaderTask = new PersistenceLoader(getInstrumentation().getContext());
+	    testUserTransLoaderTask.setUserTransactionMode(true);
         assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         PersistenceContext persistenceContext = new PersistenceContext();
         PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
@@ -59,24 +62,16 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
 
     }
 
-    protected void doSetup()
-    {
-        transcript = new Transcript();
-        //testContainer = new LoaderPersistenceContainer(ClassyFyApplication.PU_NAME);
-    }
-    
     public void test_all() throws Throwable
     {
-        doSetup();
         do_background_called();
-        //doSetup();
-        //do_rollback_only(); 
-        //doSetup();
-        //do_exception_thrown();
+        do_rollback_only(); 
+        do_exception_thrown();
     }
     
     public void do_background_called() throws Throwable
     {
+    	Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript);
         final Executable[] exeHolder = new Executable[1];
         runTestOnUiThread(new Runnable() {
@@ -91,6 +86,7 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
 
     public void do_rollback_only() throws Throwable
     {
+    	Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
 
@@ -110,12 +106,13 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
             }});
         WorkStatus status = exeHolder[0].waitForTask();
         transcript.assertEventsSoFar("background task", "onPostExecute false");
-        assertThat(status).isEqualTo(WorkStatus.FINISHED);
+        assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
 
     public void do_exception_thrown() throws Throwable
     {   
         final EntityExistsException persistException = new EntityExistsException("Entity of class RecordCategory, primary key 1 already exists");
+    	Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
 
@@ -138,6 +135,7 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
 
     public void do_npe_thrown() throws Throwable
     {
+    	Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
 
@@ -154,15 +152,22 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
+                try
+                {
+                    exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
+                	failBecauseExceptionWasNotThrown(RuntimeException.class);
+                }
+                catch (RuntimeException e)
+                {
+                	assertThat(e.getCause()).isNotNull();
+                	assertThat(e.getCause()).isInstanceOf(NullPointerException.class);
+                }
             }});
-        exeHolder[0].waitForTask();
-        transcript.assertEventsSoFar("background task", "onRollback java.lang.NullPointerException");
-        assertThat(exeHolder[0].getStatus()).isEqualTo(WorkStatus.FAILED);
     }
 
     public void do_user_transaction() throws Throwable
     {
+    	Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
 
@@ -178,7 +183,7 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-            	testLoaderTask.setUserTransactionMode(true);
+            	testUserTransLoaderTask.setUserTransactionMode(true);
                 exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
             }});
         exeHolder[0].waitForTask();

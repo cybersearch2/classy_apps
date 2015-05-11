@@ -247,8 +247,8 @@
                 		        ormlite-android,
                 		        classyandroid,
                 		        classyjava,
-                                compatibility-v4,
-                                compatibility-v7-appcompat
+                                support-v4,
+                                support-v7-appcompat
                  		      </includeArtifactIds>
                 		      <excludeArtifactIds>
                 		      	dagger-compiler
