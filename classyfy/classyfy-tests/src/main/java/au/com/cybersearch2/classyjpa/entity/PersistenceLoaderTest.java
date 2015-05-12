@@ -67,6 +67,10 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         do_background_called();
         do_rollback_only(); 
         do_exception_thrown();
+        do_user_transaction();
+        // TODO: How to test? 
+        // Test failed to run to completion. Reason: 'Instrumentation run failed due to 'java.lang.NullPointerException''. Check device logcat for details
+        //do_npe_thrown();
     }
     
     public void do_background_called() throws Throwable
@@ -81,7 +85,7 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
             }});
         WorkStatus status = exeHolder[0].waitForTask();
         transcript.assertEventsSoFar("background task", "onPostExecute true");
-        assertThat(status == WorkStatus.FINISHED).isTrue();
+        assertThat(status).isEqualTo(WorkStatus.FINISHED);
     }
 
     public void do_rollback_only() throws Throwable
@@ -177,14 +181,14 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
                     {
                         // Return false to cause transaction setRollbackOnly() to be called
                         // User Transactions get access to actual transaction
-                        return entityManager.getTransaction() instanceof EntityTransactionImpl;
+                        boolean isRealTransaction = entityManager.getTransaction() instanceof EntityTransactionImpl;
+                        return isRealTransaction;
                     }});
         final Executable[] exeHolder = new Executable[1];
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-            	testUserTransLoaderTask.setUserTransactionMode(true);
-                exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
+                exeHolder[0] = testUserTransLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
             }});
         exeHolder[0].waitForTask();
         transcript.assertEventsSoFar("background task", "onPostExecute true");

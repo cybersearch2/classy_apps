@@ -264,8 +264,8 @@
                     <filesets>
                       <fileset>
                         <directory>libs</directory>
-                        <includes><include>*</include></includes>
-                        <followSymlinks>false</followSymlinks>
+                        <includes><include>*.jar</include></includes>
+                        <excludes><exclude>.gitignore</exclude></excludes>
                       </fileset>
                    </filesets>
                  </configuration>

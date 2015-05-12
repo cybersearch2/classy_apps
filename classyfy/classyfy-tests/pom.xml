@@ -104,6 +104,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-util</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>android</groupId>
       <artifactId>android</artifactId>
       <scope>provided</scope>
@@ -165,7 +170,6 @@
                     <!--<logonly>true|false</logonly>  avd-->
                     <!--<testsize>small|medium|large</testsize>-->
                     <skip>false</skip>
-                    <testSize>small</testSize>
                     <createReport>true</createReport>
                     <!--<classes>-->
                         <!--<class>your.package.name.YourTestClass</class>-->
@@ -208,6 +212,8 @@
                 		        ormlite-android,
                 		        classyandroid,
                 		        classyjava,
+                		        fest-assert-core,
+                		        fest-util,
                                 compatibility-v4,
                                 compatibility-v7-appcompat
                  		      </includeArtifactIds>
@@ -225,8 +231,8 @@
                     <filesets>
                       <fileset>
                         <directory>libs</directory>
-                        <includes><include>*</include></includes>
-                        <followSymlinks>false</followSymlinks>
+                        <includes><include>*.jar</include></includes>
+                        <excludes><exclude>.gitignore</exclude></excludes>
                       </fileset>
                    </filesets>
                  </configuration>

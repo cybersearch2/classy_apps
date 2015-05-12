@@ -72,12 +72,9 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
             {
                 exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
-        synchronized(exeHolder[0])
-        {
-            exeHolder[0].wait(0/*10000*/);
-        }
+        WorkStatus status = exeHolder[0].waitForTask();
         transcript.assertEventsSoFar("background task", "onPostExecute true");
-        assertThat(exeHolder[0].getStatus()).isEqualTo(WorkStatus.FINISHED);
+        assertThat(status).isEqualTo(WorkStatus.FINISHED);
     }
 
     public void do_rollback_only() throws Throwable
@@ -98,12 +95,9 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
             {
                 exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
-        synchronized(exeHolder[0])
-        {
-            exeHolder[0].wait();
-        }
+        WorkStatus status = exeHolder[0].waitForTask();
         transcript.assertEventsSoFar("background task", "onPostExecute false");
-        assertThat(exeHolder[0].getStatus()).isEqualTo(WorkStatus.FAILED);
+        assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
 
     public void do_exception_thrown() throws Throwable
@@ -124,12 +118,8 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
             {
                 exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
-        synchronized(exeHolder[0])
-        {
-            exeHolder[0].wait();
-        }
-        transcript.assertEventsSoFar("background task", "onRollback " + persistException.toString());
-        assertThat(exeHolder[0].getStatus()).isEqualTo(WorkStatus.FAILED);
+        WorkStatus status = exeHolder[0].waitForTask();
+        assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
 
     public void do_npe_thrown() throws Throwable

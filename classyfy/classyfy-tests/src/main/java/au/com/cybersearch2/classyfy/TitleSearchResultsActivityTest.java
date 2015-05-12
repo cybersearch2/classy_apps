@@ -25,7 +25,12 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
 import android.view.View;
 import android.widget.ProgressBar;
+import au.com.cybersearch2.classyfy.data.RecordCategory;
+import au.com.cybersearch2.classyfy.data.RecordFolder;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classynode.EntityByNodeIdGenerator;
 import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
@@ -68,6 +73,11 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
             super.setUp();
             assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         }
+        PersistenceContext persistenceContext = new PersistenceContext();
+        PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
+        EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
+        persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
+        persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
     }
 
     @UiThreadTest
@@ -125,19 +135,9 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
         setActivityIntent(intent); 
         TitleSearchResultsActivity activity = getActivity();
         assertThat(activity).isNotNull();
- 	        synchronized(activity.taskHandle)
-	        {
- 	            if ((activity.taskHandle.getStatus() == WorkStatus.RUNNING) || (activity.taskHandle.getStatus() == WorkStatus.PENDING))
-		            try
-		            {
-		                activity.taskHandle.wait(10000);
-		            }
-		            catch (InterruptedException e)
-		            {
-		                e.printStackTrace();
-		            }
-	        }
-        assertThat(activity.taskHandle.getStatus()).isEqualTo(WorkStatus.FAILED);
+        assertThat(activity.taskHandle).isNotNull();
+        WorkStatus status = activity.taskHandle.waitForTask();
+        assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
     
     private Intent getNewIntent() 

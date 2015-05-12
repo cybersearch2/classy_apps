@@ -16,6 +16,11 @@
 package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.app.SearchManager;
@@ -23,15 +28,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import au.com.cybersearch2.classyfy.data.RecordCategory;
+import au.com.cybersearch2.classyfy.data.RecordFolder;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classynode.EntityByNodeIdGenerator;
 import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
@@ -60,6 +72,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         "Information Management Policy",
         "Information & Communications Technology"
     };
+
     protected Context context;
    
     /**
@@ -82,6 +95,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             super.setUp();
             assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         }
+        PersistenceContext persistenceContext = new PersistenceContext();
+        PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
+        EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
+        persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
+        persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
     }
 
     @UiThreadTest
@@ -129,12 +147,17 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
     }
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     public void test_search() throws Throwable
     {
         final MainActivity mainActivity = getActivity(); 
-        Instrumentation instrumentation = getInstrumentation();
-        ActivityMonitor am = instrumentation.addMonitor(TitleSearchResultsActivity.class.getName(), null, false);
-        assertThat(instrumentation.invokeMenuActionSync(mainActivity, au.com.cybersearch2.classyfy.R.id.action_search, 0)).isTrue();
+        final View view = mainActivity.findViewById(au.com.cybersearch2.classyfy.R.id.action_search);
+        runTestOnUiThread(new Runnable() {
+            public void run()
+            {
+                view.requestFocus();
+                view.callOnClick();
+            }});
         ActionBar actionBar = mainActivity.getSupportActionBar();
         assertThat(actionBar).isNotNull();
         final FragmentManager sfm = mainActivity.getSupportFragmentManager();
@@ -143,10 +166,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             {
                 sfm.executePendingTransactions();
             }});
+        Instrumentation instrumentation = getInstrumentation();
+        ActivityMonitor am = instrumentation.addMonitor(TitleSearchResultsActivity.class.getName(), null, false);
+        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_SEARCH); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_I); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_N); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_F);
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_ENTER);
+        instrumentation.waitForIdleSync();
         runTestOnUiThread(new Runnable() {
             public void run()
             {
