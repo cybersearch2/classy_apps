@@ -35,7 +35,6 @@ import au.com.cybersearch2.classyutil.Transcript;
  */
 public class UserPersistenceContainerTest extends InstrumentationTestCase
 {
-    private Transcript transcript;
     private UserPersistenceContainer testContainer;
 
     @Override
@@ -45,31 +44,26 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
         System.setProperty("java.util.logging.config.file", "src/logging.properties");
         super.setUp();
         assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
-    }
-
-    protected void doSetup()
-    {
-        transcript = new Transcript();
         testContainer = new UserPersistenceContainer(ClassyFyApplication.PU_NAME);
     }
-    
+
     public void test_all() throws Throwable
     {
-        doSetup();
         do_background_called();
-        doSetup();
         do_rollback_only(); 
-        doSetup();
         do_exception_thrown();
+        do_user_transaction();
     }
     
     public void do_background_called() throws Throwable
     {
+        final Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript);
         final Executable[] exeHolder = new Executable[1];
         runTestOnUiThread(new Runnable() {
             public void run()
             {
+                testContainer.setUserTransactionMode(false);
                 exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
         WorkStatus status = exeHolder[0].waitForTask();
@@ -79,6 +73,7 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
 
     public void do_rollback_only() throws Throwable
     {
+        Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
 
@@ -93,6 +88,7 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
+                testContainer.setUserTransactionMode(false);
                 exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
         WorkStatus status = exeHolder[0].waitForTask();
@@ -102,6 +98,7 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
 
     public void do_exception_thrown() throws Throwable
     {   
+        Transcript transcript = new Transcript();
         final EntityExistsException persistException = new EntityExistsException("Entity of class RecordCategory, primary key 1 already exists");
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
@@ -116,7 +113,8 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                exeHolder[0] = testContainer.executeTask(persistenceWork);
+               testContainer.setUserTransactionMode(false);
+               exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
         WorkStatus status = exeHolder[0].waitForTask();
         assertThat(status).isEqualTo(WorkStatus.FAILED);
@@ -124,6 +122,7 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
 
     public void do_npe_thrown() throws Throwable
     {
+        Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
 
@@ -140,6 +139,7 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
+                testContainer.setUserTransactionMode(false);
                 exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
         synchronized(exeHolder[0])
@@ -152,6 +152,7 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
 
     public void do_user_transaction() throws Throwable
     {
+        Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
                 new TestPersistenceWork.Callable(){
 

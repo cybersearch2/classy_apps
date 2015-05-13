@@ -169,6 +169,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         Instrumentation instrumentation = getInstrumentation();
         ActivityMonitor am = instrumentation.addMonitor(TitleSearchResultsActivity.class.getName(), null, false);
         instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_SEARCH); 
+        runTestOnUiThread(new Runnable() {
+            public void run()
+            {
+                sfm.executePendingTransactions();
+            }});
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_I); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_N); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_F);
