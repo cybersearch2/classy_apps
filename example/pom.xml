@@ -138,8 +138,7 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>
-com.simpligility.maven.plugins</groupId>
+          <groupId>com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
 		  <version>${android.plugin.version}</version>
           <configuration>
@@ -160,10 +159,7 @@ com.simpligility.maven.plugins</groupId>
 	  					<pluginExecutions>
 	  						<pluginExecution>
 	  							<pluginExecutionFilter>
-	  								<groupId>
-	  									
-com.simpligility.maven.plugins
-	  								</groupId>
+	  								<groupId>com.simpligility.maven.plugins</groupId>
 	  								<artifactId>
 	  									android-maven-plugin
 	  								</artifactId>
@@ -171,8 +167,7 @@ com.simpligility.maven.plugins
 	  									[4.0.0-rc.2,)
 	  								</versionRange>
 	  								<goals>
-	  									<goal>generate-sources</goal>
-	  									<goal>proguard</goal>
+	  									<goal>emma</goal>
 	  									<goal>copy-dependencies</goal>
 	  								</goals>
 	  							</pluginExecutionFilter>

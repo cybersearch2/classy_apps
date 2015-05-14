@@ -57,11 +57,6 @@
 	<pluginManagement>
 		<plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <version>1.5</version>
-          </plugin>
-          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.2</version>
@@ -72,63 +67,6 @@
                 <testTarget>1.6</testTarget>
            </configuration>
           </plugin>
-          <plugin>
-            <groupId>com.simpligility.maven.plugins</groupId>
-            <artifactId>android-maven-plugin</artifactId>
-            <version></version>
-		    <configuration>
-			  <sdk>
-				<platform>${android.platform.version}</platform>
-			  </sdk>
-		    </configuration>
-            <extensions>true</extensions>
-          </plugin>
-		  <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-		  <plugin>
-		  	<groupId>org.eclipse.m2e</groupId>
-		  	<artifactId>lifecycle-mapping</artifactId>
-		  	<version>1.0.0</version>
-		  	<configuration>
-		  		<lifecycleMappingMetadata>
-		  			<pluginExecutions>
-		  				<pluginExecution>
-		  					<pluginExecutionFilter>
-		  						<groupId>
-		  							org.apache.maven.plugins
-		  						</groupId>
-		  						<artifactId>
-		  							maven-dependency-plugin
-		  						</artifactId>
-		  						<versionRange>[2.9,)</versionRange>
-		  						<goals>
-		  							<goal>copy-dependencies</goal>
-		  						</goals>
-		  					</pluginExecutionFilter>
-		  					<action>
-		  						<ignore></ignore>
-		  					</action>
-		  				</pluginExecution>
-		  				<pluginExecution>
-		  					<pluginExecutionFilter>
-		  						<groupId>
-		  							com.simpligility.maven.plugins
-		  						</groupId>
-		  						<artifactId>
-		  							android-maven-plugin
-		  						</artifactId>
-		  						<versionRange>[4.2.0,)</versionRange>
-		  						<goals>
-		  							<goal>emma</goal>
-		  						</goals>
-		  					</pluginExecutionFilter>
-		  					<action>
-		  						<ignore></ignore>
-		  					</action>
-		  				</pluginExecution>
-		  			</pluginExecutions>
-		  		</lifecycleMappingMetadata>
-		  	</configuration>
-		  </plugin>
 		</plugins>
 	</pluginManagement>
   </build>

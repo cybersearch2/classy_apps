@@ -193,17 +193,21 @@
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
     	<plugin>
-    	    <groupId>com.simpligility.maven.plugins</groupId>
-    	    <artifactId>android-maven-plugin</artifactId>
-    	    <extensions>true</extensions>
-    	    <configuration>
-    	    <!--<disableConflictingDependenciesWarning>true</disableConflictingDependenciesWarning>-->
-    		<sdk><platform>${android.platform.version}</platform></sdk>
-    		<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
-    		<resourceDirectory>${project.basedir}/res</resourceDirectory>
-    		<assetsDirectory>${project.basedir}/assets</assetsDirectory> 
-    		<nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
-    	    </configuration>
+                <groupId>com.simpligility.maven.plugins</groupId>
+
+                <artifactId>android-maven-plugin</artifactId>
+                <version>${android.plugin.version}</version>
+                <configuration>
+                    <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+                    <assetsDirectory>${project.basedir}/assets</assetsDirectory>
+                    <resourceDirectory>${project.basedir}/res</resourceDirectory>
+                    <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
+                    <sdk>
+                        <platform>${android.platform.version}</platform>
+                    </sdk>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                </configuration>
+                <extensions>true</extensions>
     	</plugin>
     	<!-- Set skipTests = "true" to bypass test phase in build -->
     	<plugin>
@@ -216,6 +220,41 @@
     	    </configuration>
     	</plugin>
 	  </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									com.simpligility.maven.plugins
+        								</groupId>
+        								<artifactId>
+        									android-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[4.2.0,)
+        								</versionRange>
+        								<goals>
+        									<goal>emma</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
 	</build>
 	<profiles>
 	    <profile>

@@ -132,6 +132,7 @@
         <plugin>
             <groupId>com.simpligility.maven.plugins</groupId>
             <artifactId>android-maven-plugin</artifactId>
+            <version>${android.plugin.version}</version>
             <extensions>true</extensions>
             <configuration>
                 <sdk><platform>${android.platform.version}</platform></sdk>
@@ -154,6 +155,7 @@
               <plugin>
                 <groupId>com.simpligility.maven.plugins</groupId>
                 <artifactId>android-maven-plugin</artifactId>
+                <version>${android.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                   <sdk><platform>${android.platform.version}</platform></sdk>
