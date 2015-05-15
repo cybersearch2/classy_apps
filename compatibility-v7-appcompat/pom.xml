@@ -63,7 +63,7 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>/</directory>
+              <directory>.</directory>
               <includes>
                 <include>AndroidManifest.xml</include>
                 <include>R.txt</include>
@@ -113,6 +113,7 @@
                       <includeArtifactIds>
                         appcompat-v7
                       </includeArtifactIds>
+                      <excludes>classes.jar</excludes>
                       <outputDirectory>${basedir}</outputDirectory>
                     </configuration>
                   </execution>
