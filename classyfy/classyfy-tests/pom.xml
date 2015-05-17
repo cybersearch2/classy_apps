@@ -120,33 +120,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-        <plugin>
-            <groupId>com.simpligility.maven.plugins</groupId>
-            <artifactId>android-maven-plugin</artifactId>
-            <version>${android.plugin.version}</version>
-            <extensions>true</extensions>
-            <configuration>
-                <sdk><platform>${android.platform.version}</platform></sdk>
-                <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
-                <resourceDirectory>${project.basedir}/res</resourceDirectory>
-                <assetsDirectory>${project.basedir}/assets</assetsDirectory> 
-                <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
-           <test>
-              <skip>true</skip>
-           </test>
-            </configuration>
-        </plugin>
-    </plugins>
-  </build>
   <profiles>
         <profile>
           <id>with_integration_tests</id>

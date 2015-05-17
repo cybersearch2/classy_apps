@@ -133,22 +133,9 @@
         </dependency>  
     </dependencies>
   </dependencyManagement>
-
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>com.simpligility.maven.plugins</groupId>
-          <artifactId>android-maven-plugin</artifactId>
-		  <version>${android.plugin.version}</version>
-          <configuration>
-            <sdk>
-              <platform>${android.platform.version}</platform>
-            </sdk>
-            <undeployBeforeDeploy>true</undeployBeforeDeploy>
-          </configuration>
-          <extensions>true</extensions>
-        </plugin>
 	  		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 	  		<plugin>
 	  			<groupId>org.eclipse.m2e</groupId>
@@ -167,7 +154,6 @@
 	  									[4.0.0-rc.2,)
 	  								</versionRange>
 	  								<goals>
-	  									<goal>emma</goal>
 	  									<goal>copy-dependencies</goal>
 	  								</goals>
 	  							</pluginExecutionFilter>
@@ -182,5 +168,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
 </project>

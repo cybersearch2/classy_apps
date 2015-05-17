@@ -123,18 +123,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         intent.setData(actionUri);
         setActivityIntent(intent); 
         final MainActivity mainActivity = getActivity(); 
-        synchronized(mainActivity.taskHandle)
-        {
-            try
-            {
-                mainActivity.taskHandle.wait(10000);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        assertThat(mainActivity.taskHandle.getStatus()).isEqualTo(WorkStatus.FINISHED);
+        WorkStatus status = mainActivity.taskHandle.waitForTask();
+        assertThat(status).isEqualTo(WorkStatus.FINISHED);
         PropertiesListAdapter adapter = mainActivity.adapter;
         for (int i = 0; (i < adapter.getCount()) && (i < RECORD_DETAILS_ARRAY.length); i++)
         {
@@ -151,6 +141,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     public void test_search() throws Throwable
     {
         final MainActivity mainActivity = getActivity(); 
+        Instrumentation instrumentation = getInstrumentation();
+        ActivityMonitor am1 = instrumentation.addMonitor(MainActivity.class.getName(), null, false);
+        ActivityMonitor am2 = instrumentation.addMonitor(TitleSearchResultsActivity.class.getName(), null, false);
         final View view = mainActivity.findViewById(au.com.cybersearch2.classyfy.R.id.action_search);
         runTestOnUiThread(new Runnable() {
             public void run()
@@ -166,25 +159,13 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             {
                 sfm.executePendingTransactions();
             }});
-        Instrumentation instrumentation = getInstrumentation();
-        ActivityMonitor am = instrumentation.addMonitor(TitleSearchResultsActivity.class.getName(), null, false);
         instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_SEARCH); 
-        runTestOnUiThread(new Runnable() {
-            public void run()
-            {
-                sfm.executePendingTransactions();
-            }});
+        getInstrumentation().waitForMonitorWithTimeout(am1, 5000);
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_I); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_N); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_F);
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_ENTER);
-        instrumentation.waitForIdleSync();
-        runTestOnUiThread(new Runnable() {
-            public void run()
-            {
-                sfm.executePendingTransactions();
-            }});
-        TitleSearchResultsActivity titleSearchResultsActivity = (TitleSearchResultsActivity) getInstrumentation().waitForMonitorWithTimeout(am, 10000);
+        TitleSearchResultsActivity titleSearchResultsActivity = (TitleSearchResultsActivity) getInstrumentation().waitForMonitorWithTimeout(am2, 5000);
         assertThat(titleSearchResultsActivity).isNotNull();
         assertThat(titleSearchResultsActivity.taskHandle).isNotNull();
         synchronized(titleSearchResultsActivity.taskHandle)

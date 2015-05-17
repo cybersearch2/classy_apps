@@ -135,13 +135,6 @@
       <artifactId>dagger-compiler</artifactId>
      <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyandroid</artifactId>
-      <version>1.0.6</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-      </dependency>
     <!-- Exclude Support Library as already have android.support:compatibility-v4 above -->
     <dependency>
       <groupId>org.robolectric</groupId>
@@ -192,23 +185,6 @@
 	<build>
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
-    	<plugin>
-                <groupId>com.simpligility.maven.plugins</groupId>
-
-                <artifactId>android-maven-plugin</artifactId>
-                <version>${android.plugin.version}</version>
-                <configuration>
-                    <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
-                    <assetsDirectory>${project.basedir}/assets</assetsDirectory>
-                    <resourceDirectory>${project.basedir}/res</resourceDirectory>
-                    <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
-                    <sdk>
-                        <platform>${android.platform.version}</platform>
-                    </sdk>
-                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                </configuration>
-                <extensions>true</extensions>
-    	</plugin>
     	<!-- Set skipTests = "true" to bypass test phase in build -->
     	<plugin>
     	    <groupId>org.apache.maven.plugins</groupId>

@@ -120,19 +120,6 @@
 	<build>
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
-        <plugin>
-            <groupId>com.simpligility.maven.plugins</groupId>
-            <artifactId>android-maven-plugin</artifactId>
-            <version>${android.plugin.version}</version>
-            <extensions>true</extensions>
-            <configuration>
-                <sdk><platform>${android.platform.version}</platform></sdk>
-                <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
-                <resourceDirectory>${project.basedir}/res</resourceDirectory>
-                <assetsDirectory>${project.basedir}/assets</assetsDirectory> 
-                <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
-            </configuration>
-        </plugin>
         <!-- Set skipTests = "true" to bypass test phase in build -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
