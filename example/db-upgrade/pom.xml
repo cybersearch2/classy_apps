@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </parent>
 	<artifactId>db-upgrade</artifactId>
 	<packaging>apk</packaging>
@@ -80,7 +80,7 @@
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
       </dependency>
       <dependency>
         <groupId>com.j256.ormlite</groupId>

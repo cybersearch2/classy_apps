@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </parent>
 	<artifactId>example_parent</artifactId>
     <packaging>pom</packaging>
@@ -69,7 +69,7 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>1.0.6</version>
+          <version>1.0.7</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
@@ -82,7 +82,7 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>1.0.6</version>
+          <version>1.0.7</version>
           <type>jar</type>
           <scope>compile</scope>
          </dependency>
