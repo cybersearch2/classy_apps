@@ -45,6 +45,11 @@
       </dependency>  
       <dependency>
         <groupId>au.com.cybersearch2</groupId>
+        <artifactId>classyutils</artifactId>
+        <version>${project.version}</version>
+      </dependency>  
+      <dependency>
+        <groupId>au.com.cybersearch2</groupId>
         <artifactId>classyjava</artifactId>
         <exclusions>
           <exclusion>
