@@ -51,29 +51,23 @@
     <module>compatibility-v7-appcompat</module>
     <module>classyfy</module>
     <module>example</module>
- </modules>
+    <module>telegen</module>
+  </modules>
   <build>
 	<finalName>${project.artifactId}</finalName>
-    <plugins>
-        <plugin>
-          <groupId>com.simpligility.maven.plugins</groupId>
-          <artifactId>android-maven-plugin</artifactId>
-          <version>${android.plugin.version}</version>
-          <configuration>
-            <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
-            <assetsDirectory>${project.basedir}/assets</assetsDirectory>
-            <resourceDirectory>${project.basedir}/res</resourceDirectory>
-            <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
-            <sdk>
-              <platform>${android.platform.version}</platform>
-            </sdk>
-            <undeployBeforeDeploy>true</undeployBeforeDeploy>
-          </configuration>
-          <extensions>true</extensions>
-        </plugin>
-    </plugins>
 	<pluginManagement>
-		<plugins>
+	  <plugins>
+		  <plugin>
+			  <artifactId>maven-jarsigner-plugin</artifactId>
+			  <version>1.2</version>
+		  </plugin>
+		  <plugin>
+			  <artifactId>maven-resources-plugin</artifactId>
+			  <version>2.6</version>
+			  <configuration>
+				  <encoding>UTF-8</encoding>
+			  </configuration>
+		  </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -85,38 +79,105 @@
                 <testTarget>1.6</testTarget>
            </configuration>
           </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            com.simpligility.maven.plugins
-                                        </groupId>
-                                        <artifactId>
-                                            android-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [4.2.0,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>emma</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-		</plugins>
+          <plugin>
+            <groupId>com.simpligility.maven.plugins</groupId>
+            <artifactId>android-maven-plugin</artifactId>
+            <version>${android.plugin.version}</version>
+            <configuration>
+              <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+              <assetsDirectory>${project.basedir}/assets</assetsDirectory>
+              <resourceDirectory>${project.basedir}/res</resourceDirectory>
+              <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
+              <sdk>
+                <platform>${android.platform.version}</platform>
+              </sdk>
+              <undeployBeforeDeploy>true</undeployBeforeDeploy>
+            </configuration>
+            <extensions>true</extensions>
+          </plugin>
+	  	  <plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>1.8</version>
+		  </plugin>
+          <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+          <plugin>
+            <groupId>org.eclipse.m2e</groupId>
+            <artifactId>lifecycle-mapping</artifactId>
+            <version>1.0.0</version>
+            <configuration>
+                <lifecycleMappingMetadata>
+                    <pluginExecutions>
+                        <pluginExecution>
+                            <pluginExecutionFilter>
+                                <groupId>
+                                    com.simpligility.maven.plugins
+                                </groupId>
+                                <artifactId>
+                                    android-maven-plugin
+                                </artifactId>
+                                <versionRange>
+                                    [4.2.0,)
+                                </versionRange>
+                                <goals>
+                                    <goal>manifest-merger</goal>
+                                </goals>
+                            </pluginExecutionFilter>
+                            <action>
+                                <execute>
+                                    <runOnIncremental>false</runOnIncremental>
+                                </execute>
+                            </action>
+                        </pluginExecution>
+                        <pluginExecution>
+                            <pluginExecutionFilter>
+                                <groupId>
+                                    com.simpligility.maven.plugins
+                                </groupId>
+                                <artifactId>
+                                    android-maven-plugin
+                                </artifactId>
+                                <versionRange>
+                                    [4.2.0,)
+                                </versionRange>
+                                <goals>
+                                    <goal>emma</goal>
+                                </goals>
+                            </pluginExecutionFilter>
+                            <action>
+                                <ignore/>
+                            </action>
+                        </pluginExecution>
+                    </pluginExecutions>
+                </lifecycleMappingMetadata>
+            </configuration>
+          </plugin>
+	  </plugins>
 	</pluginManagement>
   </build>
+  <profiles>
+<profile>
+    <id>eclipse</id>
+    <activation>
+        <property>
+            <name>m2e.version</name>
+        </property>
+    </activation>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.simpligility.maven.plugins</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <configuration>
+                    <destinationManifestFile>${project.basedir}/bin/AndroidManifest.xml</destinationManifestFile>
+                    <manifestMerger>
+                        <versionName>${project.version}</versionName>
+                        <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+                    </manifestMerger>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</profile>
+  </profiles>
 </project>

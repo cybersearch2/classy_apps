@@ -46,34 +46,12 @@
 
   <dependencyManagement>
 	<dependencies>
-         <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.8.2</version>
-         </dependency>  
         <dependency>
-          <groupId>au.com.cybersearch2</groupId>
-          <artifactId>classyjava</artifactId>
-          <version>${project.version}</version>
-          <type>jar</type>
-        </dependency>
-        <dependency>
-          <groupId>au.com.cybersearch2</groupId>
-          <artifactId>classyandroid</artifactId>
-          <version>${project.version}</version>
-           <exclusions>
-            <exclusion>
-              <groupId>com.j256.ormlite</groupId>
-              <artifactId>ormlite-jdbc</artifactId>
-            </exclusion>
-          </exclusions>
-          <type>jar</type>
-       </dependency>
-       <dependency>
-          <groupId>com.j256.ormlite</groupId>
-          <artifactId>ormlite-android</artifactId>
-          <version>${ormlite.version}</version>
-        </dependency>
+          <groupId>android</groupId>
+          <artifactId>android</artifactId>
+          <version>${android.sdk.version}</version>
+          <scope>provided</scope>
+        </dependency>  
         <dependency>
           <groupId>com.android.support</groupId>
           <artifactId>appcompat-v7</artifactId>
@@ -92,7 +70,35 @@
           <version>${android.support.version}</version>
           <type>jar</type>
         </dependency>  
-         <dependency>
+        <dependency>
+          <groupId>au.com.cybersearch2</groupId>
+          <artifactId>classyjava</artifactId>
+          <version>${project.version}</version>
+          <type>jar</type>
+        </dependency>
+        <dependency>
+          <groupId>au.com.cybersearch2</groupId>
+          <artifactId>classyandroid</artifactId>
+          <version>${project.version}</version>
+           <exclusions>
+            <exclusion>
+              <groupId>com.j256.ormlite</groupId>
+              <artifactId>ormlite-jdbc</artifactId>
+            </exclusion>
+          </exclusions>
+          <type>jar</type>
+        </dependency>
+        <dependency>
+          <groupId>com.j256.ormlite</groupId>
+          <artifactId>ormlite-android</artifactId>
+          <version>${ormlite.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.11</version>
+        </dependency> 
+        <dependency>
           <groupId>org.mockito</groupId>
           <artifactId>mockito-core</artifactId>
           <version>1.10.19</version>
@@ -106,19 +112,13 @@
           <groupId>org.easytesting</groupId>
           <artifactId>fest-util</artifactId>
           <version>1.2.5</version>
-         </dependency>
+        </dependency>
         <dependency>
           <groupId>com.squareup.dagger</groupId>
           <artifactId>dagger-compiler</artifactId>
           <version>${dagger.version}</version>
-         <optional>true</optional>
+          <optional>true</optional>
         </dependency>
-        <dependency>
-          <groupId>android</groupId>
-          <artifactId>android</artifactId>
-          <version>${android.sdk.version}</version>
-          <scope>provided</scope>
-        </dependency>  
     </dependencies>
   </dependencyManagement>
 </project>
