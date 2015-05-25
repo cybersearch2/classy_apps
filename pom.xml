@@ -18,6 +18,7 @@
   <scm>
     <!--<connection>scm:git:ssh://git@github.com/andrew-bowley/classy-apps.git</connection>-->
     <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-apps.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
   <developers>
     <developer>

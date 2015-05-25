@@ -7,9 +7,8 @@
       <version>1.0.7</version>
   </parent>
 
-  <groupId>au.com.cybersearch2</groupId>
   <artifactId>telegen-parent</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Telegen - Parent</name>
   <description>Tele-Genious Android application demonstrates Expression Pattern Language in action</description>
@@ -21,11 +20,6 @@
        <distribution>repo</distribution>
      </license>
   </licenses>
-  <scm>
-    <url>https://github.com/j256/ormlite-core</url>
-    <connection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</developerConnection>
-  </scm>
   <developers>
     <developer>
       <id>andrew-bowley</id>
@@ -74,13 +68,13 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>${project.version}</version>
+          <version>1.0.7</version>
           <type>jar</type>
         </dependency>
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>${project.version}</version>
+          <version>1.0.7</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
