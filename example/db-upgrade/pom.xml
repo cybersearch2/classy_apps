@@ -114,6 +114,11 @@
 	<build>
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
+        <plugin>
+          <groupId>com.simpligility.maven.plugins</groupId>
+          <artifactId>android-maven-plugin</artifactId>
+          <version>${android.plugin.version}</version>
+    	</plugin>
        <!-- Set skipTests = "true" to bypass test phase in build -->
        <plugin>
             <groupId>org.apache.maven.plugins</groupId>
