@@ -7,7 +7,7 @@
 		<artifactId>telegen-parent</artifactId>
 		<version>1.0.7</version>
 	</parent>
-
+    <version>1.0.0-SNAPSHOT</version>
 	<artifactId>telegen</artifactId>
 	<packaging>apk</packaging>
 	<name>Telegen - Application</name>
@@ -80,6 +80,13 @@
 	<profiles>
 		<profile>
 			<id>release</id>
+    <properties>
+        <sign.keystore>/path/to/your/keystore/keystore.keystore</sign.keystore>
+        <sign.alias>${android.sdk.path}/keystore/c2.keystore</sign.alias>
+        <sign.storepass>${env.C2PASS}</sign.storepass>
+        <sign.keypass>${env.C2PASS}</sign.keypass>
+        <sign.alias>cybersearch2.com.au</sign.alias>
+    </properties>
 			<!-- via this activation the profile is automatically used when the release 
 				is done with the maven release plugin -->
 			<activation>
@@ -144,7 +151,7 @@
 							</manifest>
 							<!-- Change to true to skip Proguard -->
 							<proguard>
-								<skip>false</skip>
+								<skip>true</skip>
 								<config>proguard.conf</config>
 							</proguard>
 						</configuration>

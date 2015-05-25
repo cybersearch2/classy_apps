@@ -16,9 +16,8 @@
      </license>
   </licenses>
   <scm>
-    <url>https://github.com/j256/ormlite-core</url>
-    <connection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</developerConnection>
+    <!--<connection>scm:git:ssh://git@github.com/andrew-bowley/classy-apps.git</connection>-->
+    <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-apps.git</developerConnection>
   </scm>
   <developers>
     <developer>
@@ -36,6 +35,8 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- ANDROID_HOME environment variable -->
+    <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.2.1</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
     <android.platform.version>22</android.platform.version>

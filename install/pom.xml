@@ -36,8 +36,6 @@
     </developer>
   </developers>
   <properties>
-    <!-- ANDROID_HOME environment variable -->
-    <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <!-- Android home location for Support Library - can override on command line for alternative to ANDROID_HOME -->
     <android.support.path>${android.sdk.path}</android.support.path>
     <!-- v7 Support Library absolute path -->
