@@ -163,4 +163,19 @@
       </plugins>
     </pluginManagement>
   </build>
+
+    <profiles>
+        <profile>
+            <!-- the standard profile runs the instrumentation tests -->
+            <id>standard</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>android-hello-two-dbs</module>
+                <module>android-hello-two-dbs-v2</module>
+                <module>db-upgrade</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

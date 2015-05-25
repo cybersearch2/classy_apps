@@ -129,18 +129,6 @@
                 <module>classyfy-tests</module>
 			</modules>
 		</profile>
-		<profile>
-			<!-- the release profile does sign, proguard, zipalign ... but does not 
-				run instrumentation tests -->
-			<id>release</id>
-			<!-- via this activation the profile is automatically used when the release 
-				is done with the maven release plugin -->
-			<activation>
-			</activation>
-			<modules>
-                <module>classyfy-application</module>
-			</modules>
-		</profile>
 	</profiles>
 
 </project>
