@@ -136,10 +136,6 @@
 			<!-- via this activation the profile is automatically used when the release 
 				is done with the maven release plugin -->
 			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>false</value>
-				</property>
 			</activation>
 			<modules>
                 <module>classyfy-application</module>
