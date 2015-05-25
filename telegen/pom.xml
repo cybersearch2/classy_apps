@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+  <artifactId>classy_apps</artifactId>
+      <groupId>au.com.cybersearch2</groupId>
+      <version>1.0.7</version>
+  </parent>
+
+  <groupId>au.com.cybersearch2</groupId>
+  <artifactId>telegen-parent</artifactId>
+  <version>1.0.7</version>
+  <packaging>pom</packaging>
+  <name>Telegen - Parent</name>
+  <description>Tele-Genious Android application demonstrates Expression Pattern Language in action</description>
+  <url>http://cybersearch2.com.au</url>
+  <licenses>
+     <license>
+       <name>GPLv3</name>
+       <url>http://www.gnu.org/licenses/</url>
+       <distribution>repo</distribution>
+     </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/j256/ormlite-core</url>
+    <connection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/andrew-bowley/classy-tools.git</developerConnection>
+  </scm>
+  <developers>
+    <developer>
+      <id>andrew-bowley</id>
+      <name>Andrew Bowley</name>
+      <url>http://cybersearch2.com.au/</url>
+      <organization>cybersearch2</organization>
+      <organizationUrl>http://cybersearch2.com.au/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+10</timezone>
+    </developer>
+  </developers>
+  <modules>
+    <module>telegen-application</module>
+    <module>telegen-tests</module>
+  </modules>
+
+	<dependencyManagement>
+	  <dependencies>
+        <dependency>
+          <groupId>android</groupId>
+          <artifactId>android</artifactId>
+          <version>${android.sdk.version}</version>
+          <scope>provided</scope>
+        </dependency>  
+        <dependency>
+          <groupId>com.android.support</groupId>
+          <artifactId>appcompat-v7</artifactId>
+          <version>${android.support.version}</version>
+          <type>aar</type>
+        </dependency>  
+        <dependency>
+          <groupId>com.android.support</groupId>
+          <artifactId>support-v7-appcompat</artifactId>
+          <version>${android.support.version}</version>
+          <type>jar</type>
+        </dependency>  
+        <dependency>
+          <groupId>com.android.support</groupId>
+          <artifactId>support-v4</artifactId>
+          <version>${android.support.version}</version>
+          <type>jar</type>
+        </dependency>  
+        <dependency>
+          <groupId>au.com.cybersearch2</groupId>
+          <artifactId>classyjava</artifactId>
+          <version>${project.version}</version>
+          <type>jar</type>
+        </dependency>
+        <dependency>
+          <groupId>au.com.cybersearch2</groupId>
+          <artifactId>classyandroid</artifactId>
+          <version>${project.version}</version>
+           <exclusions>
+            <exclusion>
+              <groupId>com.j256.ormlite</groupId>
+              <artifactId>ormlite-jdbc</artifactId>
+            </exclusion>
+          </exclusions>
+          <type>jar</type>
+        </dependency>
+        <dependency>
+          <groupId>com.j256.ormlite</groupId>
+          <artifactId>ormlite-android</artifactId>
+          <version>${ormlite.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.1</version>
+         </dependency> 
+         <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-core</artifactId>
+          <version>1.10.19</version>
+        </dependency>
+        <dependency>
+          <groupId>org.easytesting</groupId>
+          <artifactId>fest-assert-core</artifactId>
+          <version>2.0M10</version>
+        </dependency>
+        <dependency>
+          <groupId>org.easytesting</groupId>
+          <artifactId>fest-util</artifactId>
+          <version>1.2.5</version>
+        </dependency>
+        <dependency>
+          <groupId>com.squareup.dagger</groupId>
+          <artifactId>dagger-compiler</artifactId>
+          <version>${dagger.version}</version>
+          <optional>true</optional>
+        </dependency>
+	  </dependencies>
+	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<!-- the standard profile runs the instrumentation tests -->
+			<id>standard</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+                <module>telegen-application</module>
+                <module>telegen-tests</module>
+			</modules>
+		</profile>
+		<profile>
+			<!-- the release profile does sign, proguard, zipalign ... but does not 
+				run instrumentation tests -->
+			<id>release</id>
+			<!-- via this activation the profile is automatically used when the release 
+				is done with the maven release plugin -->
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<modules>
+				<module>telegen-application</module>
+			</modules>
+		</profile>
+	</profiles>
+
+</project>
