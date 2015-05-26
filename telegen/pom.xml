@@ -39,10 +39,8 @@
     <module>telegen-tests</module>
   </modules>
   <scm>
-    <!--<connection>scm:git:ssh://git@github.com/andrew-bowley/classy_apps.git</connection>-->
-    <connection>scm:git:ssh://@microserver/opt/git/releases.git</connection>
     <developerConnection>scm:git:ssh://git@gitserver/opt/git/classy_apps.git</developerConnection>
-    <tag>telegen-parent-1.0.2</tag>
+    <tag>telegen-parent-1.0.3</tag>
   </scm>
   
 	<dependencyManagement>

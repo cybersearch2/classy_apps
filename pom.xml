@@ -16,8 +16,6 @@
      </license>
   </licenses>
   <scm>
-    <!--<connection>scm:git:ssh://git@github.com/andrew-bowley/classy_apps.git</connection>-->
-    <connection>scm:git:ssh://@microserver:/opt/git/releases.git</connection>
     <developerConnection>scm:git:ssh://git@gitserver:/opt/git/classy_apps.git</developerConnection>
     <tag>classy-apps-1.0.8</tag>
   </scm>
