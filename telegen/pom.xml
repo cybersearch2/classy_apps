@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>telegen-parent</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
   <packaging>pom</packaging>
   <name>Telegen - Parent</name>
   <description>Tele-Genious Android application demonstrates Expression Pattern Language in action</description>
