@@ -80,13 +80,13 @@
 	<profiles>
 		<profile>
 			<id>release</id>
-    <properties>
-        <sign.keystore>${android.sdk.path}/keystore/c2.keystore</sign.keystore>
-        <sign.alias>cybersearch2.com.au</sign.alias>
-        <sign.storepass>${env.C2PASS}</sign.storepass>
-        <sign.keypass>${env.C2PASS}</sign.keypass>
-        <sign.alias>cybersearch2.com.au</sign.alias>
-    </properties>
+            <properties>
+                <sign.keystore>${android.sdk.path}/keystore/c2.keystore</sign.keystore>
+                <sign.alias>cybersearch2.com.au</sign.alias>
+                <sign.storepass>${env.C2PASS}</sign.storepass>
+                <sign.keypass>${env.C2PASS}</sign.keypass>
+                <sign.alias>cybersearch2.com.au</sign.alias>
+            </properties>
 			<!-- via this activation the profile is automatically used when the release 
 				is done with the maven release plugin -->
 			<activation>
@@ -151,7 +151,7 @@
 							</manifest>
 							<!-- Change to true to skip Proguard -->
 							<proguard>
-								<skip>true</skip>
+								<skip>false</skip>
 								<config>proguard.conf</config>
 							</proguard>
 						</configuration>
@@ -170,7 +170,7 @@
 									<goal>zipalign</goal>
 								</goals>
 							</execution>
-						</executions>
+                        </executions>
 					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
