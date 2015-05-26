@@ -5,11 +5,11 @@
   <parent>
 	  <groupId>au.com.cybersearch2</groupId>
 	  <artifactId>telegen-parent</artifactId>
-	  <version>1.0.3</version>
+	  <version>1.0.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>telegen-it</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
   <packaging>apk</packaging>
   <name>Telegen-it - Integration tests</name>
 
@@ -18,14 +18,14 @@
 		<groupId>au.com.cybersearch2</groupId>
 		<artifactId>telegen</artifactId>
 		<type>apk</type>
-		<version>1.0.3</version>
+		<version>1.0.4-SNAPSHOT</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>
 		<groupId>au.com.cybersearch2</groupId>
 		<artifactId>telegen</artifactId>
 		<type>jar</type>
-		<version>1.0.3</version>
+		<version>1.0.4-SNAPSHOT</version>
 		<scope>provided</scope>
 	</dependency>
     <dependency>
