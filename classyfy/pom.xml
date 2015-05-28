@@ -90,20 +90,33 @@
         </dependency>
     </dependencies>
   </dependencyManagement>
-  <profiles>
-	<profile>
-		<!-- Do not release this app -->
-		<id>release</id>
-		<!-- via this activation the profile is automatically used when the release 
-			is done with the maven release plugin -->
-		<activation>
-			<property>
-				<name>performRelease</name>
-				<value>true</value>
-			</property>
-		</activation>
-		<modules>
-		</modules>
-	</profile>
-  </profiles>
+    <profiles>
+        <profile>
+            <!-- the standard profile runs the instrumentation tests -->
+            <id>standard</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>classyfy-application</module>
+                <module>classyfy-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <!-- the release profile does sign, proguard, zipalign ... but does not 
+                run instrumentation tests -->
+            <id>release</id>
+            <!-- via this activation the profile is automatically used when the release 
+                is done with the maven release plugin -->
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>classyfy-application</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

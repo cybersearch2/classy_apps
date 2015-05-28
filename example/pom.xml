@@ -130,20 +130,5 @@
       </plugins>
     </pluginManagement>
   </build>
-  <profiles>
-	<profile>
-		<!-- Do not release this app -->
-		<id>release</id>
-		<!-- via this activation the profile is automatically used when the release 
-			is done with the maven release plugin -->
-		<activation>
-			<property>
-				<name>performRelease</name>
-				<value>true</value>
-			</property>
-		</activation>
-		<modules>
-		</modules>
-	</profile>
   </profiles>
 </project>
