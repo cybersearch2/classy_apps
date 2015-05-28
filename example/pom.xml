@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.7-SNAPSHOT</version>
+        <version>1.0.7</version>
     </parent>
 	<artifactId>example_parent</artifactId>
     <packaging>pom</packaging>
@@ -120,7 +120,7 @@
 	  								</goals>
 	  							</pluginExecutionFilter>
 	  							<action>
-	  								<ignore></ignore>
+	  								<ignore />
 	  							</action>
 	  						</pluginExecution>
 	  					</pluginExecutions>

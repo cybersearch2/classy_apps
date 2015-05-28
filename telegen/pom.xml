@@ -4,7 +4,7 @@
   <parent>
   <artifactId>classy_apps</artifactId>
       <groupId>au.com.cybersearch2</groupId>
-      <version>1.0.7-SNAPSHOT</version>
+      <version>1.0.7</version>
   </parent>
 
   <artifactId>telegen-parent</artifactId>
@@ -40,7 +40,7 @@
   <!-- This SCM needed for releasing this module on it's own -->
   <scm>
     <developerConnection>scm:git:ssh://git@gitserver/opt/git/classy_apps.git</developerConnection>
-    <tag>telegen-parent-1.0.7</tag>
+    <tag>classy_apps-1.0.7</tag>
   </scm>
   <properties>
     <classy_tools.version>${project.parent.version}</classy_tools.version>
