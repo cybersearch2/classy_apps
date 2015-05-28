@@ -3,7 +3,7 @@
   <parent>
      <artifactId>classyfy_parent</artifactId>
      <groupId>au.com.cybersearch2</groupId>
-     <version>1.0.7</version>
+     <version>1.0.8-SNAPSHOT</version>
   </parent>
   <artifactId>classyfy_tests</artifactId>
   <packaging>apk</packaging>

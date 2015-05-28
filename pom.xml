@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.cybersearch2</groupId>
   <artifactId>classy_apps</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.8-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Classy Apps Parent</name>
   <description>Android applications built with ClassyTools</description>
@@ -17,7 +17,7 @@
   </licenses>
   <scm>
     <developerConnection>scm:git:ssh://git@gitserver:/opt/git/classy_apps.git</developerConnection>
-    <tag>classy_apps-1.0.7</tag>
+    <tag>HEAD</tag>
   </scm>
   <distributionManagement>
     <repository>
