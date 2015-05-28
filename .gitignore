@@ -1,3 +1,4 @@
 /.settings/
 release.properties
 /pom.xml.*
+/target/
