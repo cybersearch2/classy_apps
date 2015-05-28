@@ -90,9 +90,10 @@
       <artifactId>android</artifactId>
       <scope>provided</scope>
     </dependency>  
-     <dependency>
+    <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>appcompat-v7</artifactId>
+      <version>${android.support.version}</version>
       <type>aar</type>
       <scope>provided</scope>
     </dependency>

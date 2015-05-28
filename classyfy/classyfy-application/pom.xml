@@ -97,16 +97,19 @@
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>appcompat-v7</artifactId>
+      <version>${android.support.version}</version>
       <type>aar</type>
     </dependency>  
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>support-v7-appcompat</artifactId>
+      <version>${android.support.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>support-v4</artifactId>
+      <version>${android.support.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
