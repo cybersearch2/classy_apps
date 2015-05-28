@@ -5,7 +5,7 @@
   <parent>
     <groupId>au.com.cybersearch2</groupId>
     <artifactId>classy_apps</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.7-SNAPSHOT</version>
   </parent>
   <groupId>com.android.support</groupId>
   <artifactId>appcompat-v7</artifactId>
@@ -45,7 +45,6 @@
 		</plugin>
 		<plugin>
             <artifactId>maven-clean-plugin</artifactId>
-            <version>2.6.1</version>
             <configuration>
               <skip>true</skip>
             </configuration>
@@ -67,7 +66,6 @@
           <plugins>
               <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.6.1</version>
                 <executions>
                   <execution>
                     <id>clean-dependencies</id>

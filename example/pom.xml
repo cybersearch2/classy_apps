@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.7</version>
+        <version>1.0.7-SNAPSHOT</version>
     </parent>
 	<artifactId>example_parent</artifactId>
     <packaging>pom</packaging>
@@ -42,29 +42,10 @@
 
   <dependencyManagement>
 	<dependencies>
-        <!-- Prevent "Ignoring InnerClasses attribute for an anonymous inner class" Dex warning -->
-        <dependency>
-    	  <groupId>commons-logging</groupId>
-    	  <artifactId>commons-logging</artifactId>
-          <version>1.1.1</version>
-          <scope>provided</scope>
-        </dependency>    
-        <dependency>
-    	  <groupId>commons-collections</groupId>
-    	  <artifactId>commons-collections</artifactId>
-    	  <version>3.2</version>
-          <scope>provided</scope>
-        </dependency>
-         <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.8.2</version>
-          <scope>test</scope>
-        </dependency>  
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>1.0.7</version>
+          <version>${project.version}</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
@@ -72,14 +53,17 @@
             </exclusion>
           </exclusions>
           <type>jar</type>
-          <scope>compile</scope>
          </dependency>
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
+          <artifactId>classyutils</artifactId>
+          <version>${project.version}</version>
+        </dependency>  
+        <dependency>
+          <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>1.0.7</version>
+          <version>${project.version}</version>
           <type>jar</type>
-          <scope>compile</scope>
          </dependency>
         <dependency>
           <groupId>com.j256.ormlite</groupId>
@@ -103,23 +87,6 @@
           <artifactId>compatibility-v4</artifactId>
           <version>${android.support.version}</version>
         </dependency>  
-        <dependency>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-core</artifactId>
-          <version>1.10.19</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.easytesting</groupId>
-          <artifactId>fest-assert-core</artifactId>
-          <version>2.0M10</version>
-        </dependency>
-        <dependency>
-          <groupId>com.squareup.dagger</groupId>
-          <artifactId>dagger-compiler</artifactId>
-          <version>${dagger.version}</version>
-         <optional>true</optional>
-        </dependency>
         <dependency>
           <groupId>android</groupId>
           <artifactId>android</artifactId>
@@ -163,19 +130,20 @@
       </plugins>
     </pluginManagement>
   </build>
-
-    <profiles>
-        <profile>
-            <!-- the standard profile runs the instrumentation tests -->
-            <id>standard</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>android-hello-two-dbs</module>
-                <module>android-hello-two-dbs-v2</module>
-                <module>db-upgrade</module>
-            </modules>
-        </profile>
-    </profiles>
+  <profiles>
+	<profile>
+		<!-- Do not release this app -->
+		<id>release</id>
+		<!-- via this activation the profile is automatically used when the release 
+			is done with the maven release plugin -->
+		<activation>
+			<property>
+				<name>performRelease</name>
+				<value>true</value>
+			</property>
+		</activation>
+		<modules>
+		</modules>
+	</profile>
+  </profiles>
 </project>

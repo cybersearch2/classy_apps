@@ -1,2 +1,3 @@
-release.properties
 /.settings/
+release.properties
+/pom.xml.*

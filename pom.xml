@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.cybersearch2</groupId>
   <artifactId>classy_apps</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Classy Apps Parent</name>
   <description>Android applications built with ClassyTools</description>
@@ -17,8 +17,20 @@
   </licenses>
   <scm>
     <developerConnection>scm:git:ssh://git@gitserver:/opt/git/classy_apps.git</developerConnection>
-    <tag>classy-apps-1.0.8</tag>
+    <tag>HEAD</tag>
   </scm>
+  <distributionManagement>
+    <repository>
+        <id>${release.repo.id}</id>
+        <name>repo-releases</name>
+        <url>${release.repo.url}</url>
+    </repository>
+    <snapshotRepository>
+        <id>${snapshot.repo.id}</id>
+        <name>repo-snapshots</name>
+        <url>${snapshot.repo.url}</url>
+    </snapshotRepository>
+  </distributionManagement>  
   <developers>
     <developer>
       <id>andrew-bowley</id>
@@ -47,6 +59,10 @@
     <robolectric.version>3.0-rc2</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <dagger.version>1.2.2</dagger.version>
+    <release.repo.id>artifactory</release.repo.id>
+    <release.repo.url>http://microserver/artifactory/libs-release-local</release.repo.url>
+    <snapshot.repo.id>artifactory</snapshot.repo.id>
+    <snapshot.repo.url>http://microserver/artifactory/libs-snapshot-local</snapshot.repo.url>
   </properties>
   <modules>
     <module>compatibility-v7-appcompat</module>
@@ -54,10 +70,45 @@
     <module>example</module>
     <module>telegen</module>
   </modules>
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.11</version>
+        </dependency>
+        <dependency>
+          <groupId>org.easytesting</groupId>
+          <artifactId>fest-assert-core</artifactId>
+          <version>2.0M10</version>
+        </dependency>
+        <dependency>
+          <groupId>org.easytesting</groupId>
+          <artifactId>fest-util</artifactId>
+          <version>1.2.5</version>
+        </dependency>
+         <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-core</artifactId>
+          <version>1.10.19</version>
+        </dependency>
+        <dependency>
+          <groupId>com.squareup.dagger</groupId>
+          <artifactId>dagger-compiler</artifactId>
+          <version>${dagger.version}</version>
+          <optional>true</optional>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
   <build>
 	<finalName>${project.artifactId}</finalName>
 	<pluginManagement>
 	  <plugins>
+           <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-clean-plugin</artifactId>
+               <version>2.6.1</version>
+           </plugin>
 		  <plugin>
 			  <artifactId>maven-release-plugin</artifactId>
 			  <version>2.5.2</version>
@@ -76,6 +127,21 @@
 				  <encoding>UTF-8</encoding>
 			  </configuration>
 		  </plugin>
+		  <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>2.9</version>
+		  </plugin>
+           <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.17</version>
+            </plugin>
+           <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-deploy-plugin</artifactId>
+              <version>2.8.2</version>
+            </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -164,28 +230,28 @@
 	</pluginManagement>
   </build>
   <profiles>
-<profile>
-    <id>eclipse</id>
-    <activation>
-        <property>
-            <name>m2e.version</name>
-        </property>
-    </activation>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.simpligility.maven.plugins</groupId>
-                <artifactId>android-maven-plugin</artifactId>
-                <configuration>
-                    <destinationManifestFile>${project.basedir}/bin/AndroidManifest.xml</destinationManifestFile>
-                    <manifestMerger>
-                        <versionName>${project.version}</versionName>
-                        <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
-                    </manifestMerger>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</profile>
+    <profile>
+        <id>eclipse</id>
+        <activation>
+            <property>
+                <name>m2e.version</name>
+            </property>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.simpligility.maven.plugins</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <configuration>
+                        <destinationManifestFile>${project.basedir}/bin/AndroidManifest.xml</destinationManifestFile>
+                        <manifestMerger>
+                            <versionName>${project.version}</versionName>
+                            <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+                        </manifestMerger>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
   </profiles>
 </project>

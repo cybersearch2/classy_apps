@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.0.7</version>
+        <version>1.0.7-SNAPSHOT</version>
     </parent>
 	<artifactId>android-hello-two-dbs</artifactId>
 	<packaging>apk</packaging>
@@ -34,26 +34,16 @@
     </developers>
 	<dependencies>
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <scope>test</scope>
-      </dependency>  
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+        <scope>provided</scope>
+      </dependency>
       <dependency>
-        <groupId>au.com.cybersearch2</groupId>
-        <artifactId>classyutils</artifactId>
-        <version>${project.version}</version>
-      </dependency>  
-      <dependency>
-        <groupId>au.com.cybersearch2</groupId>
-        <artifactId>classyjava</artifactId>
-        <exclusions>
-          <exclusion>
-              <groupId>*</groupId>
-              <artifactId>*</artifactId>
-            </exclusion>
-        </exclusions>
-        <type>jar</type>
-        <scope>compile</scope>
+    	<groupId>commons-collections</groupId>
+    	<artifactId>commons-collections</artifactId>
+    	<version>3.2</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>au.com.cybersearch2</groupId>
@@ -76,12 +66,17 @@
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
-        <version>1.0.7</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.j256.ormlite</groupId>
         <artifactId>ormlite-android</artifactId>
       </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+      </dependency>  
       <!-- Exclude Support Library as already have android.support:compatibility-v4 above -->
       <dependency>
         <groupId>org.robolectric</groupId>
@@ -91,6 +86,14 @@
           <exclusion>
             <groupId>com.android.support</groupId>
             <artifactId>support-v4</artifactId>        
+          </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>        
+          </exclusion>
+          <exclusion>
+           <groupId>org.apache.maven</groupId>
+           <artifactId>maven-ant-tasks</artifactId>
           </exclusion>
         </exclusions>
         <scope>test</scope>
@@ -107,7 +110,7 @@
         <scope>provided</scope>
       </dependency>  
       <dependency>
-          <groupId>com.squareup.dagger</groupId>
+         <groupId>com.squareup.dagger</groupId>
          <artifactId>dagger-compiler</artifactId>
          <optional>true</optional>
       </dependency>
@@ -124,7 +127,6 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.17</version>
             <configuration>
              <argLine> -XX:-UseSplitVerifier</argLine>
              <skipTests>false</skipTests>
@@ -140,7 +142,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
                     <executions>
                         <execution>
                             <id>libs</id>
@@ -184,7 +185,6 @@
                 </plugin>
                 <plugin>
                   <artifactId>maven-clean-plugin</artifactId>
-                  <version>2.6.1</version>
                   <configuration>
                     <filesets>
                       <fileset>
