@@ -122,7 +122,6 @@
         <plugin>
           <groupId>com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
-          <version>${android.plugin.version}</version>
           <configuration>
             <test>
               <skip>true</skip>

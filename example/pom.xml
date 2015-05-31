@@ -45,7 +45,7 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyjava</artifactId>
-          <version>${project.version}</version>
+          <version>${classy_tools.version}</version>
            <exclusions>
             <exclusion>
               <groupId>com.j256.ormlite</groupId>
@@ -57,12 +57,12 @@
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyutils</artifactId>
-          <version>${project.version}</version>
+          <version>${classy_tools.version}</version>
         </dependency>  
         <dependency>
           <groupId>au.com.cybersearch2</groupId>
           <artifactId>classyandroid</artifactId>
-          <version>${project.version}</version>
+          <version>${classy_tools.version}</version>
           <type>jar</type>
          </dependency>
         <dependency>

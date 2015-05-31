@@ -6,7 +6,6 @@
     <artifactId>classy_apps</artifactId>
     <version>1.0.8-SNAPSHOT</version>
   </parent>
-  <groupId>com.android.support</groupId>
   <artifactId>appcompat-v7</artifactId>
   <packaging>pom</packaging>
   <name>appcompat-v7</name>

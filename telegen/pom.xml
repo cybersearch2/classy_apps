@@ -39,13 +39,12 @@
   </modules>
   <!-- This SCM needed for releasing this module on it's own -->
   <scm>
+    <url>https://github.com/andrew-bowley/classy_apps</url>
+    <connection>scm:git:ssh://git@github.com/andrew-bowley/classy_apps.git</connection>
     <developerConnection>scm:git:ssh://git@gitserver/opt/git/classy_apps.git</developerConnection>
-    <tag>telegen-parent-1.0.7</tag>
+    <tag>HEAD</tag>
   </scm>
-  <properties>
-    <classy_tools.version>${project.parent.version}</classy_tools.version>
-  </properties>
-	<dependencyManagement>
+  <dependencyManagement>
 	  <dependencies>
         <dependency>
           <groupId>android</groupId>
@@ -77,9 +76,9 @@
           <version>${ormlite.version}</version>
         </dependency>
 	  </dependencies>
-	</dependencyManagement>
+  </dependencyManagement>
 
-	<profiles>
+  <profiles>
 		<profile>
 			<!-- the standard profile runs the instrumentation tests -->
 			<id>standard</id>
@@ -107,6 +106,6 @@
 				<module>telegen-application</module>
 			</modules>
 		</profile>
-	</profiles>
+  </profiles>
 
 </project>

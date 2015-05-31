@@ -75,7 +75,7 @@
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
-        <version>${project.version}</version>
+        <version>${classy_tools.version}</version>
       </dependency>
       <dependency>
         <groupId>com.j256.ormlite</groupId>
@@ -109,6 +109,7 @@
         <groupId>com.squareup.dagger</groupId>
         <artifactId>dagger-compiler</artifactId>
         <optional>true</optional>
+        <version>${dagger.version}</version>
       </dependency>
  	</dependencies>
 	<build>
@@ -117,7 +118,6 @@
         <plugin>
           <groupId>com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
-          <version>${android.plugin.version}</version>
     	</plugin>
        <!-- Set skipTests = "true" to bypass test phase in build -->
        <plugin>
