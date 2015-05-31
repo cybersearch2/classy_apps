@@ -5,7 +5,7 @@
   <parent>
 	  <groupId>au.com.cybersearch2</groupId>
 	  <artifactId>telegen-parent</artifactId>
-	  <version>1.0.10-SNAPSHOT</version>
+	  <version>1.0.8</version>
   </parent>
 
   <artifactId>telegen-it</artifactId>
