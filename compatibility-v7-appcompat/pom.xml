@@ -4,7 +4,7 @@
   <parent>
     <groupId>au.com.cybersearch2</groupId>
     <artifactId>classy_apps</artifactId>
-    <version>1.0.9-SNAPSHOT</version>
+    <version>1.10-SNAPSHOT</version>
   </parent>
   <artifactId>appcompat-v7</artifactId>
   <packaging>pom</packaging>
