@@ -3,14 +3,14 @@ package au.com.cybersearch2.telegen.test;
 import android.test.ActivityInstrumentationTestCase2;
 import au.com.cybersearch2.telegen.*;
 
-public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<HelloAndroidActivity> {
+public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     public HelloAndroidActivityTest() {
-        super(HelloAndroidActivity.class); 
+        super(MainActivity.class); 
     }
 
     public void testActivity() {
-        HelloAndroidActivity activity = getActivity();
+        MainActivity activity = getActivity();
         assertNotNull(activity);
     }
 }
