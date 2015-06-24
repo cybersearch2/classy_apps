@@ -23,11 +23,13 @@ import java.util.TreeSet;
 
 import android.app.Dialog;
 import android.app.SearchManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -40,12 +42,16 @@ import android.widget.Toast;
 import au.com.cybersearch2.classyfy.data.FieldDescriptor;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classynode.NodeFinder;
+import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classyjpa.entity.PersistenceLoader;
+import au.com.cybersearch2.classytask.BackgroundTask;
 import au.com.cybersearch2.classytask.Executable;
+import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyfy.data.RecordModel;
+import au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher;
 
 public class MainActivity extends ActionBarActivity 
 {
@@ -103,7 +109,40 @@ public class MainActivity extends ActionBarActivity
 		adapter = new PropertiesListAdapter(this);
 		nodeDetailsFragment.setListAdapter(adapter);
 		loader = new PersistenceLoader();
-		parseIntent(getIntent());
+		final ClassyFyLauncher classyfyLauncher = (ClassyFyLauncher)getApplication();
+        // Complete initialization in background
+        BackgroundTask starter =  new BackgroundTask(this)
+        {
+            /**
+             * The background task
+             * @see au.com.cybersearch2.classytask.BackgroundTask#loadInBackground()
+             */
+            @Override
+            public Boolean loadInBackground()
+            {
+                WorkStatus status = classyfyLauncher.waitForApplicationSetup();
+                if (status != WorkStatus.FINISHED)
+                    return Boolean.FALSE;
+                //DI.inject(MainActivity.this);
+                return Boolean.TRUE;
+            }
+
+            @Override
+            public void onLoadComplete(Loader<Boolean> loader, Boolean success)
+            {
+                if (!success)
+                    displayToast("ClassyFy failed to start due to unexpected error");
+                else
+                {
+                    parseIntent(getIntent());
+                    // Call ClassyFyProvider to wait for SearchEngine start
+                    ContentResolver contentResolver  = getContentResolver();
+                    contentResolver.getType(ClassyFySearchEngine.CONTENT_URI);
+                }
+
+            }};
+         starter.onStartLoading();
+		
 	}
 
 	@Override

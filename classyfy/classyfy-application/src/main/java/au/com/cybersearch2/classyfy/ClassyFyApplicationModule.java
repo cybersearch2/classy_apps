@@ -15,10 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
+import android.database.sqlite.SQLiteOpenHelper;
 import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
+import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.AndroidPersistenceEnvironment;
 import au.com.cybersearch2.classyjpa.AndroidPersistenceFactory;
@@ -30,13 +31,19 @@ import dagger.Provides;
  * @author Andrew Bowley
  * 08/07/2014
  */
-@Module(injects = { ClassyFyStartup.class, ClassyFyProvider.class }, includes = ClassyFyEnvironmentModule.class)
+@Module(injects = { 
+    ClassyFyStartup.class, 
+    ClassyFyProvider.class,
+    ClassyFySearchEngine.class 
+    }, includes = ClassyFyEnvironmentModule.class)
 public class ClassyFyApplicationModule implements ApplicationModule
 {
-    @Provides @Singleton @Named(ClassyFyApplication.PU_NAME)
-    AndroidPersistenceEnvironment provideAndroidPersistenceEnvironment()
+    @Provides @Singleton SQLiteOpenHelper provideSQLiteOpenHelper()
     {
-        return new AndroidPersistenceFactory().getAndroidPersistenceEnvironment(ClassyFyApplication.PU_NAME);
+        AndroidPersistenceFactory androidPersistenceFactory = 
+            new AndroidPersistenceFactory();
+        AndroidPersistenceEnvironment androidPersistence = 
+            androidPersistenceFactory.getAndroidPersistenceEnvironment(ClassyFyApplication.PU_NAME);
+        return androidPersistence.getSQLiteOpenHelper();
     }
-
 }

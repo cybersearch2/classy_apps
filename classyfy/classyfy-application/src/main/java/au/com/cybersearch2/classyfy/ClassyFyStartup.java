@@ -18,17 +18,15 @@ package au.com.cybersearch2.classyfy;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.util.Log;
 import au.com.cybersearch2.classyapp.ContextModule;
-import au.com.cybersearch2.classynode.EntityByNodeIdGenerator;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classyfy.data.RecordFolder;
-import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classynode.EntityByNodeIdGenerator;
 import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.classytask.ThreadHelper;
 import au.com.cybersearch2.classytask.WorkStatus;
@@ -45,7 +43,11 @@ import com.j256.ormlite.dao.DaoManager;
  */
 public class ClassyFyStartup
 {
-   
+    public interface Callback
+    {
+        void onStartupFinished();
+    }
+    
     public static final String TAG = "ClassyFyStartup";
     /** Application  Dependency Injection configuration */
     protected ClassyFyApplicationModule classyFyApplicationModule;
@@ -68,7 +70,7 @@ public class ClassyFyStartup
      * Start application
      * @param context Android Context
      */
-    public void start(final Context context)
+    public void start(final Context context, final Callback callback)
     {
     	// Clear out ORMLite internal caches.
         DaoManager.clearCache();
@@ -103,15 +105,12 @@ public class ClassyFyStartup
                 {   // All SQLExceptions are rethrown as PersistenceExceptions
                     Log.e(TAG, "Database initialisation failed", e);
                 }
+                if (status == WorkStatus.FINISHED)
+                    callback.onStartupFinished();
                 applicationSetup.setStatus(status);
                 synchronized(applicationSetup)
                 {
                     applicationSetup.notifyAll();
-                }
-                if (status == WorkStatus.FINISHED)
-                {   // Call ClassyFyProvider to start SearchEngine
-                    ContentResolver contentResolver  = context.getContentResolver();
-                    contentResolver.getType(ClassyFySearchEngine.CONTENT_URI);
                 }
             }
         };
@@ -135,19 +134,15 @@ public class ClassyFyStartup
      */
     public WorkStatus waitForApplicationSetup()
     {
-        if ((applicationSetup.getStatus() != WorkStatus.FINISHED) &&
-             (applicationSetup.getStatus() != WorkStatus.FAILED))
-            synchronized(applicationSetup)
-            {
-                try
-                {
-                    applicationSetup.wait();
-                }
-                catch (InterruptedException e)
-                {
-                }
-            }
-        return applicationSetup.getStatus();
+        try
+        {
+            return applicationSetup.waitForTask();
+        }
+        catch (InterruptedException e)
+        {
+            Log.e(TAG, "ClassyFy interrupted on startup", e);
+        }
+        return WorkStatus.FAILED;
     }
     
 }

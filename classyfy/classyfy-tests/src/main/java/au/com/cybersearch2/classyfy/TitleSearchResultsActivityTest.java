@@ -71,7 +71,7 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
             System.setProperty( "dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath() );
             System.setProperty("java.util.logging.config.file", "src/logging.properties");
             super.setUp();
-            assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
+            //assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         }
         PersistenceContext persistenceContext = new PersistenceContext();
         PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);

@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanLoaderTest;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProviderTest;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngineTest;
 import au.com.cybersearch2.classyfy.test.SqlParserTest;
 import au.com.cybersearch2.classyfy.xml.XmlParserTest;
@@ -32,6 +33,7 @@ import au.com.cybersearch2.classyfy.xml.XmlParserTest;
 @Suite.SuiteClasses({
     MainActivityTest.class,
     TitleSearchResultsActivityTest.class,
+    ClassyFyProviderTest.class,
     ClassyFySearchEngineTest.class,
     SqlParserTest.class,
     XmlParserTest.class,

@@ -16,56 +16,98 @@
 package au.com.cybersearch2.classyfy;
 
 import android.app.Application;
-import android.content.Context;
+import android.util.Log;
+import au.com.cybersearch2.classyapp.PrimaryContentProvider;
+import au.com.cybersearch2.classyfts.FtsEngine;
 import au.com.cybersearch2.classyfy.data.RecordModel;
+import au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher;
+import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classynode.Node;
-import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.classytask.WorkStatus;
 
-public class ClassyFyApplication extends Application
+/**
+ * ClassyFyApplication
+ * Launches ClassyFy persistence
+ * @author Andrew Bowley
+ * 19 Jun 2015
+ */
+public class ClassyFyApplication extends Application implements ClassyFyLauncher
 {
-
+    public static final String TAG = "ClassyFyApplication";
+    /** Persistence unit name refers to peristence.xml in assets */
     public static final String PU_NAME = "classyfy";
+    /** Name of query to get Category record by id */
     public static final String CATEGORY_BY_NODE_ID = Node.NODE_BY_PRIMARY_KEY_QUERY + RecordModel.recordCategory.ordinal();
+    /** Name of query to get Folder record by id */
     public static final String FOLDER_BY_NODE_ID = Node.NODE_BY_PRIMARY_KEY_QUERY + RecordModel.recordFolder.ordinal();
+    /** Limit maximum number of search results */
     public static final int SEARCH_RESULTS_LIMIT = 50; // Same as Android
     
-    public static final String TAG = "ClassyFyApplication";
-    private static ClassyFyApplication singleton;
+    /** Object to initialize ClassyFy persistence, on which the appliication depends */
     protected ClassyFyStartup startup;
+    /** The actual ContentProvider implementation */
+    protected ClassyFySearchEngine classyFySearchEngine;
+    /** Singleton */
+    static ClassyFyApplication singleton;
+    
 
+    /**
+     * Construct ClassyFyApplication object
+     */
     public ClassyFyApplication()
     {
         singleton = this;
         startup = new ClassyFyStartup();
     }
-    
+ 
+    /**
+     * onCreate
+     * @see android.app.Application#onCreate()
+     */
     @Override public void onCreate() 
     {
         super.onCreate();
-        init(this);
-     }
-
-    
-    public void init(final Context context)
-    {
-        startup.start(context);
+        startApplicationSetup();
     }
 
-    Executable getApplicationSetup()
-    {
-        return startup.getApplicationSetup();
-    }
-
+    /**
+     * Wait for application setup
+     * @see au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher#waitForApplicationSetup()
+     */
+    @Override
     public WorkStatus waitForApplicationSetup()
     {
         return startup.waitForApplicationSetup();
     }
+ 
+    public PrimaryContentProvider getContentProvider()
+    {
+        return classyFySearchEngine;
+    }
     
+    protected void startApplicationSetup()
+    {
+        // Initialize ClassyFy persistence
+        if (Log.isLoggable(TAG, Log.INFO))
+            Log.i(TAG, "Start ClassyFy application");
+        ClassyFyStartup.Callback callback = new ClassyFyStartup.Callback(){
+
+            @Override
+            public void onStartupFinished()
+            {   // Start SearchEngine
+                classyFySearchEngine = new ClassyFySearchEngine();
+                FtsEngine ftsEngine = classyFySearchEngine.createFtsEngine();
+                ftsEngine.initialize();
+                classyFySearchEngine.setFtsQuery(ftsEngine);
+               //     ContentResolver contentResolver  = context.getContentResolver();
+               //     contentResolver.getType(ClassyFySearchEngine.CONTENT_URI);
+            }
+        };
+        startup.start(this, callback);
+    }
+
     public static ClassyFyApplication getInstance()
     {
-        if (singleton == null)
-            throw new IllegalStateException("ClassyFyApplication called while not initialized");
         return singleton;
     }
 }

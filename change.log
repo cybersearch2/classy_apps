@@ -1,3 +1,11 @@
+Classy Appls v1.10
+
+1. Update android.support.version to 22.2
+2. Move Tele-Genious Application to xpl project
+3. Add ClassyFyLauncher interface to ClassyFyApplication to facilitate wait for startup
+4. Change ClassyFyApplication to manage ClassyFySearchEngine creation and initialization
+5. Add ClassyFyContentProviderTest
+6. Update ClassyFySearchEngine to sync with classyandroid SearchEngineBase changes
 _______________________________________________________________________________________________________________________
 Classy Apps v1.0.9
 
@@ -8,11 +16,10 @@ ________________________________________________________________________________
 Classy Apps v1.0.8
 Introduce Maven Release support, with snapshot versioning and SCM and Distribution Management activation.
 Also added Tele-Genious Android Application as production APK pilot. This will be developed into an eXPL sample application. 
-Only releases will be pushed to Github in future.
 _______________________________________________________________________________________________________________________
 Classy Apps v1.0.7
 
-1.  Update Maven Android plugin version to 4.2.1
+1. Update Maven Android plugin version to 4.2.1
 2. Upgrade Gradle project Support Library version to 21.1+
 3. Fix android-maven-plugin Lifecycle-mapping error which disabled m2e-android plugin
 4. Move android-maven-plugin config to classy_apps pom

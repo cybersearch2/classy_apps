@@ -35,7 +35,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.RobolectricTestRunner;
-
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowIntent;
 import org.robolectric.util.ActivityController;
@@ -106,11 +105,9 @@ public class TitleSearchResultsActivityTest
     @Before
     public void setUp() 
     {
-        if (controller == null)
-        {
-            // Set up dependency injection
-            TestClassyFyApplication.getTestInstance().init(); 
-        }
+        TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
+        classyfyLauncher.startup();
+        classyfyLauncher.waitForApplicationSetup();
         controller = Robolectric.buildActivity(TestTitleSearchResultsActivity.class);
         loaderManager = mock(LoaderManager.class);
         titleSearchResultsFragment = mock(TitleSearchResultsFragment.class);

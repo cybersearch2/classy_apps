@@ -33,9 +33,9 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import au.com.cybersearch2.classyfy.MainActivity.MenuOptionsHandler;
-import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
+import au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 
 /**
@@ -62,11 +62,14 @@ public class IntegrateMainActivityTest
     @Before
     public void setUp() throws Exception 
     {
+        TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
+        classyfyLauncher.startup();
         controller = Robolectric.buildActivity(MainActivity.class);
+        classyfyLauncher.waitForApplicationSetup();
         mainActivity = controller.create().get();
     		
         menuOptionsHandler = mainActivity.menuOptionsHandler;
-        // Prevent NPE caused by Robolectric lack of support for SearchView
+        // Prevent NPE caused by Robolectric lack of support for SearchView (3.0-rc2)
         mainActivity.menuOptionsHandler = new MenuOptionsHandler(){
 
             @Override
@@ -99,8 +102,6 @@ public class IntegrateMainActivityTest
         // Shadow SearchManager returns null for SearchablInfo
         //verify(searchView).setSearchableInfo(isA(SearchableInfo.class));
         verify(searchView).setIconifiedByDefault(false);
-        TestClassyFyApplication.getTestInstance().startup();
-        assertThat(TestClassyFyApplication.getTestInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         Intent intent = getNewIntent();
         intent.setAction(Intent.ACTION_VIEW);
         Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "34");

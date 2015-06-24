@@ -18,6 +18,8 @@ package au.com.cybersearch2.classyfy.provider;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -27,6 +29,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.CancellationSignal;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import au.com.cybersearch2.classyfts.FtsEngine;
@@ -34,19 +37,24 @@ import au.com.cybersearch2.classyfts.FtsOpenHelper;
 import au.com.cybersearch2.classyfts.FtsQueryBuilder;
 import au.com.cybersearch2.classyfts.SearchEngineBase;
 import au.com.cybersearch2.classyfts.WordFilter;
-import au.com.cybersearch2.classyfy.R;
+import au.com.cybersearch2.classyinject.DI;
 
 /**
  * ClassyFySearchEngine
+ * The ClassyFy ContentProvider implementation with Fast Text Search.
+ * The ClassyFyContentProvider object accesses this object by ClassyFyApllication instance
  * @author Andrew Bowley
  * 11/07/2014
  */
 public class ClassyFySearchEngine extends SearchEngineBase
 {
     
-    public static final String PROVIDER_AUTHORITY = "au.com.cybersearch2.classyfy.ClassyFyProvider";
-    public static final Uri CONTENT_URI = Uri.parse("content://au.com.cybersearch2.classyfy.ClassyFyProvider/all_nodes");
-    public static Uri LEX_CONTENT_URI = Uri.parse("content://" + PROVIDER_AUTHORITY + "/" + LEX + "/" + SearchManager.SUGGEST_URI_PATH_QUERY);
+    public static final String PROVIDER_AUTHORITY = 
+            "au.com.cybersearch2.classyfy.ClassyFyProvider";
+    public static final Uri CONTENT_URI = 
+            Uri.parse("content://au.com.cybersearch2.classyfy.ClassyFyProvider/all_nodes");
+    public static final Uri LEX_CONTENT_URI = 
+            Uri.parse("content://" + PROVIDER_AUTHORITY + "/" + LEX + "/" + SearchManager.SUGGEST_URI_PATH_QUERY);
     public static final String ALL_NODES_VIEW = "all_nodes";
     
     // Column names
@@ -62,25 +70,51 @@ public class ClassyFySearchEngine extends SearchEngineBase
     protected static final int ALL_NODES_TYPES = PROVIDER_TYPE;
     protected static final int ALL_NODES_TYPE_ID = ALL_NODES_TYPES + 1;
 
-    
-    protected final UriMatcher uriMatcher;
-    protected SQLiteOpenHelper sqLiteOpenHelper;
-    
-    // Search suggestions support. A Cursor must be returned with a set of pre-defined columns
+    /** Search suggestions support. A Cursor must be returned with a set of pre-defined columns */
     protected final Map<String, String> ALL_NODES_TYPE_SEARCH_PROJECTION_MAP;
-    
+    /** SQLite database helper dependency accesses application persistence implementation */
+    @Inject
+    SQLiteOpenHelper sqLiteOpenHelper;
 
+    /**
+     * Construct ClassyFySearchEngine object
+     */
     public ClassyFySearchEngine()
     {
-        super();
-        uriMatcher = createUriMatcher();
+        super(PROVIDER_AUTHORITY);
+        // Add node searches to UriMatcher
+        uriMatcher.addURI(PROVIDER_AUTHORITY, "all_nodes", ALL_NODES_TYPES);
+        uriMatcher.addURI(PROVIDER_AUTHORITY, "all_nodes/#", ALL_NODES_TYPE_ID);
+        DI.inject(this);
+        // Projection map decouples external names from database column names
         ALL_NODES_TYPE_SEARCH_PROJECTION_MAP = createProjectionMap();
     }
 
-    @Override
-    public void onCreate(SQLiteOpenHelper sqLiteOpenHelper)
+    /**
+     * Returns Uri matcher
+     * @return UriMatcher object
+     */
+    protected UriMatcher getUriMatcher()
     {
-        this.sqLiteOpenHelper = sqLiteOpenHelper;
+        return uriMatcher;
+    }
+
+    /**
+     * Returns projection map
+     * @return Container mapping column name to column alias
+     */
+    protected Map<String, String> getProjectionMap()
+    {
+        return ALL_NODES_TYPE_SEARCH_PROJECTION_MAP;
+    }
+    
+    /**
+     * Returns FtsEngine customised for use with this class.
+     * Once initialized by background thread, return it with call to setFtsQuery().
+     * @return
+     */
+    public FtsEngine createFtsEngine()
+    {
         WordFilter text2Filter = new WordFilter(){
             /**
              * Search result word filter 
@@ -104,10 +138,9 @@ public class ClassyFySearchEngine extends SearchEngineBase
         FtsEngine ftsEngine = new FtsEngine(ftsOpenHelper, "all_nodes", COLUMN_MAP);
         ftsEngine.setOrderbyText2(true);
         ftsEngine.setText2Filter(text2Filter);
-        if (LEX.equals(getSearchSuggestPath(R.xml.searchable))) 
-            startFtsEngine(ftsEngine);
+        return ftsEngine;
     }
-
+    
     /**
      * This is called when a client calls {@link android.content.ContentResolver#getType(Uri)}.
      * Returns the "custom" or "vendor-specific" MIME data type of the URI given as a parameter.
@@ -118,24 +151,40 @@ public class ClassyFySearchEngine extends SearchEngineBase
      * @return The MIME type of the URI.
      * @throws IllegalArgumentException if the incoming URI pattern is invalid.
      */
- 
-     public String getType(Uri uri)
-     {
-         int queryType = uriMatcher.match(uri);
-         switch (queryType)
-         {
-         case ALL_NODES_TYPES: 
-             return "vnd.android.cursor.dir/vnd.classyfy.node";
-         case ALL_NODES_TYPE_ID: 
-             return "vnd.android.cursor.item/vnd.classyfy.node";
-         default: 
-             return super.getType(queryType, uri);
-         }
-     }
+    @Override
+    public String getType(Uri uri)
+    {
+        int queryType = uriMatcher.match(uri);
+        switch (queryType)
+        {
+        case ALL_NODES_TYPES: 
+            return "vnd.android.cursor.dir/vnd.classyfy.node";
+        case ALL_NODES_TYPE_ID: 
+            return "vnd.android.cursor.item/vnd.classyfy.node";
+        default: 
+            return super.getType(queryType, uri);
+        }
+    }
 
-
+    /**
+     * query
+     * @see au.com.cybersearch2.classyapp.PrimaryContentProvider#query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)
+     */
+    @Override
     public Cursor query(Uri uri, final String[] projection, final String selection,
             final String[] selectionArgs, final String sortOrder)
+    {
+        return query(uri, projection, selection, selectionArgs, sortOrder, null);
+    }
+    
+    /**
+     * Perform query with given SQL search parameters and CancellationSignal
+     * @see android.content.ContentProvider#query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, android.os.CancellationSignal)
+     */
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection,
+            String[] selectionArgs, String sortOrder,
+            CancellationSignal cancellationSignal)
     {
         final int queryType = uriMatcher.match(uri);
         FtsQueryBuilder qb = new FtsQueryBuilder(
@@ -145,10 +194,17 @@ public class ClassyFySearchEngine extends SearchEngineBase
                 selection,
                 selectionArgs, 
                 sortOrder);
+        if (cancellationSignal != null)
+            qb.setCancellationSignal(cancellationSignal);
         return query(uri, qb);
     }
-    
-    
+
+    /**
+     * Perform query, using FTS if appropriate
+     * @param uri Query Uri
+     * @param qb Query builder containing parameters depending on type of query
+     * @return Cursor object
+     */
     protected Cursor query(Uri uri, FtsQueryBuilder qb)
     {
         qb.setTables(ALL_NODES_VIEW);
@@ -182,7 +238,8 @@ public class ClassyFySearchEngine extends SearchEngineBase
         return query(qb, sqLiteOpenHelper);
     }
 
-    /* (non-Javadoc)
+    /**
+     * insert
      * @see android.content.ContentProvider#insert(android.net.Uri, android.content.ContentValues)
      */
     public Uri insert(Uri uri, ContentValues values)
@@ -200,7 +257,8 @@ public class ClassyFySearchEngine extends SearchEngineBase
         throw new SQLException("Failed to insert row into " + uri);
     }
 
-    /* (non-Javadoc)
+    /**
+     * delete
      * @see android.content.ContentProvider#delete(android.net.Uri, java.lang.String, java.lang.String[])
      */
     public int delete(Uri uri, String selection, String[] selectionArgs)
@@ -224,7 +282,8 @@ public class ClassyFySearchEngine extends SearchEngineBase
         return count;
     }
 
-    /* (non-Javadoc)
+    /**
+     * update
      * @see android.content.ContentProvider#update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[])
      */
     public int update(Uri uri, ContentValues values, String selection,
@@ -250,32 +309,10 @@ public class ClassyFySearchEngine extends SearchEngineBase
         return count;
     }
 
-    protected static UriMatcher createUriMatcher() 
-    {
-        // Allocate the UriMatcher object where a URI ending is 'all_nodes' will correspond to a request for all nodes, 
-        // and 'all_nodes' with a trailing '/[rowID]' will represent a single all_nodes row
-
-        UriMatcher newUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, "all_nodes", ALL_NODES_TYPES);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, "all_nodes/#", ALL_NODES_TYPE_ID);
-        // to get suggestions...
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, LEX + "/" + SearchManager.SUGGEST_URI_PATH_QUERY, LEXICAL_SEARCH_SUGGEST);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, LEX + "/" + SearchManager.SUGGEST_URI_PATH_QUERY + "/*", LEXICAL_SEARCH_SUGGEST);
-        /* The following are unused in this implementation, but if we include
-         * {@link SearchManager#SUGGEST_COLUMN_SHORTCUT_ID} as a column in our suggestions table, we
-         * could expect to receive refresh queries when a shortcutted suggestion is displayed in
-         * Quick Search Box, in which case, the following Uris would be provided and we
-         * would return a cursor with a single item representing the refreshed suggestion data.
-         */
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT, REFRESH_SHORTCUT);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", REFRESH_SHORTCUT);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, LEX + "/" + SearchManager.SUGGEST_URI_PATH_SHORTCUT, LEXICAL_REFRESH_SHORTCUT);
-        newUriMatcher.addURI(PROVIDER_AUTHORITY, LEX + "/" + SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", LEXICAL_REFRESH_SHORTCUT);
-        return newUriMatcher;
-    }
-
+    /**
+     * Returns container which maps names to database columns
+     * @return
+     */
     protected static Map<String, String> createProjectionMap() 
     {
         Map<String, String> newProjectionMap = new HashMap<String, String>();
@@ -289,7 +326,5 @@ public class ClassyFySearchEngine extends SearchEngineBase
                 KEY_ID + " AS " + SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID);
         return newProjectionMap;
     }
-
-
 
 }

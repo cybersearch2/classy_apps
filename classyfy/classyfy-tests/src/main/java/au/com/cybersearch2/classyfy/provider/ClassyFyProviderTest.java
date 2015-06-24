@@ -23,7 +23,6 @@ import android.test.mock.MockContext;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.util.Log;
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
-import au.com.cybersearch2.classytask.WorkStatus;
 
 
 /**
@@ -32,6 +31,7 @@ import au.com.cybersearch2.classytask.WorkStatus;
  */
 public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
 {
+    
     private static final String TAG = ClassyFyProviderTest.class.getSimpleName();
     static boolean firstTime = true;
 
@@ -39,7 +39,7 @@ public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
 
 	public ClassyFyProviderTest()
     {
-	    super(au.com.cybersearch2.classyfy.provider.ClassyFyProvider.class, ClassyFySearchEngine.PROVIDER_AUTHORITY);
+	    super(ClassyFyProvider.class, ClassyFySearchEngine.PROVIDER_AUTHORITY);
         super.setContext(new MockContext());
     }
 
@@ -50,12 +50,11 @@ public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
         {
             firstTime = false;
             System.setProperty( "dexmaker.dexcache", "/data/data/au.com.cybersearch2.classyfy/cache");
-            System.setProperty("java.util.logging.config.file", "src/logging.properties");
-            super.setUp();
-            assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
+            System.setProperty("java.util.logging.config.file", "src/test/resources/logging.properties");
         }
         super.setUp();
-        Log.d(TAG, "setUp: ");
+        ClassyFyApplication classyfyApplication = ClassyFyApplication.getInstance();
+        classyfyApplication.waitForApplicationSetup();
         mockResolver = getMockContentResolver();
     }
 
@@ -115,7 +114,7 @@ public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
 
         // Asserts that the index pointer is now the same as the number of selection arguments, so
         // that the number of arguments tested is exactly the same as the number of rows returned.
-        assertEquals(SELECTION_ARGS.length, index);
+        assertThat(SELECTION_ARGS.length).isEqualTo(index);
     }
     /** @return a ContentValues object with a value set for each MetadataType column */
     /*

@@ -31,8 +31,13 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import dagger.Module;
+import dagger.Provides;
+
+import javax.inject.Singleton;
+
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -40,13 +45,13 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.app.SearchManager;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import au.com.cybersearch2.classyapp.ApplicationLocale;
 import au.com.cybersearch2.classyapp.ContextModule;
-import au.com.cybersearch2.classyfts.FtsEngine;
+import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classyfts.FtsOpenHelper;
 import au.com.cybersearch2.classyfts.FtsQuery;
 import au.com.cybersearch2.classyfts.FtsQueryBuilder;
-import au.com.cybersearch2.classyfts.SearchEngineBase;
-import au.com.cybersearch2.classyfy.ClassyFyEnvironmentModule;
+import au.com.cybersearch2.classyfy.ClassyFyResourceEnvironment;
 import au.com.cybersearch2.classyfy.TestClassyFyApplication;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyinject.DI;
@@ -59,12 +64,6 @@ import au.com.cybersearch2.classyinject.DI;
 @RunWith(RobolectricTestRunner.class)
 public class ClassyFySearchEngineTest
 {
-    @Module(includes = ClassyFyEnvironmentModule.class) 
-    static class ClassyFySearchEngineTestModule implements ApplicationModule
-    {
-        
-    }
-
     class TestFtsQueryBuilder extends FtsQueryBuilder
     {
         String whereClause;
@@ -110,6 +109,7 @@ public class ClassyFySearchEngineTest
             return whereClause;
         }
 
+        @Override
         public String getTables()
         {
             return tables;
@@ -118,6 +118,29 @@ public class ClassyFySearchEngineTest
         public Map<String, String> getProjectionMap()
         {
             return projectionMap;
+        }
+    }
+ 
+    @Module(injects = { 
+            TestClassyFySearchEngine.class, 
+            ClassyFySearchEngine.class,
+            ApplicationLocale.class
+            }, complete = false)
+    static class TestClassyFySearchEngineModule implements ApplicationModule
+    {
+        SQLiteOpenHelper sqliteOpenHelper = mock(SQLiteOpenHelper.class);
+        
+        @Provides @Singleton
+        SQLiteOpenHelper provideSqLiteOpenHelper()
+        {   // SQLiteOpenHelper only has to handle getWritableDatabase() call
+            SQLiteDatabase sQLiteDatabase = mock(SQLiteDatabase.class);
+            when(sqliteOpenHelper.getWritableDatabase()).thenReturn(sQLiteDatabase);
+            return sqliteOpenHelper;
+        }
+        
+        @Provides @Singleton ResourceEnvironment provideResourceEnvironment()
+        {
+            return new ClassyFyResourceEnvironment();
         }
     }
     
@@ -139,19 +162,6 @@ public class ClassyFySearchEngineTest
         }
 
         @Override
-        protected String getSearchSuggestPath(int searchableResourceId)
-        {
-            return searchSuggestPath;
-        }
-
-        @Override
-        protected void startFtsEngine(final FtsEngine ftsEngine)
-        {
-            isFtsAvailable = ftsAvailable;
-            ftsQuery = testFtsQuery;
-        }
-
-        @Override
         protected Cursor query(Uri uri, FtsQueryBuilder qb)
         {
             this.qb = new TestFtsQueryBuilder(qb);
@@ -168,7 +178,6 @@ public class ClassyFySearchEngineTest
     private static final String ALL_NODES_VIEW = "all_nodes";
     private static Context context;
     protected FtsOpenHelper ftsOpenHelper;
-    protected SQLiteOpenHelper classyFyOpenHelper;
     protected Cursor cursor;
     protected String searchSuggestPath;
     protected boolean ftsAvailable;
@@ -181,12 +190,12 @@ public class ClassyFySearchEngineTest
     {
         if (context == null)
         {
-            context = TestClassyFyApplication.getTestInstance();
-            // Set up dependency injection
-            new DI(new ClassyFySearchEngineTestModule(), new ContextModule(context));
+            TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
+            context = classyfyLauncher;
+            Object[] initModules = new Object[] { new ContextModule(context) }; 
+            new DI(new TestClassyFySearchEngineModule(), initModules);
         }
         ftsOpenHelper = mock(FtsOpenHelper.class);
-        classyFyOpenHelper = mock(SQLiteOpenHelper.class);
         cursor = mock(Cursor.class);
         searchSuggestPath = "lex";
         ftsAvailable = true;
@@ -194,11 +203,16 @@ public class ClassyFySearchEngineTest
     }
 
     @Test
-    public void testOnCreate() throws Exception
+    public void test_constructor() throws Exception
     {   
         ClassyFySearchEngine classyFySearchEngine = new ClassyFySearchEngine();
-        classyFySearchEngine.onCreate(classyFyOpenHelper);
-        assertThat(classyFySearchEngine.sqLiteOpenHelper).isEqualTo(classyFyOpenHelper);
+        assertThat(classyFySearchEngine.sqLiteOpenHelper).isNotNull();
+        UriMatcher uriMatcher = classyFySearchEngine.getUriMatcher();
+        Uri searchQueryUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_ALL_NODES);
+        assertThat(uriMatcher.match(searchQueryUri)).isEqualTo(5);
+        searchQueryUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_ALL_NODES + "/1");
+        assertThat(uriMatcher.match(searchQueryUri)).isEqualTo(6);
+        assertThat(classyFySearchEngine.getProjectionMap().size()).isEqualTo(4);
      }
     
     @Test
@@ -220,7 +234,7 @@ public class ClassyFySearchEngineTest
         Uri searchLexQueryUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_SEGMENT_LEX +SearchManager.SUGGEST_URI_PATH_QUERY);
         assertThat(classyFySearchEngine.getType(searchLexQueryUri)).isEqualTo(SearchManager.SUGGEST_MIME_TYPE);
         searchLexQueryUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_SEGMENT_LEX + SearchManager.SUGGEST_URI_PATH_QUERY + "/*");
-        assertThat(classyFySearchEngine.getType(searchQueryUri)).isEqualTo(SearchManager.SUGGEST_MIME_TYPE);
+        assertThat(classyFySearchEngine.getType(searchLexQueryUri)).isEqualTo(SearchManager.SUGGEST_MIME_TYPE);
         Uri searchLexShortcutUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_SEGMENT_LEX +SearchManager.SUGGEST_URI_PATH_SHORTCUT);
         assertThat(classyFySearchEngine.getType(searchLexShortcutUri)).isEqualTo(SearchManager.SUGGEST_MIME_TYPE);
         searchLexShortcutUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_SEGMENT_LEX +SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*");
@@ -241,7 +255,6 @@ public class ClassyFySearchEngineTest
     public void testQuery() throws Exception
     {
         TestClassyFySearchEngine classyFySearchEngine = new TestClassyFySearchEngine();
-        classyFySearchEngine.onCreate(classyFyOpenHelper);
         // Defines a projection of column names to return for a query
         final String[] TEST_PROJECTION = {
             ClassyFySearchEngine.KEY_TITLE,
@@ -262,8 +275,6 @@ public class ClassyFySearchEngineTest
          // Defines a query sort order
         final String SORT_ORDER = "title ASC";
         Uri allNodesUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_ALL_NODES);
-        SQLiteDatabase sQLiteDatabase = mock(SQLiteDatabase.class);
-        when(classyFyOpenHelper.getWritableDatabase()).thenReturn(sQLiteDatabase);
 
         // A query that uses selection criteria should return only those rows that match the
         // criteria. Use a projection so that it's easy to get the data in a particular column.
@@ -290,7 +301,6 @@ public class ClassyFySearchEngineTest
     public void testSuggestionLexicalQuery() throws Exception
     {
         TestClassyFySearchEngine classyFySearchEngine = new TestClassyFySearchEngine();
-        classyFySearchEngine.onCreate(classyFyOpenHelper);
         FtsQuery ftsQuery = mock(FtsQuery.class);
         String selection = SearchManager.SUGGEST_COLUMN_TEXT_1 + " MATCH ?";
         String[] columns = new String[] 
@@ -325,10 +335,7 @@ public class ClassyFySearchEngineTest
         // Defines a query sort order
         final String SORT_ORDER = "name ASC";
         TestClassyFySearchEngine classyFySearchEngine = new TestClassyFySearchEngine();
-        classyFySearchEngine.onCreate(classyFyOpenHelper);
         Uri suggestUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + "/" + SearchManager.SUGGEST_URI_PATH_QUERY  + "/information?limit=50");
-        SQLiteDatabase sQLiteDatabase = mock(SQLiteDatabase.class);
-        when(classyFyOpenHelper.getWritableDatabase()).thenReturn(sQLiteDatabase);
  
         // A query that uses selection criteria should return only those rows that match the
         // criteria. Use a projection so that it's easy to get the data in a particular column.
@@ -360,11 +367,8 @@ public class ClassyFySearchEngineTest
         final String SELECTION = "match WORD ?";
         final String[] SELECTION_ARGS = { "information" };
         TestClassyFySearchEngine classyFySearchEngine = new TestClassyFySearchEngine();
-        classyFySearchEngine.onCreate(classyFyOpenHelper);
         // Uri is expected to have searchSuggestPath = "lex"
         Uri suggestUri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_SEGMENT_LEX + SearchManager.SUGGEST_URI_PATH_QUERY  + "?limit=50");
-        SQLiteDatabase sQLiteDatabase = mock(SQLiteDatabase.class);
-        when(classyFyOpenHelper.getWritableDatabase()).thenReturn(sQLiteDatabase);
         // A query that uses selection criteria should return only those rows that match the
         // criteria. Use a projection so that it's easy to get the data in a particular column.
         Cursor projectionCursor = classyFySearchEngine.query(

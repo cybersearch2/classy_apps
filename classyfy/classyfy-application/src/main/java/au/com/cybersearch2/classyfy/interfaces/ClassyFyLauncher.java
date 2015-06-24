@@ -13,15 +13,16 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.telegen;
+package au.com.cybersearch2.classyfy.interfaces;
 
-import android.support.v4.app.ListFragment;
+import au.com.cybersearch2.classytask.WorkStatus;
 
 /**
- * IssuesListFragment
+ * ClassyFyLauncher
  * @author Andrew Bowley
- * 11 Jun 2015
+ * 19 Jun 2015
  */
-public class DisplayListFragment extends ListFragment
+public interface ClassyFyLauncher
 {
+    WorkStatus waitForApplicationSetup();
 }

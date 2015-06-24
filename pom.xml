@@ -49,7 +49,7 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <classy_tools.version>1.0.10</classy_tools.version>
+    <classy_tools.version>1.11-SNAPSHOT</classy_tools.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.2.1</android.plugin.version>
@@ -58,7 +58,7 @@
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
     <android.sdk.version>5.1.1_r2</android.sdk.version>
     <!-- Android Suport Library version - always 3-part -->
-    <android.support.version>22.1.1</android.support.version>
+    <android.support.version>22.2</android.support.version>
     <robolectric.version>3.0-rc2</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <dagger.version>1.2.2</dagger.version>
@@ -71,7 +71,6 @@
     <module>compatibility-v7-appcompat</module>
     <module>classyfy</module>
     <module>example</module>
-    <module>telegen</module>
     <module>install</module>
   </modules>
   <dependencyManagement>
@@ -129,7 +128,7 @@
         <dependency>
           <groupId>org.robolectric</groupId>
           <artifactId>shadows-core</artifactId>
-          <version>3.0-rc2 </version>
+          <version>3.0-rc2</version>
         </dependency> 
         <dependency>
           <groupId>org.apache.maven</groupId>

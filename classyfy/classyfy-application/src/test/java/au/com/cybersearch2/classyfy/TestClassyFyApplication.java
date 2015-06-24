@@ -20,10 +20,9 @@ import java.lang.reflect.Method;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
 
-import android.app.Application;
+import android.util.Log;
 import au.com.cybersearch2.classyapp.ContextModule;
 import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.classytask.WorkStatus;
 
 /**
@@ -31,25 +30,17 @@ import au.com.cybersearch2.classytask.WorkStatus;
  * @author Andrew Bowley
  * 14/04/2014
  */
-public class TestClassyFyApplication extends Application implements TestLifecycleApplication
+public class TestClassyFyApplication extends ClassyFyApplication implements TestLifecycleApplication
 {
     private static ClassyFyApplicationModule classyFyApplicationModule;
     public static final String TAG = "TestClassyFyApplication";
     public static final String PU_NAME = "classyfy";
     private static TestClassyFyApplication singleton;
-    protected ClassyFyStartup startup;
  
     public TestClassyFyApplication()
     {
         singleton = this;
         RuntimeEnvironment.application = singleton;
-        startup = new ClassyFyStartup();
-    }
-
-    @Override 
-    public void onCreate() 
-    {
-        super.onCreate();
     }
 
     @Override
@@ -93,16 +84,26 @@ public class TestClassyFyApplication extends Application implements TestLifecycl
     
     public void startup()
     {
-        startup.start(this);
+        super.startApplicationSetup();
     }
 
-    Executable getApplicationSetup()
-    {
-        return startup.getApplicationSetup();
-    }
-
+    /**
+     * Wait for application setup
+     * @see au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher#waitForApplicationSetup()
+     */
+    @Override
     public WorkStatus waitForApplicationSetup()
     {
         return startup.waitForApplicationSetup();
     }
+
+    /**
+     * Override to allow startup to be optional
+     * @see au.com.cybersearch2.classyfy.ClassyFyApplication#startApplicationSetup()
+     */
+    @Override
+    protected void startApplicationSetup()
+    {
+    }
+
 }

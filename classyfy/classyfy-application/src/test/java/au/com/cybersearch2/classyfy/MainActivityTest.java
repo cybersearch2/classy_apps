@@ -17,10 +17,12 @@ package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +34,9 @@ import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
+
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -85,8 +89,9 @@ public class MainActivityTest
     @Before
     public void setUp() 
     {
-        if (controller == null)
-            TestClassyFyApplication.getTestInstance().init(); // For DI
+        TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
+        classyfyLauncher.startup();
+        classyfyLauncher.waitForApplicationSetup();
         controller = Robolectric.buildActivity(TestMainActivity.class);
     }
 
@@ -123,6 +128,9 @@ public class MainActivityTest
         assertThat(item1).isNotNull();
         assertThat(item1.getName()).isEqualTo(TITLE);
         assertThat(item1.getValue()).isEqualTo(RecordModel.recordCategory.toString());
+        // Check that ContentProvider is available for search operations
+        ContentResolver contentResolver  = TestClassyFyApplication.getTestInstance().getContentResolver();
+        assertThat(contentResolver.getType(ClassyFySearchEngine.CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
     }
     
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
