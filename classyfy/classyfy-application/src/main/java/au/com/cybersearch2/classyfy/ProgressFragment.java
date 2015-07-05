@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import au.com.cybersearch2.classytask.BackgroundTask;
 
 /**
  * ProgressFragment
@@ -30,6 +31,7 @@ import android.widget.ProgressBar;
 public class ProgressFragment extends Fragment
 {
     ProgressBar spinner;
+    BackgroundTask hideTask;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,12 +40,23 @@ public class ProgressFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container,
                 false);
         spinner = (ProgressBar)rootView.findViewById(R.id.mainProgressBar);
-        spinner.setVisibility(View.GONE);
         return rootView;
     }
     
     public ProgressBar getSpinner()
     {
         return spinner;
+    }
+    
+    public void showSpinner()
+    {
+        if (spinner != null)
+            spinner.setVisibility(View.VISIBLE);
+    }
+    
+    public void hideSpinner()
+    {
+        if (spinner != null)
+            spinner.setVisibility(View.GONE);
     }
 }

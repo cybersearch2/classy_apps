@@ -14,4 +14,11 @@
             android:layout_height="wrap_content"
             tools:layout="@android:layout/list_content" >
         </fragment>
+        <fragment android:name="au.com.cybersearch2.classyfy.ProgressFragment"
+            android:id="@+id/activity_progress_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:layout_centerHorizontal="true" 
+            android:visibility="gone" >
+        </fragment>
 </LinearLayout>

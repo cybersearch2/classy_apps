@@ -28,6 +28,13 @@ public enum RecordModel
    root, 
    recordCategory, // Alfresco Records managemement
    recordFolder ;  // Alfresco Records managemement
+
+   public static String[] MODEL_NAMES =
+   {
+       "Root",
+       "Category",
+       "Folder"
+   };
    
    public static RecordModel getModelByName(String name)
    {
@@ -37,10 +44,16 @@ public enum RecordModel
            return root;
        return valueOf(RecordModel.class, name);
    }
-   
+
+   public static RecordModel getModel(int id)
+   {
+       return RecordModel.values()[id];
+
+   }
+
    public static String getNameByNode(Node node)
    {
-       return RecordModel.values()[node.getModel()].toString();
+       return MODEL_NAMES[node.getModel()];
 
    }
 }

@@ -33,7 +33,7 @@ import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classynode.EntityByNodeIdGenerator;
 import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter;
-import au.com.cybersearch2.classywidget.PropertiesListAdapter.Value;
+import au.com.cybersearch2.classywidget.ListItem;
 
 /**
  * TitileSearchResultsActivityTest
@@ -70,25 +70,15 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
             firstTime = false;
             System.setProperty( "dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath() );
             System.setProperty("java.util.logging.config.file", "src/logging.properties");
-            super.setUp();
-            //assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         }
+        super.setUp();
+        ClassyFyApplication classyfyApplication = ClassyFyApplication.getInstance();
+        classyfyApplication.waitForApplicationSetup();
         PersistenceContext persistenceContext = new PersistenceContext();
         PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
         EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
         persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
         persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
-    }
-
-    @UiThreadTest
-    public void test_onCreate()
-    {
-        TitleSearchResultsActivity activity = getActivity();
-        assertThat(activity.adapter).isNotNull();
-        assertThat(activity.loaderManager).isNotNull();
-        assertThat(activity.loaderCallbacks).isNotNull();
-        assertThat(activity.resultsView).isNotNull();
-        assertThat(activity.resultsView.getListAdapter()).isEqualTo(activity.adapter);
     }
 
     public void test_action_view() throws Throwable
@@ -97,34 +87,59 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, String.valueOf(34)));
         setActivityIntent(intent); 
-        Instrumentation instrumentation = getInstrumentation();
-        ActivityMonitor am = instrumentation.addMonitor(MainActivity.class.getName(), null, false);
-        TitleSearchResultsActivity activity = getActivity();
+        final TitleSearchResultsActivity activity = getActivity();
         assertThat(activity).isNotNull();
-        MainActivity mainActivity = (MainActivity) getInstrumentation().waitForMonitorWithTimeout(am, 10000);
-        assertThat(mainActivity).isNotNull();
-        synchronized(mainActivity.taskHandle)
-        {
-            try
-            {
-                mainActivity.taskHandle.wait(10000);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        assertThat(mainActivity.taskHandle.getStatus()).isEqualTo(WorkStatus.FINISHED);
-        PropertiesListAdapter adapter = mainActivity.adapter;
+        assertThat(activity.taskHandle).isNotNull();
+        assertThat(activity.taskHandle.getStatus()).isEqualTo(WorkStatus.FINISHED);
+        PropertiesListAdapter adapter = activity.adapter;
         for (int i = 0; (i < adapter.getCount()) && (i < RECORD_DETAILS_ARRAY.length); i++)
         {
-            Value item = (Value)adapter.getItem(i);
+            ListItem item = (ListItem)adapter.getItem(i);
             assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
             assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
         }
-        ProgressBar spinner = mainActivity.progressFragment.getSpinner();
-        assertThat(spinner).isNotNull();
-        assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
+        /*
+        Runnable testTask = new Runnable(){
+
+            @Override
+            public void run()
+            {
+                synchronized(activity.taskHandle)
+                {
+                    if ((activity.taskHandle.getStatus() != WorkStatus.FAILED) && 
+                        (activity.taskHandle.getStatus() != WorkStatus.FINISHED))
+                    try
+                    {
+                        activity.taskHandle.wait(10000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                assertThat(activity.taskHandle.getStatus()).isEqualTo(WorkStatus.FINISHED);
+                PropertiesListAdapter adapter = activity.adapter;
+                for (int i = 0; (i < adapter.getCount()) && (i < RECORD_DETAILS_ARRAY.length); i++)
+                {
+                    Value item = (Value)adapter.getItem(i);
+                    assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
+                    assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
+                }
+                ProgressBar spinner = activity.progressFragment.getSpinner();
+                assertThat(spinner).isNotNull();
+                assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
+                synchronized(this)
+                {
+                    notifyAll();
+                }
+            }};
+         Thread testThread = new Thread(testTask);
+         testThread.start();
+         synchronized(testTask)
+         {
+             testTask.wait(10000);
+         }
+         */
     }
  
     public void test_action_search_bad_url() throws Throwable
@@ -135,6 +150,9 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
         setActivityIntent(intent); 
         TitleSearchResultsActivity activity = getActivity();
         assertThat(activity).isNotNull();
+        assertThat(activity.adapter).isNotNull();
+        assertThat(activity.resultsView).isNotNull();
+        assertThat(activity.resultsView.getListAdapter()).isEqualTo(activity.adapter);
         assertThat(activity.taskHandle).isNotNull();
         WorkStatus status = activity.taskHandle.waitForTask();
         assertThat(status).isEqualTo(WorkStatus.FAILED);

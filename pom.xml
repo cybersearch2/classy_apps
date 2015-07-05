@@ -52,7 +52,7 @@
     <classy_tools.version>1.11-SNAPSHOT</classy_tools.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
-    <android.plugin.version>4.2.1</android.plugin.version>
+    <android.plugin.version>4.3.0</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
     <android.platform.version>22</android.platform.version>
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->

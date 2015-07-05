@@ -46,7 +46,7 @@ insert into child_nodes (_parent, _child) values (13, 14);
 insert into nodes (_parent_id, name, title, model, level) values (2,'Vehicles','Vehicles',1,3);
 insert into categories ( node_id, description, created, creator, modified, modifier, identifier) values (15,'','2014-02-06 19:57:36.000000','admin','2014-02-06 19:58:30.000000','admin','2014-1391677049946');
 insert into child_nodes (_parent, _child) values (2, 15);
-insert into nodes (_parent_id, name, title, model, level) values (15,'Registration_AON993','Registration AON993',2,4);
+insert into nodes (_parent_id, name, title, model, level) values (15,'Registration_BIG330','Registration BIG330',2,4);
 insert into folders ( node_id, description, created, creator, modified, modifier, identifier, location, hasDispositionSchedule, dispositionInstructions, dispositionAuthority) values (16,'','2014-02-06 19:57:57.000000','admin','2014-02-06 19:57:57.000000','admin','2014-1391677070564',null,1,'Cutoff 30 days after filing, transfer to offline storage 2 years after cutoff and destroy 7 years after transfer.','(GA28) - 2007 (revised 2009, 2012)');
 insert into child_nodes (_parent, _child) values (15, 16);
 insert into nodes (_parent_id, name, title, model, level) values (15,'Registration_NSW123','Registration NSW123',2,4);

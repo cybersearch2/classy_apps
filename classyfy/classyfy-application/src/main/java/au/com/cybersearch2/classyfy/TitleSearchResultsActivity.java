@@ -16,27 +16,42 @@
 package au.com.cybersearch2.classyfy;
 
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import android.app.Dialog;
+import android.app.SearchManager;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.app.SearchManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.database.Cursor;
-import au.com.cybersearch2.classycontent.CursorAdapaterParameters;
+import android.widget.Toast;
 import au.com.cybersearch2.classycontent.SuggestionCursorParameters;
-import au.com.cybersearch2.classycontent.SearchCursorLoader;
-import au.com.cybersearch2.classyfy.R;
+import au.com.cybersearch2.classyfy.data.FieldDescriptor;
+import au.com.cybersearch2.classyfy.data.FieldDescriptorSetFactory;
+import au.com.cybersearch2.classyfy.data.RecordModel;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import au.com.cybersearch2.classyjpa.entity.PersistenceLoader;
+import au.com.cybersearch2.classynode.Node;
+import au.com.cybersearch2.classynode.NodeFinder;
+import au.com.cybersearch2.classynode.NodeType;
+import au.com.cybersearch2.classytask.BackgroundTask;
 import au.com.cybersearch2.classytask.Executable;
-import au.com.cybersearch2.classytask.WorkStatus;
+import au.com.cybersearch2.classytask.BackgroundTask.TaskCallback;
+import au.com.cybersearch2.classywidget.PropertiesListAdapter;
+import au.com.cybersearch2.classywidget.ListItem;
 
 /**
  * TitleSearchResultsActivity
@@ -45,102 +60,55 @@ import au.com.cybersearch2.classytask.WorkStatus;
  */
 public class TitleSearchResultsActivity extends FragmentActivity
 {
+    class QueryTask extends BackgroundTask
+    {
+        String searchQuery;
+        List<ListItem> resultList;
+        
+        public QueryTask(String searchQuery, List<ListItem> resultList)
+        {
+            super(TitleSearchResultsActivity.this);
+            this.searchQuery = searchQuery;
+            this.resultList = resultList;
+        }
+        
+        /**
+         * Execute task in  background thread
+         * Called on a worker thread to perform the actual load. 
+         * @return Boolean object - Boolean.TRUE indicates successful result
+         * @see android.support.v4.content.AsyncTaskLoader#loadInBackground()
+         */
+        @Override
+        public Boolean loadInBackground()
+        {
+            resultList.addAll(doSearchQuery(searchQuery));
+            return Boolean.TRUE;
+        }
+    }
+    
     public static final String TAG = "TitleSearchResults";
 
     protected String REFINE_SEARCH_MESSAGE;
-    protected SimpleCursorAdapter adapter;
+    protected PropertiesListAdapter adapter;
     protected TitleSearchResultsFragment resultsView;
-    protected LoaderManager loaderManager;
-    protected LoaderCallbacks<Cursor> loaderCallbacks;
+    protected ProgressFragment progressFragment;
     protected Executable taskHandle;
+    protected ContentResolver contentResolver;
+    protected PersistenceLoader loader;
+    protected Dialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.results_list);
-        adapter = getSimpleCursorAdapter();
-        loaderManager = getActivityLoaderManager();
+        progressFragment = getProgressFragment();
+        adapter = new PropertiesListAdapter(this);
         resultsView = getTitleSearchResultsFragment(); 
         resultsView.setListAdapter(adapter);
         REFINE_SEARCH_MESSAGE = this.getString(R.string.refine_search);
-        // Initiate the Cursor Loader
-        loaderCallbacks = new LoaderCallbacks<Cursor>() 
-        {
-            /**
-             * Instantiate and return a new Loader for the given ID.
-             *
-             * @param id The ID whose loader is to be created.
-             * @param args Any arguments supplied by the caller.
-             * @return Return a new Loader instance that is ready to start loading.
-             */
-            @Override
-            public Loader<Cursor> onCreateLoader(int id, Bundle args) 
-            {
-                // Extract the search query from the arguments
-                SuggestionCursorParameters params = new SuggestionCursorParameters(args, ClassyFySearchEngine.LEX_CONTENT_URI, ClassyFyApplication.SEARCH_RESULTS_LIMIT); 
-                // Create the new Cursor Loader
-                SearchCursorLoader searchCursorLoader = new SearchCursorLoader(TitleSearchResultsActivity.this, params);
-                searchCursorLoader.setStatus(WorkStatus.RUNNING);
-                taskHandle = searchCursorLoader.getWorkTracker();
-                return searchCursorLoader;
-           }
-
-            /**
-             * Called when a previously created loader has finished its load.  Note
-             * that normally an application is <em>not</em> allowed to commit fragment
-             * transactions while in this call, since it can happen after an
-             * activity's state is saved.  See {@link FragmentManager#beginTransaction()
-             * FragmentManager.openTransaction()} for further discussion on this.
-             * 
-             * <p>This function is guaranteed to be called prior to the release of
-             * the last data that was supplied for this Loader.  At this point
-             * you should remove all use of the old data (since it will be released
-             * soon), but should not do your own release of the data since its Loader
-             * owns it and will take care of that.  The Loader will take care of
-             * management of its data so you don't have to.  In particular:
-             *
-             * <ul>
-             * <li> <p>The Loader will monitor for changes to the data, and report
-             * them to you through new calls here.  
-             * <li> The Loader will release the data once it knows the application
-             * is no longer using it.  
-             * </ul>
-             *
-             * @param loader The Loader that has finished.
-             * @param cursor Cursor.
-             */
-            @Override
-            public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) 
-            {
-                adapter.swapCursor(cursor);
-                boolean success = (cursor != null) && (adapter.getCount() > 0);
-                SearchCursorLoader searchCursorLoader = (SearchCursorLoader)loader;
-                searchCursorLoader.setStatus(
-                        success ? WorkStatus.FINISHED : WorkStatus.FAILED);
-                if (adapter.getCount() == 0)
-                    displayToast("Search for \"" + searchCursorLoader.getSearchTerm() + "\" returned nothing");    
-                if (adapter.getCount() >= ClassyFyApplication.SEARCH_RESULTS_LIMIT)
-                    displayToast(REFINE_SEARCH_MESSAGE);    
-
-            }
-
-           /**
-            * Called when a previously created loader is being reset, and thus
-            * making its data unavailable.  The application should at this point
-            * remove any references it has to the Loader's data.
-            *
-            * @param loader The Loader that is being reset.
-            */
-             @Override
-            public void onLoaderReset(Loader<Cursor> loader) 
-            {
-                adapter.swapCursor(null);
-                ((SearchCursorLoader)loader).setStatus(WorkStatus.PENDING);
-            }
-            
-        };
-        loaderManager.initLoader(0, null, loaderCallbacks);
+        contentResolver = getContentResolver();
+        loader = new PersistenceLoader();
         // Process intent
         parseIntent(getIntent());
     }
@@ -150,7 +118,7 @@ public class TitleSearchResultsActivity extends FragmentActivity
     {
         super.onResume();
         // Restart the database loader
-   }
+    }
 
 
     @Override
@@ -161,77 +129,214 @@ public class TitleSearchResultsActivity extends FragmentActivity
         parseIntent(intent);
     }
 
-    protected SimpleCursorAdapter getSimpleCursorAdapter()
-    {
-       CursorAdapaterParameters params = new CursorAdapaterParameters();
-       return new SimpleCursorAdapter(
-               this, 
-               params.getLayout(),  
-               params.getCursor(), 
-               params.getUiBindFrom(), 
-               params.getUiBindTo(), 
-               params.getFlags());
-    }
-    
     protected TitleSearchResultsFragment getTitleSearchResultsFragment()
     {
         return (TitleSearchResultsFragment)getSupportFragmentManager().findFragmentById(R.id.title_search_results_fragment);
     }
-    
-    protected LoaderManager getActivityLoaderManager()
+ 
+    protected ProgressFragment getProgressFragment()
     {
-        return getSupportLoaderManager();
+        return (ProgressFragment) getSupportFragmentManager().findFragmentById(R.id.activity_progress_fragment);
     }
 
-    private void parseIntent(Intent intent)
+    protected void parseIntent(Intent intent)
     {
         // If the Activity was started to service a search request, extract the search query
         if (Intent.ACTION_SEARCH.equals(intent.getAction()))
         {
-            String searchQuery = intent.getStringExtra(SearchManager.QUERY);
-            // Perform the search, passing in the search query as an argument to the Cursor Loader
-            Bundle args = new Bundle();
-            args.putString(SuggestionCursorParameters.QUERY_TEXT_KEY, searchQuery);
-            // Restart the Cursor Loader to execute the new query
-            /**
-             * Starts a new or restarts an existing Loader in
-             * this manager, registers the callbacks to it,
-             * and (if the activity/fragment is currently started) starts loading it.
-             * If a loader with the same id has previously been
-             * started it will automatically be destroyed when the new loader completes
-             * its work. The callback will be delivered before the old loader
-             * is destroyed.
-             *
-             * @param id A unique identifier for this loader.  Can be whatever you want.
-             * Identifiers are scoped to a particular LoaderManager instance.
-             * @param args Optional arguments to supply to the loader at construction.
-             * @param callback Interface the LoaderManager will call to report about
-             * changes in the state of the loader.  Required.
-             */
-            loaderManager.restartLoader(0, args, loaderCallbacks);
+            launchSearch(intent.getStringExtra(SearchManager.QUERY));
             // Define the on-click listener for the list items
             resultsView.getListView().setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    // Build the Intent used to open details dialog with a specific node Uri
-                    showDetailsDialog(Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, String.valueOf(id)));
+                    // Show details in a list and a dialog
+                    displayNodeDetails((int)id);
                 }
             });
         }
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) 
-        {
-            // handles a click on a search suggestion; launches activity to show node
-            showDetailsDialog(intent.getData());
-        }
+        if (Intent.ACTION_VIEW.equals(intent.getAction()) && (intent.getData() != null)) 
+            viewUri(intent.getData());
         
     }
 
-    private void showDetailsDialog(Uri uri)
+    void viewUri(Uri uri)
     {
-        Intent wordIntent = new Intent(this, MainActivity.class);
-        wordIntent.setData(uri);
-        wordIntent.setAction(Intent.ACTION_VIEW);
-        startActivity(wordIntent);
-        finish();
+        // Handles a click on a search suggestion
+        if (uri.getPathSegments().size() < 2)
+        {
+            displayToast("Invalid resource address: \"" + uri.toString() + "\"");
+            return;
+        }
+        int nodeId;
+        try
+        {
+            nodeId = Integer.parseInt(uri.getPathSegments().get(1)); 
+        }
+        catch (NumberFormatException e)
+        {
+            displayToast("Resource address has invalid ID: \"" + uri.toString() + "\"");
+            return;
+        }
+        displayNodeDetails(nodeId);
+    }
+
+    protected void launchSearch(final String searchQuery)
+    {
+        final List<ListItem> resultList = new ArrayList<ListItem>();
+        BackgroundTask queryTask = new QueryTask(searchQuery, resultList);
+        queryTask.start(new TaskCallback(){
+
+            @Override
+            public void onTaskComplete(boolean success)
+            {
+                if (success)
+                {
+                    success = resultList.size() > 0;
+                    if (success)
+                        adapter.changeData(resultList);
+                    if (adapter.getCount() >= ClassyFyApplication.SEARCH_RESULTS_LIMIT)
+                        displayToast(REFINE_SEARCH_MESSAGE);  
+                }
+                if (!success)
+                    displayToast("Search for \"" + searchQuery + "\" returned nothing");    
+            }
+        });
+    }
+    
+    protected List<ListItem> doSearchQuery(String searchQuery)
+    {
+        // Perform the search, passing in the search query as an argument to the Cursor Loader
+        SuggestionCursorParameters params = new SuggestionCursorParameters(searchQuery, ClassyFySearchEngine.LEX_CONTENT_URI, ClassyFyApplication.SEARCH_RESULTS_LIMIT); 
+        Cursor cursor = contentResolver.query(
+                params.getUri(), 
+                params.getProjection(), 
+                params.getSelection(), 
+                params.getSelectionArgs(), 
+                params.getSortOrder());
+         List<ListItem> fieldList = new ArrayList<ListItem>();
+         int nameColumnId = cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1);
+         int valueColumnId = cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_2);
+         // Id column name set in android.support.v4.widget.CursorAdaptor
+         int idColumnId = cursor.getColumnIndexOrThrow("_id");
+         if (cursor.getCount() > 0) 
+         {
+             cursor.moveToPosition(-1);         
+             while (cursor.moveToNext())
+             {
+                 String name = cursor.getString(nameColumnId);
+                 String value = cursor.getString(valueColumnId);
+                 long id = cursor.getLong(idColumnId);
+                 fieldList.add(new ListItem(name, value, id));
+             }
+         }
+         cursor.close();
+         return fieldList;
+    }
+    
+    /**
+     * Display Node details in a dialog
+     * @param uri Search suggestion containing node id in path segment 1
+     * @return Flag to indicate dialog launched
+     */
+    protected boolean displayNodeDetails(int nodeId)
+    {
+        progressFragment.showSpinner();
+        final NodeFinder nodeFinder = new NodeFinder(nodeId, new NodeFinder.Callback(){
+
+            @Override
+            public void onNodeFound(Node node)
+            {
+                progressFragment.hideSpinner();
+                // Update details
+                updateDetails(node);
+                if (node.getChildren().size() > 0)
+                    showDetailsDialog(node);
+            }
+
+            @Override
+            public void onNodeNotFound(int nodeId)
+            {
+                progressFragment.hideSpinner();
+                displayToast("Record not found due to database error");
+            }
+            
+            @Override
+            public void onRollback(int nodeId, Throwable rollbackException)
+            {
+                Log.e(TAG, "Fetch node id " + nodeId + ": failed", rollbackException);
+            }
+        });
+        taskHandle = loader.execute(ClassyFyApplication.PU_NAME, nodeFinder);
+        return true;
+    }
+
+    protected void updateDetails(Node data) 
+    {
+        Map<String,Object> valueMap = data.getProperties();
+        List<ListItem> fieldList = new ArrayList<ListItem>();
+        fieldList.add(new ListItem(data.getTitle(), RecordModel.getNameByNode(data)));
+        Set<FieldDescriptor> fieldSet = FieldDescriptorSetFactory.instance(data);
+        for (FieldDescriptor descriptor: fieldSet)
+        {
+            Object value = valueMap.get(descriptor.getName());
+            if (value == null)
+                continue;
+            fieldList.add(new ListItem(descriptor.getTitle(), value.toString()));
+        }
+        adapter.changeData(fieldList);
+    }
+
+    protected void showDetailsDialog(Node data)
+    {
+        Bundle args = new Bundle();
+        //args.putLong(ClassyFySearchEngine.KEY_ID, nodeId);
+        args.putString(ClassyFySearchEngine.KEY_TITLE, data.getTitle());
+        args.putString(ClassyFySearchEngine.KEY_MODEL, RecordModel.getNameByNode(data));
+        ArrayList<ListItem> categoryTitles = new ArrayList<ListItem>();
+        ArrayList<ListItem> folderTitles = new ArrayList<ListItem>();
+        ArrayList<ListItem> hierarchy = new ArrayList<ListItem>();
+        for (Node child: data.getChildren())
+        {
+            String title = child.getTitle();
+            long id = (long)child.get_id();
+            ListItem item = new ListItem("Title", title, id);
+            if (RecordModel.getModel(child.getModel()) == RecordModel.recordFolder)
+                folderTitles.add(item);
+            else
+                categoryTitles.add(item);
+        }
+        // Cast required because parent field declared in NodeEntity super class
+        Node node = (Node)data.getParent();
+        Deque<Node> nodeDeque = new ArrayDeque<Node>();
+        // Walk up to top node
+        while (node.getModel() != NodeType.ROOT)// Top of tree
+        {
+            nodeDeque.add(node);
+            node = (Node)node.getParent();
+        }
+        Iterator<Node> nodeIterator = nodeDeque.descendingIterator();
+        while (nodeIterator.hasNext())
+        {
+            node = nodeIterator.next();
+            String title = node.getTitle();
+            long id = (long)node.get_id();
+            ListItem item = new ListItem("Title", title, id);
+            hierarchy.add(item);
+        }
+        
+        args.putParcelableArrayList(NodeDetailsDialog.FOLDER_LIST, folderTitles);
+        args.putParcelableArrayList(NodeDetailsDialog.CATEGORY_LIST, categoryTitles);
+        args.putParcelableArrayList(NodeDetailsDialog.HIERARCHY_LIST, hierarchy);
+        dialog = showDialog(args);
+    }
+    
+    public Dialog showDialog(Bundle args) 
+    {
+        NodeDetailsDialog newFragment = new NodeDetailsDialog();
+        newFragment.setArguments(args);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        newFragment.show(fragmentManager, "dialog");
+        fragmentManager.executePendingTransactions();
+        return newFragment.getDialog();
     }
 
     protected void displayToast(String text)

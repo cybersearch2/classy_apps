@@ -10,17 +10,6 @@
         android:orientation="vertical"
         tools:context="au.com.cybersearch2.classyfy.MainActivity" >
         
-        <fragment android:name="au.com.cybersearch2.classyfy.NodeDetailsFragment"
-            android:id="@+id/node_details_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout="@android:layout/list_content" >
-        </fragment>
-        <fragment android:name="au.com.cybersearch2.classyfy.ProgressFragment"
-            android:id="@+id/main_activity_progress_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </fragment>
 </LinearLayout>
 
 

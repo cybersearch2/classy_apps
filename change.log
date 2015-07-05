@@ -1,11 +1,12 @@
 Classy Appls v1.10
 
-1. Update android.support.version to 22.2
+1. Update android.support.version to 22.2 and android.plugin.version to 4.3.0
 2. Move Tele-Genious Application to xpl project
 3. Add ClassyFyLauncher interface to ClassyFyApplication to facilitate wait for startup
 4. Change ClassyFyApplication to manage ClassyFySearchEngine creation and initialization
 5. Add ClassyFyContentProviderTest
 6. Update ClassyFySearchEngine to sync with classyandroid SearchEngineBase changes
+7. Adjust MainActivity for classyjava NodeFinder change to use a callback to handle task completion
 _______________________________________________________________________________________________________________________
 Classy Apps v1.0.9
 
