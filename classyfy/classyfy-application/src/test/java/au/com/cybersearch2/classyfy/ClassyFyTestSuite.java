@@ -31,6 +31,7 @@ import au.com.cybersearch2.classyfy.xml.XmlParserTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+    ClassyfyLogicTest.class,
     MainActivityTest.class,
     TitleSearchResultsActivityTest.class,
     ClassyFyProviderTest.class,

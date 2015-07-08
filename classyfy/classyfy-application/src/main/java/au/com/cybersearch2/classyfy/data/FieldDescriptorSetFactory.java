@@ -18,8 +18,6 @@ package au.com.cybersearch2.classyfy.data;
 import java.util.Set;
 import java.util.TreeSet;
 
-import au.com.cybersearch2.classynode.Node;
-
 /**
  * FieldDescriptorSet
  * @author Andrew Bowley

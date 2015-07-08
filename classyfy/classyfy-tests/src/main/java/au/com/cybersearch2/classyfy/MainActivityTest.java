@@ -16,14 +16,17 @@
 package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.app.SearchManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -32,9 +35,11 @@ import android.os.Build;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -95,46 +100,22 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             super.setUp();
             //assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         }
-        PersistenceContext persistenceContext = new PersistenceContext();
-        PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
-        EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
-        persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
-        persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
+        //PersistenceContext persistenceContext = new PersistenceContext();
+        //PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
+        //EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
+        //persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
+        //persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
     }
-/*
+
     @UiThreadTest
     public void test_onCreate()
     {
-        MainActivity activity = getActivity();
-        assertThat(activity.adapter).isNotNull();
-        assertThat(activity.adapter.getCount()).isEqualTo(0);
-        assertThat(activity.progressFragment).isNotNull();
-        assertThat(activity.progressFragment.getActivity()).isEqualTo(activity);
-        assertThat(activity.nodeDetailsFragment).isNotNull();
-        assertThat(activity.nodeDetailsFragment.getListAdapter()).isEqualTo(activity.adapter);
+        MainActivity mainActivity = getActivity();
+        // Check that ContentProvider is available for search operations
+        ContentResolver contentResolver  = mainActivity.getContentResolver();
+        assertThat(contentResolver.getType(ClassyFySearchEngine.CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
     }
-    
-    public void test_parseIntent_action_view() throws Throwable
-    {
-        Intent intent = getNewIntent();
-        intent.setAction(Intent.ACTION_VIEW);
-        Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "34");
-        intent.setData(actionUri);
-        setActivityIntent(intent); 
-        final MainActivity mainActivity = getActivity(); 
-        WorkStatus status = mainActivity.taskHandle.waitForTask();
-        assertThat(status).isEqualTo(WorkStatus.FINISHED);
-        PropertiesListAdapter adapter = mainActivity.adapter;
-        for (int i = 0; (i < adapter.getCount()) && (i < RECORD_DETAILS_ARRAY.length); i++)
-        {
-            Value item = (Value)adapter.getItem(i);
-            assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
-            assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
-        }
-        ProgressBar spinner = mainActivity.progressFragment.getSpinner();
-        assertThat(spinner).isNotNull();
-        assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
-    }
+    /*    
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     public void test_search() throws Throwable

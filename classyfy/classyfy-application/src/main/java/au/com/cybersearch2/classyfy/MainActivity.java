@@ -43,8 +43,6 @@ import au.com.cybersearch2.classytask.WorkStatus;
 public class MainActivity extends ActionBarActivity 
 {
     public static final String TAG = "MainActivity";
-    public static final String EDIT_DATA_KEY = "EDIT_DATA_KEY";
-    public static final String NODE_KEY = "NODE_KEY";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

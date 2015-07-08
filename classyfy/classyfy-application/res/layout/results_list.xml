@@ -8,17 +8,23 @@
         android:layout_marginTop="16dp"
         android:orientation="vertical" >
         
-        <fragment android:name="au.com.cybersearch2.classyfy.TitleSearchResultsFragment"
-            android:id="@+id/title_search_results_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout="@android:layout/list_content" >
-        </fragment>
-        <fragment android:name="au.com.cybersearch2.classyfy.ProgressFragment"
+         <fragment android:name="au.com.cybersearch2.classyfy.ProgressFragment"
             android:id="@+id/activity_progress_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" 
             android:layout_centerHorizontal="true" 
             android:visibility="gone" >
         </fragment>
+        <TextView
+            android:id="@+id/node_detail_title"
+            android:textSize="24sp"
+            android:textColor="?android:textColorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:id="@+id/node_properties"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:padding="5dp" />
 </LinearLayout>

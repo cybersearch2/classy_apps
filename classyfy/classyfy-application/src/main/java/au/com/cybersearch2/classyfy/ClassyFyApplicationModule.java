@@ -18,6 +18,7 @@ package au.com.cybersearch2.classyfy;
 import javax.inject.Singleton;
 
 import android.database.sqlite.SQLiteOpenHelper;
+import au.com.cybersearch2.classyfy.helper.TicketManager;
 import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.ApplicationModule;
@@ -34,7 +35,8 @@ import dagger.Provides;
 @Module(injects = { 
     ClassyFyStartup.class, 
     ClassyFyProvider.class,
-    ClassyFySearchEngine.class 
+    ClassyFySearchEngine.class,
+    TitleSearchResultsActivity.class
     }, includes = ClassyFyEnvironmentModule.class)
 public class ClassyFyApplicationModule implements ApplicationModule
 {
@@ -45,5 +47,15 @@ public class ClassyFyApplicationModule implements ApplicationModule
         AndroidPersistenceEnvironment androidPersistence = 
             androidPersistenceFactory.getAndroidPersistenceEnvironment(ClassyFyApplication.PU_NAME);
         return androidPersistence.getSQLiteOpenHelper();
+    }
+    
+    @Provides @Singleton ClassyfyLogic proviceClassyfyLogic()
+    {
+        return new ClassyfyLogic();
+    }
+    
+    @Provides @Singleton TicketManager provideTicketManager()
+    {
+        return new TicketManager();
     }
 }

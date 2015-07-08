@@ -4,7 +4,7 @@
              version="2.0">
    <persistence-unit name="classyfy">
        <provider>au.com.cybersearch2.ClassyFyProvider</provider> 
-       <class>au.com.cybersearch2.classynode.NodeEntity</class>
+       <class>au.com.cybersearch2.classyfy.data.NodeEntity</class>
        <class>au.com.cybersearch2.classyfy.data.RecordCategory</class>
        <class>au.com.cybersearch2.classyfy.data.RecordFolder</class>
        <property name="database-name" value="classyfy.db"/>

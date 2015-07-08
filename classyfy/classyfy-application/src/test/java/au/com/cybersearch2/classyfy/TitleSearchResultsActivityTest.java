@@ -17,13 +17,20 @@ package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.inject.Singleton;
@@ -32,7 +39,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -41,49 +47,50 @@ import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
+import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.SimpleFuture;
 
-import com.j256.ormlite.support.ConnectionSource;
-
-import dagger.Module;
-import dagger.Provides;
 import android.app.SearchManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v4.content.AsyncTaskLoader;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import au.com.cybersearch2.classyapp.ContextModule;
 import au.com.cybersearch2.classybean.BeanMap;
+import au.com.cybersearch2.classyfy.data.FieldDescriptor;
+import au.com.cybersearch2.classyfy.data.FieldDescriptorSetFactory;
+import au.com.cybersearch2.classyfy.data.Node;
+import au.com.cybersearch2.classyfy.data.NodeEntity;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classyfy.data.RecordModel;
+import au.com.cybersearch2.classyfy.helper.TicketManager;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classyjpa.entity.EntityManagerImpl;
-import au.com.cybersearch2.classyjpa.entity.PersistenceLoader;
 import au.com.cybersearch2.classyjpa.persist.Persistence;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classyjpa.persist.TestEntityManagerFactory;
-import au.com.cybersearch2.classyjpa.query.EntityQuery;
-import au.com.cybersearch2.classynode.Node;
-import au.com.cybersearch2.classynode.NodeEntity;
-import au.com.cybersearch2.classynode.NodeFinder;
+import au.com.cybersearch2.classynode.NodeType;
 import au.com.cybersearch2.classytask.ThreadHelper;
 import au.com.cybersearch2.classytask.WorkerRunnable;
-import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.ListItem;
+
+import com.j256.ormlite.support.ConnectionSource;
+
+import dagger.Module;
+import dagger.Provides;
 
 
 /**
@@ -94,7 +101,10 @@ import au.com.cybersearch2.classywidget.ListItem;
 @RunWith(RobolectricTestRunner.class)
 public class TitleSearchResultsActivityTest
 {
-    @Module(injects = { PersistenceContext.class, WorkerRunnable.class })
+    @Module(injects = { 
+            PersistenceContext.class, 
+            WorkerRunnable.class,
+            TitleSearchResultsActivity.class})
     static class TestModule implements ApplicationModule
     {
         @Provides @Singleton PersistenceFactory providePersistenceModule() 
@@ -114,6 +124,16 @@ public class TitleSearchResultsActivityTest
         @Provides @Singleton ThreadHelper provideThreadHelper()
         {
             return new ClassyFyThreadHelper();
+        }
+        
+        @Provides @Singleton ClassyfyLogic proviceClassyfyLogic()
+        {
+            return mock(ClassyfyLogic.class);
+        }
+        
+        @Provides @Singleton TicketManager provideTicketManager()
+        {
+            return new TicketManager();
         }
     }
     
@@ -164,24 +184,78 @@ public class TitleSearchResultsActivityTest
             }
           }
     }
+
+    class NodeField
+    {
+        public int id;
+        public int parentId;
+        public String name;
+        public String title;
+        public int model;
+        public int level;
+        
+        public NodeField(
+                int id,
+                int parentId,
+                String name,
+                String title,
+                int model,
+                int level)
+        {
+           this.id = id; 
+           this.parentId = parentId;
+           this.name = name;
+           this.title = title;
+           this.model = model;
+           this.level = level;
+        }
+        
+        NodeEntity getNodeEntity(NodeEntity parent)
+        {
+            NodeEntity nodeEntity = new NodeEntity();
+            nodeEntity.set_id(id);
+            nodeEntity.set_parent_id(parentId);
+            nodeEntity.setLevel(level);
+            nodeEntity.setModel(model);
+            nodeEntity.setName(name);
+            nodeEntity.setParent(parent);
+            nodeEntity.setTitle(title);
+            return nodeEntity;
+        }
+    }
+
+    NodeField[] NODE_FIELDS = new NodeField[]
+    {
+        new NodeField(1,1,"cybersearch2_records","Cybersearch2 Records",1,1),
+        new NodeField(2,1,"administration","Administration",1,2),
+        new NodeField(3,2,"premises","Premises",1,3),
+        new NodeField(4,3,"maintenance","Maintenance",2,4),
+        new NodeField(5,3,"rent","Rent",2,4)
+    };
     
+    private static final String[][] RECORD_DETAILS_ARRAY =
+    {
+        { "description", "" },
+        { "created", "2014-02-12 10:58:00.000000" },
+        { "creator", "admin" },
+        { "modified", "2014-02-12 11:28:35.000000" },
+        { "modifier", "admin" },
+        { "identifier", "2014-1392163053802" }
+    };
+
+
     public static final String TITLE = "Corporate Management";
     public static final String MODEL = "Category";
     private final static String SEARCH_TEXT = "Information";
     private static final String RECORD_NAME = "Cybersearch2-Records";
     private static final String RECORD_VALUE = "Cybersearch2 Records";
     private static final long NODE_ID = 34L;
-    private static final int RECORD_ID = 77;
-    private EntityManagerImpl entityManager;
 
     @Before
     public void setUp() 
     {
-        TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
-        ContextModule contextModule = new ContextModule(classyfyLauncher);
+        ContextModule contextModule = new ContextModule(TestClassyFyApplication.getTestInstance());
         new DI(new TestModule(), contextModule);
-        TestEntityManagerFactory.setEntityManagerInstance();
-        entityManager = (EntityManagerImpl) TestEntityManagerFactory.getEntityManager();
     }
 
     @After
@@ -194,7 +268,6 @@ public class TitleSearchResultsActivityTest
         return new Intent(RuntimeEnvironment.application, TitleSearchResultsActivity.class);
     }
     
-    @SuppressWarnings("unchecked")
     @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
     @Test 
     public void test_onCreate() throws Exception
@@ -207,107 +280,92 @@ public class TitleSearchResultsActivityTest
         .visible()
         .get();
         // Check activity fields initialization
-        assertThat(titleSearchResultsActivity.adapter.getCount()).isEqualTo(0);
-        assertThat(titleSearchResultsActivity.resultsView).isNotNull();
-        assertThat(titleSearchResultsActivity.resultsView.getListAdapter()).isEqualTo(titleSearchResultsActivity.adapter);
-        assertThat(titleSearchResultsActivity.resultsView.getId()).isEqualTo(R.id.title_search_results_fragment);
+        assertThat(titleSearchResultsActivity.progressFragment).isNotNull();
+        assertThat(titleSearchResultsActivity.classyfyLogic).isNotNull();
         assertThat(titleSearchResultsActivity.REFINE_SEARCH_MESSAGE).isEqualTo("Only first 50 hits displayed. Please refine search.");
-
-        // Test updateDetails() sets adapter correctly
-        Node node = mock(Node.class);
-        Map<String, Object> testNodeProperties = getNodeProperties();
-        when(node.getProperties()).thenReturn(testNodeProperties);
-        when(node.getTitle()).thenReturn(TITLE);
-        when(node.getModel()).thenReturn(RecordModel.recordCategory.ordinal());
-        titleSearchResultsActivity.updateDetails(node);
-        assertThat(titleSearchResultsActivity.adapter.getCount()).isEqualTo(7);
-        ListItem item1 = (ListItem) titleSearchResultsActivity.adapter.getItem(0);
-        assertThat(item1).isNotNull();
-        assertThat(item1.getName()).isEqualTo(TITLE);
-        assertThat(item1.getValue()).isEqualTo(MODEL);
         
         // Test search suggesion initiated by intent
-        ContentResolver contentResolver = mock(ContentResolver.class);
-        titleSearchResultsActivity.contentResolver = contentResolver;
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, SEARCH_TEXT);
         ShadowLooper.getUiThreadScheduler().pause();
         ShadowApplication.getInstance().getBackgroundScheduler().pause();
         titleSearchResultsActivity.parseIntent(intent);
         // Navigate doSearchQuery() and onLoadComplete()
-        Cursor cursor = mock(Cursor.class);
-        when(cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1)).thenReturn(1);
-        when(cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_2)).thenReturn(2);
-        when(cursor.getColumnIndexOrThrow("_id")).thenReturn(0);
-        when(cursor.getCount()).thenReturn(1);
-        when(cursor.moveToNext()).thenReturn(true, false);
-        when(cursor.getString(1)).thenReturn(RECORD_NAME);
-        when(cursor.getString(2)).thenReturn(RECORD_VALUE);
-        when(cursor.getLong(0)).thenReturn(NODE_ID);
-        Uri uri = Uri.parse(ClassyFySearchEngine.LEX_CONTENT_URI + "?" + 
-                            SearchManager.SUGGEST_PARAMETER_LIMIT + "=" +
-                            String.valueOf(ClassyFyApplication.SEARCH_RESULTS_LIMIT));
-        when(contentResolver.query(uri, null, "word MATCH ?", new String[] { SEARCH_TEXT }, null)).thenReturn(cursor);
+        ClassyfyLogic classyfyLogic = titleSearchResultsActivity.classyfyLogic;
+        ArrayList<ListItem> singletonList = new ArrayList<ListItem>();
+        ListItem listItem = new ListItem(RECORD_NAME, RECORD_VALUE, NODE_ID);
+        singletonList.add(listItem);
+        when(classyfyLogic.doSearchQuery(SEARCH_TEXT)).thenReturn(singletonList);
         ShadowApplication.getInstance().getBackgroundScheduler().runOneTask();
-        PropertiesListAdapter adapter = mock(PropertiesListAdapter.class);
-        when(adapter.getCount()).thenReturn(1);
-        titleSearchResultsActivity.adapter = adapter;
-        //Robolectric.flushForegroundScheduler();
+        verify(classyfyLogic).doSearchQuery(SEARCH_TEXT);
         assertThat(ShadowLooper.getUiThreadScheduler().runOneTask()).isTrue();
-        @SuppressWarnings("rawtypes")
-        ArgumentCaptor<ArrayList> valueList = ArgumentCaptor.forClass(ArrayList.class);
-        verify(adapter).changeData(valueList.capture());
-        ArrayList<ListItem> singletonList = valueList.getValue();
-        ListItem value = singletonList.get(0);
-        assertThat(value.getName()).isEqualTo(RECORD_NAME);
-        assertThat(value.getValue()).isEqualTo(RECORD_VALUE);
-        assertThat(value.getId()).isEqualTo(NODE_ID);
+        ShadowActivity activity = Shadows.shadowOf(titleSearchResultsActivity);
+        TextView tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
+        assertThat(tv1.getText()).isEqualTo("Search: " + SEARCH_TEXT);
+        LinearLayout propertiesLayout = (LinearLayout)activity.findViewById(R.id.node_properties);
+        LinearLayout dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(0);
+        LinearLayout titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        TextView titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Titles");
+        ListView itemList = (ListView)dynamicLayout.getChildAt(1);
+        ListAdapter adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(1);
+        assertThat((ListItem)adapter.getItem(0)).isEqualTo(listItem);
         
         // Test item selection by activating the onItemClickListener
-        OnItemClickListener onItemClickListener = titleSearchResultsActivity.resultsView.getListView().getOnItemClickListener();
+        OnItemClickListener onItemClickListener = itemList.getOnItemClickListener();
         ShadowApplication.getInstance().getBackgroundScheduler().advanceToLastPostedRunnable();
-        PersistenceLoader loader = mock(PersistenceLoader.class);
-        titleSearchResultsActivity.loader = loader;
+        Node data = getTestNode();
+        NodeDetailsBean nodeDetails = getNodeDetails(data);
+        when(classyfyLogic.getNodeDetails((int)NODE_ID)).thenReturn(nodeDetails);
         onItemClickListener.onItemClick(null, null, 0, NODE_ID);
-        //assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.VISIBLE);
+        assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.VISIBLE);
         ShadowApplication.getInstance().getBackgroundScheduler().runOneTask();
-        // Navigate NodeFinder execution. Requires mocking JPA activity to get NodeEntity and CategoryRecord
-        ArgumentCaptor<NodeFinder> nodeFinder = ArgumentCaptor.forClass(NodeFinder.class);
-        verify(loader).execute(eq(ClassyFyApplication.PU_NAME), nodeFinder.capture());
-        NodeEntity nodeEntity = new NodeEntity();
-        // Set id == parent_id so only one node returned
-        nodeEntity.set_id(1);
-        nodeEntity.set_parent_id(1);
-        nodeEntity.set_id((int)NODE_ID);
-        nodeEntity.setModel(1);
-        nodeEntity.setName(RECORD_NAME);
-        nodeEntity.setTitle(RECORD_VALUE);
-        when(entityManager.find(NodeEntity.class, (int)NODE_ID)).thenReturn(nodeEntity);
-        EntityQuery<?> query = mock(EntityQuery.class);
-        RecordCategory category = getRecordCategory();
-        category.set_id(RECORD_ID);
-        category.set_nodeId((int)NODE_ID);
-        when(query.getSingleResult()).thenReturn(category);
-        when(entityManager.createNamedQuery(Node.NODE_BY_PRIMARY_KEY_QUERY + 1)).thenReturn(query);
-        nodeFinder.getValue().doTask(entityManager);
-        nodeFinder.getValue().onPostExecute(true);
-        @SuppressWarnings("rawtypes")
-        // Check list view is updated correctly
-        ArgumentCaptor<ArrayList> fieldsList = ArgumentCaptor.forClass(ArrayList.class);
-        verify(adapter, times(2)).changeData(fieldsList.capture());
-        ArrayList<ListItem> fieldValues = fieldsList.getValue();
-        value = fieldValues.get(0);
-        assertThat(fieldValues.size()).isEqualTo(7);
-        assertThat(value.getName()).isEqualTo(RECORD_VALUE);
-        assertThat(value.getValue()).isEqualTo(MODEL);
-        value = fieldValues.get(1);
-        assertThat(value.getName()).isEqualTo("Description");
-        assertThat(value.getValue()).isEqualTo(category.getDescription());
+        verify(classyfyLogic).getNodeDetails((int)NODE_ID);
         Robolectric.flushForegroundScheduler();
-        // Check dialog is displayed
-        ShadowDialog dialog = Shadows.shadowOf(ShadowDialog.getLatestDialog());
-        assertThat(dialog.getTitle()).isEqualTo("Category: " + RECORD_VALUE);
-        assertThat(dialog.isCancelableOnTouchOutside()).isTrue();
+        assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.GONE);
+        tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
+        assertThat(tv1.getText()).isEqualTo(nodeDetails.getHeading());
+        propertiesLayout = (LinearLayout)activity.findViewById(R.id.node_properties);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(0);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Hierarchy");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[0].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[0].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[1].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[1].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(1);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Folders");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[3].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[3].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[4].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[4].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(2);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Details");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(RECORD_DETAILS_ARRAY.length);
+        for (int i = 0; i < RECORD_DETAILS_ARRAY.length; i++)
+        {
+            ListItem item = (ListItem)adapter.getItem(i);
+            assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
+            assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
+        }
     }
  
     @Test
@@ -324,7 +382,7 @@ public class TitleSearchResultsActivityTest
         .get();
         ShadowToast.showedToast("Invalid resource address: \"" + ClassyFySearchEngine.CONTENT_URI.toString() + "\"");
     }
-
+    
     @Test
     public void test_parseIntent_action_view_invalid_node_id()
     {
@@ -338,28 +396,6 @@ public class TitleSearchResultsActivityTest
         .visible()
         .get();
         ShadowToast.showedToast("Resource address has invalid ID: \"" + actionUri.toString() + "\"");
-    }
-    
-    @Test
-    public void test_parseIntent_action_edit() throws Exception
-    {
-        TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class)
-        .create()
-        .start()
-        .visible()
-        .get();
-        Node root = Node.rootNodeNewInstance();
-        Node data = new Node(RecordModel.recordCategory.ordinal(), root);
-        data.setTitle(TITLE);
-        data.setProperties(getNodeProperties());
-        titleSearchResultsActivity.showDetailsDialog(data);
-        ShadowDialog dialog = Shadows.shadowOf(ShadowDialog.getLatestDialog());
-        assertThat(dialog.getTitle()).isEqualTo("Node Details");
-        assertThat(dialog.isCancelableOnTouchOutside()).isTrue();
-        //TextView tv1 = (TextView) ShadowDialog.getLatestDialog().findViewById(R.id.node_detail_title);
-        //assertThat(tv1.getText()).isEqualTo(TITLE);
-        //TextView tv2 = (TextView) ShadowDialog.getLatestDialog().findViewById(R.id.node_detail_model);
-        //assertThat(tv2.getText()).isEqualTo(RecordModel.recordCategory.toString());
     }
 
    /*
@@ -379,72 +415,84 @@ public class TitleSearchResultsActivityTest
         // Assertions go here
     }
     */
-/*
-    @Test
-    public void test_dynamic_layout() throws Exception
+
+    protected NodeDetailsBean getNodeDetails(Node data)
     {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS", new Locale("en", "AU"));
-        RecordCategory recordCategory = new RecordCategory();
-        Date created = sdf.parse("2014-02-05 18:45:46.145000");
-        Date modified = sdf.parse("2014-02-12 11:55:23.121000");
-        recordCategory.setCreated(created);
-        recordCategory.setModified(modified);
-        recordCategory.setCreator("admin");
-        recordCategory.setDescription("Information Technology");
-        recordCategory.setIdentifier("2014-1391586274589");
-        FieldDescriptor descriptionField = new FieldDescriptor();
-        descriptionField.setOrder(1);
-        descriptionField.setName("description");
-        descriptionField.setTitle("Description");
-        FieldDescriptor createdField = new FieldDescriptor();
-        createdField.setOrder(2);
-        createdField.setName("created");
-        createdField.setTitle("Created");
-        FieldDescriptor creatorField = new FieldDescriptor();
-        creatorField.setOrder(3);
-        creatorField.setName("creator");
-        creatorField.setTitle("Creator");
-        FieldDescriptor modifiedField = new FieldDescriptor();
-        modifiedField.setOrder(4);
-        modifiedField.setName("modified");
-        modifiedField.setTitle("Modified");
-        FieldDescriptor modifier = new FieldDescriptor();
-        modifier.setOrder(5);
-        modifier.setName("modifier");
-        modifier.setTitle("Modifier");
-        FieldDescriptor identifierField = new FieldDescriptor();
-        identifierField.setOrder(6);
-        identifierField.setName("identifier");
-        identifierField.setTitle("Identifier");
-        Set<FieldDescriptor> fieldSet = new TreeSet<FieldDescriptor>();
-        fieldSet.add(descriptionField);
-        fieldSet.add(createdField);
-        fieldSet.add(creatorField);
-        fieldSet.add(modifiedField);
-        fieldSet.add(modifier);
-        fieldSet.add(identifierField);
-        Map<String,Object> valueMap = PropertyUtils.describe(recordCategory);
-        titleSearchResultsActivity = (TitleSearchResultsActivity) controller.create().get(); 
-        LinearLayout dynamicLayout = new LinearLayout(titleSearchResultsActivity);
-        dynamicLayout.setOrientation(LinearLayout.VERTICAL);
-        int layoutHeight = LinearLayout.LayoutParams.MATCH_PARENT;
-        int layoutWidth = LinearLayout.LayoutParams.WRAP_CONTENT;
+        NodeDetailsBean nodeDetailsBean = new NodeDetailsBean();
+        // Collect children, distinguishing between folders and categories
+        for (Node child: data.getChildren())
+        {
+            String title = child.getTitle();
+            long id = (long)child.getId();
+            ListItem item = new ListItem("Title", title, id);
+            if (RecordModel.getModel(child.getModel()) == RecordModel.recordFolder)
+                nodeDetailsBean.getFolderTitles().add(item);
+            else
+                nodeDetailsBean.getCategoryTitles().add(item);
+        }
+        // Collect node hierarchy up to root node
+        Node node = data.getParent();
+        Deque<Node> nodeDeque = new ArrayDeque<Node>();
+        // Walk up to top node
+        while (node.getModel() != NodeType.ROOT)// Top of tree
+        {
+            nodeDeque.add(node);
+            node = node.getParent();
+        }
+        Iterator<Node> nodeIterator = nodeDeque.descendingIterator();
+        while (nodeIterator.hasNext())
+        {
+            node = nodeIterator.next();
+            String title = node.getTitle();
+            long id = (long)node.getId();
+            ListItem item = new ListItem("Title", title, id);
+            nodeDetailsBean.getHierarchy().add(item);
+        }
+        // Build heading from Title and record type
+        StringBuilder builder = new StringBuilder();
+        builder.append(RecordModel.getNameByNode(data)).append(": ");
+        builder.append(data.getTitle());
+        nodeDetailsBean.setHeading(builder.toString());
+        // Collect details in FieldDescripter order
+        Map<String,Object> valueMap = data.getProperties();
+        Set<FieldDescriptor> fieldSet = FieldDescriptorSetFactory.instance(data);
         for (FieldDescriptor descriptor: fieldSet)
         {
             Object value = valueMap.get(descriptor.getName());
             if (value == null)
                 continue;
-            TextView titleView = new TextView(titleSearchResultsActivity);
-            titleView.setText(descriptor.getTitle());
-            TextView valueView = new TextView(titleSearchResultsActivity);
-            valueView.setText(value.toString());
-            LinearLayout fieldLayout = new LinearLayout(titleSearchResultsActivity);
-            fieldLayout.setOrientation(LinearLayout.HORIZONTAL);
-            fieldLayout.addView(titleView, new LinearLayout.LayoutParams(layoutWidth, layoutHeight));
-            fieldLayout.addView(valueView, new LinearLayout.LayoutParams(layoutWidth, layoutHeight));
+            nodeDetailsBean.getFieldList().add(new ListItem(descriptor.getTitle(), value.toString()));
         }
+        return nodeDetailsBean;
     }
-    */
+
+    public Node getTestNode() throws Exception
+    {
+        NodeEntity nodeEntity0 = NODE_FIELDS[0].getNodeEntity(null);
+        List<NodeEntity> children0 = new ArrayList<NodeEntity>();
+        NodeEntity nodeEntity1 = NODE_FIELDS[1].getNodeEntity(nodeEntity0);
+        children0.add(nodeEntity1);
+        nodeEntity0.set_children(children0);
+        
+        NodeEntity nodeEntity2 = NODE_FIELDS[2].getNodeEntity(nodeEntity1);
+        List<NodeEntity> children1 = new ArrayList<NodeEntity>();
+        children1.add(nodeEntity2);
+        nodeEntity1.set_children(children1);
+        
+        NodeEntity nodeEntity3 = NODE_FIELDS[3].getNodeEntity(nodeEntity2);
+        NodeEntity nodeEntity4 = NODE_FIELDS[4].getNodeEntity(nodeEntity2);
+        List<NodeEntity> children2 = new ArrayList<NodeEntity>();
+        children2.add(nodeEntity3);
+        children2.add(nodeEntity4);
+        nodeEntity2.set_children(children2);
+      
+        Node node = new Node(nodeEntity0, null);
+        node = node.getChildren().get(0).getChildren().get(0);
+        node.setProperties(getNodeProperties());
+        return node;
+    }
+
+
     private Map<String, Object> getNodeProperties() throws Exception
     {
         return new BeanMap(getRecordCategory());

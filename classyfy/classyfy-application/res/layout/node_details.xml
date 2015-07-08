@@ -17,10 +17,4 @@
             android:paddingTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />-->
-    <LinearLayout
-        android:id="@+id/node_properties"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:padding="5dp" />
 </LinearLayout>

@@ -15,7 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.data;
 
-import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classynode.NodeType;
 
 /**

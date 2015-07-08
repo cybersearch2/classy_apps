@@ -16,42 +16,33 @@
 package au.com.cybersearch2.classyfy;
 
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import android.app.Dialog;
+import javax.inject.Inject;
+
 import android.app.SearchManager;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
-import au.com.cybersearch2.classycontent.SuggestionCursorParameters;
-import au.com.cybersearch2.classyfy.data.FieldDescriptor;
-import au.com.cybersearch2.classyfy.data.FieldDescriptorSetFactory;
-import au.com.cybersearch2.classyfy.data.RecordModel;
-import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyjpa.entity.PersistenceLoader;
-import au.com.cybersearch2.classynode.Node;
-import au.com.cybersearch2.classynode.NodeFinder;
-import au.com.cybersearch2.classynode.NodeType;
+import au.com.cybersearch2.classyfy.helper.TicketManager;
+import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classytask.BackgroundTask;
-import au.com.cybersearch2.classytask.Executable;
-import au.com.cybersearch2.classytask.BackgroundTask.TaskCallback;
-import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.ListItem;
+import au.com.cybersearch2.classywidget.PropertiesListAdapter;
+//import au.com.cybersearch2.classynode.Node;
+//import au.com.cybersearch2.classynode.NodeFinder;
 
 /**
  * TitleSearchResultsActivity
@@ -60,42 +51,14 @@ import au.com.cybersearch2.classywidget.ListItem;
  */
 public class TitleSearchResultsActivity extends FragmentActivity
 {
-    class QueryTask extends BackgroundTask
-    {
-        String searchQuery;
-        List<ListItem> resultList;
-        
-        public QueryTask(String searchQuery, List<ListItem> resultList)
-        {
-            super(TitleSearchResultsActivity.this);
-            this.searchQuery = searchQuery;
-            this.resultList = resultList;
-        }
-        
-        /**
-         * Execute task in  background thread
-         * Called on a worker thread to perform the actual load. 
-         * @return Boolean object - Boolean.TRUE indicates successful result
-         * @see android.support.v4.content.AsyncTaskLoader#loadInBackground()
-         */
-        @Override
-        public Boolean loadInBackground()
-        {
-            resultList.addAll(doSearchQuery(searchQuery));
-            return Boolean.TRUE;
-        }
-    }
-    
     public static final String TAG = "TitleSearchResults";
 
     protected String REFINE_SEARCH_MESSAGE;
-    protected PropertiesListAdapter adapter;
-    protected TitleSearchResultsFragment resultsView;
     protected ProgressFragment progressFragment;
-    protected Executable taskHandle;
-    protected ContentResolver contentResolver;
-    protected PersistenceLoader loader;
-    protected Dialog dialog;
+    @Inject
+    ClassyfyLogic classyfyLogic;
+    @Inject
+    TicketManager ticketManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -103,12 +66,8 @@ public class TitleSearchResultsActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.results_list);
         progressFragment = getProgressFragment();
-        adapter = new PropertiesListAdapter(this);
-        resultsView = getTitleSearchResultsFragment(); 
-        resultsView.setListAdapter(adapter);
         REFINE_SEARCH_MESSAGE = this.getString(R.string.refine_search);
-        contentResolver = getContentResolver();
-        loader = new PersistenceLoader();
+        DI.inject(this);
         // Process intent
         parseIntent(getIntent());
     }
@@ -117,7 +76,6 @@ public class TitleSearchResultsActivity extends FragmentActivity
     protected void onResume()
     {
         super.onResume();
-        // Restart the database loader
     }
 
 
@@ -129,11 +87,6 @@ public class TitleSearchResultsActivity extends FragmentActivity
         parseIntent(intent);
     }
 
-    protected TitleSearchResultsFragment getTitleSearchResultsFragment()
-    {
-        return (TitleSearchResultsFragment)getSupportFragmentManager().findFragmentById(R.id.title_search_results_fragment);
-    }
- 
     protected ProgressFragment getProgressFragment()
     {
         return (ProgressFragment) getSupportFragmentManager().findFragmentById(R.id.activity_progress_fragment);
@@ -143,27 +96,19 @@ public class TitleSearchResultsActivity extends FragmentActivity
     {
         // If the Activity was started to service a search request, extract the search query
         if (Intent.ACTION_SEARCH.equals(intent.getAction()))
-        {
-            launchSearch(intent.getStringExtra(SearchManager.QUERY));
-            // Define the on-click listener for the list items
-            resultsView.getListView().setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    // Show details in a list and a dialog
-                    displayNodeDetails((int)id);
-                }
-            });
-        }
+            launchSearch(intent.getStringExtra(SearchManager.QUERY), ticketManager.addIntent(intent));
         if (Intent.ACTION_VIEW.equals(intent.getAction()) && (intent.getData() != null)) 
-            viewUri(intent.getData());
+            viewUri(intent.getData(), ticketManager.addIntent(intent));
         
     }
 
-    void viewUri(Uri uri)
+    void viewUri(Uri uri, int ticket)
     {
         // Handles a click on a search suggestion
         if (uri.getPathSegments().size() < 2)
         {
             displayToast("Invalid resource address: \"" + uri.toString() + "\"");
+            ticketManager.removeIntent(ticket);
             return;
         }
         int nodeId;
@@ -174,161 +119,107 @@ public class TitleSearchResultsActivity extends FragmentActivity
         catch (NumberFormatException e)
         {
             displayToast("Resource address has invalid ID: \"" + uri.toString() + "\"");
+            ticketManager.removeIntent(ticket);
             return;
         }
-        displayNodeDetails(nodeId);
+        displayNodeDetails(nodeId, ticket);
     }
 
-    protected void launchSearch(final String searchQuery)
+    protected void launchSearch(final String searchQuery, final int ticket)
     {
         final List<ListItem> resultList = new ArrayList<ListItem>();
-        BackgroundTask queryTask = new QueryTask(searchQuery, resultList);
-        queryTask.start(new TaskCallback(){
+        BackgroundTask queryTask = new BackgroundTask(this)
+        {
+            /**
+             * Execute task in  background thread
+             * Called on a worker thread to perform the actual load. 
+             * @return Boolean object - Boolean.TRUE indicates successful result
+             * @see android.support.v4.content.AsyncTaskLoader#loadInBackground()
+             */
+            @Override
+            public Boolean loadInBackground()
+            {
+                resultList.addAll(classyfyLogic.doSearchQuery(searchQuery));
+                return Boolean.TRUE;
+            }
 
             @Override
-            public void onTaskComplete(boolean success)
+            public void onLoadComplete(Loader<Boolean> loader, Boolean success)
             {
                 if (success)
                 {
                     success = resultList.size() > 0;
                     if (success)
-                        adapter.changeData(resultList);
-                    if (adapter.getCount() >= ClassyFyApplication.SEARCH_RESULTS_LIMIT)
+                    {
+                        TextView tv1 = (TextView)findViewById(R.id.node_detail_title);
+                        tv1.setText("Search: " + searchQuery);
+                        LinearLayout propertiesLayout = (LinearLayout) findViewById(R.id.node_properties);
+                        propertiesLayout.removeAllViews();
+                        propertiesLayout.addView(createDynamicLayout("Titles", resultList, false));
+                    }
+                    if (resultList.size() >= ClassyFyApplication.SEARCH_RESULTS_LIMIT)
                         displayToast(REFINE_SEARCH_MESSAGE);  
                 }
                 if (!success)
                     displayToast("Search for \"" + searchQuery + "\" returned nothing");    
+                ticketManager.removeIntent(ticket);
             }
-        });
-    }
-    
-    protected List<ListItem> doSearchQuery(String searchQuery)
-    {
-        // Perform the search, passing in the search query as an argument to the Cursor Loader
-        SuggestionCursorParameters params = new SuggestionCursorParameters(searchQuery, ClassyFySearchEngine.LEX_CONTENT_URI, ClassyFyApplication.SEARCH_RESULTS_LIMIT); 
-        Cursor cursor = contentResolver.query(
-                params.getUri(), 
-                params.getProjection(), 
-                params.getSelection(), 
-                params.getSelectionArgs(), 
-                params.getSortOrder());
-         List<ListItem> fieldList = new ArrayList<ListItem>();
-         int nameColumnId = cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1);
-         int valueColumnId = cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_2);
-         // Id column name set in android.support.v4.widget.CursorAdaptor
-         int idColumnId = cursor.getColumnIndexOrThrow("_id");
-         if (cursor.getCount() > 0) 
-         {
-             cursor.moveToPosition(-1);         
-             while (cursor.moveToNext())
-             {
-                 String name = cursor.getString(nameColumnId);
-                 String value = cursor.getString(valueColumnId);
-                 long id = cursor.getLong(idColumnId);
-                 fieldList.add(new ListItem(name, value, id));
-             }
-         }
-         cursor.close();
-         return fieldList;
+        };
+        queryTask.onStartLoading();
     }
     
     /**
      * Display Node details in a dialog
      * @param uri Search suggestion containing node id in path segment 1
-     * @return Flag to indicate dialog launched
      */
-    protected boolean displayNodeDetails(int nodeId)
+    protected void displayNodeDetails(final int nodeId, final int ticket)
     {
         progressFragment.showSpinner();
-        final NodeFinder nodeFinder = new NodeFinder(nodeId, new NodeFinder.Callback(){
-
-            @Override
-            public void onNodeFound(Node node)
-            {
-                progressFragment.hideSpinner();
-                // Update details
-                updateDetails(node);
-                if (node.getChildren().size() > 0)
-                    showDetailsDialog(node);
-            }
-
-            @Override
-            public void onNodeNotFound(int nodeId)
-            {
-                progressFragment.hideSpinner();
-                displayToast("Record not found due to database error");
-            }
+        BackgroundTask getDetailsTask = new BackgroundTask(this)
+        {
+            NodeDetailsBean nodeDetails;
             
             @Override
-            public void onRollback(int nodeId, Throwable rollbackException)
+            public Boolean loadInBackground()
             {
-                Log.e(TAG, "Fetch node id " + nodeId + ": failed", rollbackException);
+                nodeDetails = classyfyLogic.getNodeDetails(nodeId);
+                return Boolean.TRUE;
             }
-        });
-        taskHandle = loader.execute(ClassyFyApplication.PU_NAME, nodeFinder);
-        return true;
+            @Override
+            public void onLoadComplete(Loader<Boolean> loader, Boolean success)
+            {
+                progressFragment.hideSpinner();
+                if (success)
+                {
+                    String errorMessage = nodeDetails.getErrorMessage();
+                    if (errorMessage != null)
+                        displayToast(errorMessage);
+                    else
+                        showDetailsDialog(nodeDetails);
+                }
+                else
+                    displayToast(ClassyfyLogic.RECORD_NOT_FOUND);
+                ticketManager.removeIntent(ticket);
+            }
+       };
+       getDetailsTask.onStartLoading();
     }
 
-    protected void updateDetails(Node data) 
+    protected void showDetailsDialog(NodeDetailsBean nodeDetails)
     {
-        Map<String,Object> valueMap = data.getProperties();
-        List<ListItem> fieldList = new ArrayList<ListItem>();
-        fieldList.add(new ListItem(data.getTitle(), RecordModel.getNameByNode(data)));
-        Set<FieldDescriptor> fieldSet = FieldDescriptorSetFactory.instance(data);
-        for (FieldDescriptor descriptor: fieldSet)
-        {
-            Object value = valueMap.get(descriptor.getName());
-            if (value == null)
-                continue;
-            fieldList.add(new ListItem(descriptor.getTitle(), value.toString()));
-        }
-        adapter.changeData(fieldList);
+        TextView tv1 = (TextView)findViewById(R.id.node_detail_title);
+        tv1.setText(nodeDetails.getHeading());
+        LinearLayout propertiesLayout = (LinearLayout) findViewById(R.id.node_properties);
+        propertiesLayout.removeAllViews();
+        if (nodeDetails.getHierarchy().size() > 0)
+            propertiesLayout.addView(createDynamicLayout("Hierarchy", nodeDetails.getHierarchy(), true));
+        if (nodeDetails.getCategoryTitles().size() > 0)
+            propertiesLayout.addView(createDynamicLayout("Categories", nodeDetails.getCategoryTitles(), true));
+        if (nodeDetails.getFolderTitles().size() > 0)
+            propertiesLayout.addView(createDynamicLayout("Folders", nodeDetails.getFolderTitles(), true));
+        propertiesLayout.addView(createDynamicLayout("Details", nodeDetails.getFieldList(), false));
     }
-
-    protected void showDetailsDialog(Node data)
-    {
-        Bundle args = new Bundle();
-        //args.putLong(ClassyFySearchEngine.KEY_ID, nodeId);
-        args.putString(ClassyFySearchEngine.KEY_TITLE, data.getTitle());
-        args.putString(ClassyFySearchEngine.KEY_MODEL, RecordModel.getNameByNode(data));
-        ArrayList<ListItem> categoryTitles = new ArrayList<ListItem>();
-        ArrayList<ListItem> folderTitles = new ArrayList<ListItem>();
-        ArrayList<ListItem> hierarchy = new ArrayList<ListItem>();
-        for (Node child: data.getChildren())
-        {
-            String title = child.getTitle();
-            long id = (long)child.get_id();
-            ListItem item = new ListItem("Title", title, id);
-            if (RecordModel.getModel(child.getModel()) == RecordModel.recordFolder)
-                folderTitles.add(item);
-            else
-                categoryTitles.add(item);
-        }
-        // Cast required because parent field declared in NodeEntity super class
-        Node node = (Node)data.getParent();
-        Deque<Node> nodeDeque = new ArrayDeque<Node>();
-        // Walk up to top node
-        while (node.getModel() != NodeType.ROOT)// Top of tree
-        {
-            nodeDeque.add(node);
-            node = (Node)node.getParent();
-        }
-        Iterator<Node> nodeIterator = nodeDeque.descendingIterator();
-        while (nodeIterator.hasNext())
-        {
-            node = nodeIterator.next();
-            String title = node.getTitle();
-            long id = (long)node.get_id();
-            ListItem item = new ListItem("Title", title, id);
-            hierarchy.add(item);
-        }
-        
-        args.putParcelableArrayList(NodeDetailsDialog.FOLDER_LIST, folderTitles);
-        args.putParcelableArrayList(NodeDetailsDialog.CATEGORY_LIST, categoryTitles);
-        args.putParcelableArrayList(NodeDetailsDialog.HIERARCHY_LIST, hierarchy);
-        dialog = showDialog(args);
-    }
-    
+/*    
     public Dialog showDialog(Bundle args) 
     {
         NodeDetailsDialog newFragment = new NodeDetailsDialog();
@@ -337,6 +228,37 @@ public class TitleSearchResultsActivity extends FragmentActivity
         newFragment.show(fragmentManager, "dialog");
         fragmentManager.executePendingTransactions();
         return newFragment.getDialog();
+    }
+*/
+    protected View createDynamicLayout(String title, List<ListItem> items, boolean isSingleLine)
+    {
+        LinearLayout dynamicLayout = new LinearLayout(this);
+        dynamicLayout.setOrientation(LinearLayout.VERTICAL);
+        int layoutHeight = LinearLayout.LayoutParams.MATCH_PARENT;
+        int layoutWidth = LinearLayout.LayoutParams.MATCH_PARENT;
+        TextView titleView = new TextView(this);
+        titleView.setText(title);
+        titleView.setTextColor(Color.BLUE);
+        LinearLayout titleLayout = new LinearLayout(this);
+        titleLayout.setOrientation(LinearLayout.HORIZONTAL);
+        LayoutParams titleLayoutParms = new LinearLayout.LayoutParams(layoutWidth, layoutHeight);
+        titleLayout.addView(titleView, titleLayoutParms);
+        dynamicLayout.addView(titleLayout);
+        ListView itemList = new ListView(this);
+        PropertiesListAdapter listAdapter = new PropertiesListAdapter(this, items);
+        listAdapter.setSingleLine(isSingleLine);
+        itemList.setAdapter(listAdapter);
+        itemList.setOnItemClickListener(new OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id)
+            {
+                displayNodeDetails((int)id, ticketManager.voidTicket());
+            }
+        });
+        dynamicLayout.addView(itemList);
+        return dynamicLayout;
     }
 
     protected void displayToast(String text)
