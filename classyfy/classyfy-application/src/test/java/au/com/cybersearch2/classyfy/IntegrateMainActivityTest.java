@@ -248,6 +248,7 @@ public class IntegrateMainActivityTest
         .get();
         mainActivity.startMonitor.waitForTask();
         assertThat(mainActivity.startMonitor.getStatus()).isEqualTo(WorkStatus.FINISHED);
+        /*
         ShadowActivity activity = Shadows.shadowOf(mainActivity);
         TextView tv1 = (TextView)activity.findViewById(R.id.category_title);
         assertThat(tv1.getText()).isEqualTo("Category: Cybersearch2 Records");
@@ -260,6 +261,7 @@ public class IntegrateMainActivityTest
             assertThat(listItem.getValue()).isEqualTo(TOP_CATS[i]);
             assertThat(listItem.getId()).isGreaterThan(1);
         }
+        */
     }
     
     @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })

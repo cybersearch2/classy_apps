@@ -37,6 +37,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
+import au.com.cybersearch2.classyfy.helper.ViewHelper;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classytask.BackgroundTask;
 import au.com.cybersearch2.classywidget.ListItem;
@@ -265,23 +266,8 @@ public class TitleSearchResultsActivity extends FragmentActivity
      */
     protected View createDynamicLayout(String title, List<ListItem> items, boolean isSingleLine)
     {
-        LinearLayout dynamicLayout = new LinearLayout(this);
-        dynamicLayout.setOrientation(LinearLayout.VERTICAL);
-        int layoutHeight = LinearLayout.LayoutParams.MATCH_PARENT;
-        int layoutWidth = LinearLayout.LayoutParams.MATCH_PARENT;
-        TextView titleView = new TextView(this);
-        titleView.setText(title);
-        titleView.setTextColor(Color.BLUE);
-        LinearLayout titleLayout = new LinearLayout(this);
-        titleLayout.setOrientation(LinearLayout.HORIZONTAL);
-        LayoutParams titleLayoutParms = new LinearLayout.LayoutParams(layoutWidth, layoutHeight);
-        titleLayout.addView(titleView, titleLayoutParms);
-        dynamicLayout.addView(titleLayout);
-        ListView itemList = new ListView(this);
-        PropertiesListAdapter listAdapter = new PropertiesListAdapter(this, items);
-        listAdapter.setSingleLine(isSingleLine);
-        itemList.setAdapter(listAdapter);
-        itemList.setOnItemClickListener(new OnItemClickListener(){
+        return ViewHelper.createRecordView(this, title, items, isSingleLine, 
+                new OnItemClickListener(){
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -290,8 +276,6 @@ public class TitleSearchResultsActivity extends FragmentActivity
                 displayNodeDetails((int)id, ticketManager.voidTicket());
             }
         });
-        dynamicLayout.addView(itemList);
-        return dynamicLayout;
     }
 
     /**

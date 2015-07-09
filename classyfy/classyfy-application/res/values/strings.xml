@@ -9,5 +9,5 @@
     <string name="search_hint">Search Titles</string>
     <string name="search_description">Search for Title</string>
     <string name="refine_search">Only first 50 hits displayed. Please refine search.</string>
-    <string name="main_prompt">Click on top-level Categories below to navigate ClassyFy records.\nUse Search in menu above to find records.</string>
+    <string name="main_prompt">Click on top-level Categories below to navigate ClassyFy records.\nUse Search in above menu bar to find records.</string>
 </resources>

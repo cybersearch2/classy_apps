@@ -32,11 +32,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import au.com.cybersearch2.classyfy.helper.ViewHelper;
 import au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.DI;
@@ -73,7 +76,6 @@ public class MainActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
 		final ClassyFyLauncher classyfyLauncher = (ClassyFyLauncher)getApplication();
         // Complete initialization in background
         BackgroundTask starter = new BackgroundTask(this)
@@ -106,7 +108,9 @@ public class MainActivity extends ActionBarActivity
                 }
                 // Get first node, which is root of records tree
                 nodeDetails = classyfyLogic.getNodeDetails(1);
-                return nodeDetails != null ? Boolean.TRUE : Boolean.FALSE;
+                if ((nodeDetails == null) || nodeDetails.getCategoryTitles().isEmpty())
+                    return Boolean.FALSE;
+                return  Boolean.TRUE;
             }
 
             /**
@@ -207,14 +211,13 @@ public class MainActivity extends ActionBarActivity
      */
     protected void displayContent(NodeDetailsBean nodeDetails)
     {
-        TextView tv1 = (TextView)findViewById(R.id.category_title);
-        tv1.setText(nodeDetails.getHeading());
-        tv1.setTextColor(Color.BLUE);
-        ListView itemList = (ListView)findViewById(R.id.category_list);
-        PropertiesListAdapter listAdapter = new PropertiesListAdapter(this, nodeDetails.getCategoryTitles());
-        listAdapter.setSingleLine(true);
-        itemList.setAdapter(listAdapter);
-        itemList.setOnItemClickListener(new OnItemClickListener(){
+        setContentView(R.layout.activity_main);
+        View categoryDetails = ViewHelper.createRecordView(
+                this, 
+                nodeDetails.getHeading(), 
+                nodeDetails.getCategoryTitles(), 
+                true, 
+                new OnItemClickListener(){
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -227,6 +230,8 @@ public class MainActivity extends ActionBarActivity
                 finish();
             }
         });
+        LinearLayout categoryLayout = (LinearLayout) findViewById(R.id.top_category);
+        categoryLayout.addView(categoryDetails);
     }
 
     /**

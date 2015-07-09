@@ -3,8 +3,10 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="14dp"
         android:layout_marginStart="14dp"
         android:layout_marginTop="16dp"
         android:orientation="vertical"
@@ -17,7 +19,7 @@
             android:id="@+id/prompt_container"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:padding="5dp" >
             <TextView
                 android:id="@+id/main_prompt"
@@ -27,26 +29,12 @@
                 android:layout_height="wrap_content" 
                 android:text="@string/main_prompt"/>
         </LinearLayout>
-        <TextView
-            android:id="@+id/category_title"
-            android:textSize="24sp"
-            android:textColor="?android:textColorPrimary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
         <LinearLayout
-            android:id="@+id/category_container"
+            android:id="@+id/top_category"
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:padding="5dp" >
-            <ListView
-                android:id="@+id/category_list"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent">
-            </ListView>
-        </LinearLayout>
-            
-    
+            android:layout_height="wrap_content"
+            android:padding="5dp" />
 </LinearLayout>
 
 
