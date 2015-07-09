@@ -36,6 +36,7 @@ import dagger.Provides;
     ClassyFyStartup.class, 
     ClassyFyProvider.class,
     ClassyFySearchEngine.class,
+    MainActivity.class,
     TitleSearchResultsActivity.class
     }, includes = ClassyFyEnvironmentModule.class)
 public class ClassyFyApplicationModule implements ApplicationModule

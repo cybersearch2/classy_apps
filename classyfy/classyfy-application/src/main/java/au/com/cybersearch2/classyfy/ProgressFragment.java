@@ -37,7 +37,7 @@ public class ProgressFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
-        View rootView = inflater.inflate(R.layout.fragment_main, container,
+        View rootView = inflater.inflate(R.layout.progress, container,
                 false);
         spinner = (ProgressBar)rootView.findViewById(R.id.mainProgressBar);
         return rootView;

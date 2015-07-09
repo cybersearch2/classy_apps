@@ -9,6 +9,7 @@ Classy Apps v1.10
 7. Adjust MainActivity for classyjava NodeFinder change to use a callback to handle task completion
 8. Redesign ClassyFy application so TitleSearchResultsActivity handles all user interactions and allows
    navigation of the database records.
+9. Add prompt and top categories to MainActivity
 _______________________________________________________________________________________________________________________
 Classy Apps v1.0.9
 

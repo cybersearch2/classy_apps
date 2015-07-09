@@ -81,8 +81,7 @@
             </activation>
             <modules>
                 <module>classyfy-application</module>
-                <module>classyfy-tests</module>
-            </modules>
+             </modules>
         </profile>
         <profile>
             <!-- the release profile does sign, proguard, zipalign ... but does not 

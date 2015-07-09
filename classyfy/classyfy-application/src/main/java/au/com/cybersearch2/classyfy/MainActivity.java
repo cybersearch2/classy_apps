@@ -15,10 +15,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy;
 
+import javax.inject.Inject;
+
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -27,15 +31,25 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 import au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classytask.BackgroundTask;
+import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.classytask.WorkStatus;
+import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 
 /**
  * ClassyFy MainActivity
- * Displays node details when ACTION_VIEW intent received. Fast Text Search is provided by ClassyFyProvider.
+ * ClassyFy displays node details when ACTION_VIEW intent received. 
+ * Fast Text Search is provided by ClassyFyProvider.
+ * This activity prompts the user to navigate or search ClassyFy records.
  * @author Andrew Bowley
  * 26 Jun 2015
  */
@@ -43,7 +57,18 @@ import au.com.cybersearch2.classytask.WorkStatus;
 public class MainActivity extends ActionBarActivity 
 {
     public static final String TAG = "MainActivity";
+    /** Monitor to track startup status. Used only for integraion testing */
+    protected Executable startMonitor;
+    /** Monitor status */
+    protected WorkStatus status;
+    
+    @Inject /** Persistence queries to obtain record details */
+    ClassyfyLogic classyfyLogic;
 
+    /**
+     * onCreate
+     * @see android.support.v7.app.AppCompatActivity#onCreate(android.os.Bundle)
+     */
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -53,6 +78,8 @@ public class MainActivity extends ActionBarActivity
         // Complete initialization in background
         BackgroundTask starter = new BackgroundTask(this)
         {
+            NodeDetailsBean nodeDetails;
+            
             /**
              * The background task
              * @see au.com.cybersearch2.classytask.BackgroundTask#loadInBackground()
@@ -60,31 +87,73 @@ public class MainActivity extends ActionBarActivity
             @Override
             public Boolean loadInBackground()
             {
-                WorkStatus status = classyfyLauncher.waitForApplicationSetup();
+                // Wait for database initialzation started by Application object
+                status = classyfyLauncher.waitForApplicationSetup();
                 if (status != WorkStatus.FINISHED)
                     return Boolean.FALSE;
-                //DI.inject(MainActivity.this);
-                return Boolean.TRUE;
+                // Reset status for database query
+                status = WorkStatus.RUNNING;
+                // Dependency injection delayed until database initialization complete
+                try
+                {
+                    DI.inject(MainActivity.this);
+                }
+                catch (IllegalArgumentException e)
+                {   // DI may throw this exception
+                    notifyStatus(WorkStatus.FAILED);
+                    Log.e(TAG, "Fatal initialization error", e);
+                    return Boolean.FALSE;
+                }
+                // Get first node, which is root of records tree
+                nodeDetails = classyfyLogic.getNodeDetails(1);
+                return nodeDetails != null ? Boolean.TRUE : Boolean.FALSE;
             }
 
+            /**
+             * onLoadComplete
+             * @see au.com.cybersearch2.classytask.BackgroundTask#onLoadComplete(android.support.v4.content.Loader, java.lang.Boolean)
+             */
             @Override
             public void onLoadComplete(Loader<Boolean> loader, Boolean success)
             {
                 if (!success)
+                {
+                    notifyStatus(WorkStatus.FAILED);
                     displayToast("ClassyFy failed to start due to unexpected error");
+                }
                 else
                 {
-                    parseIntent(getIntent());
                     // Call ClassyFyProvider to wait for SearchEngine start
                     ContentResolver contentResolver = getContentResolver();
                     contentResolver.getType(ClassyFySearchEngine.CONTENT_URI);
+                    displayContent(nodeDetails);
+                    notifyStatus(WorkStatus.FINISHED);
                 }
+            }
+            protected void notifyStatus(WorkStatus finalStatus) 
+            {
+                status = finalStatus;
+                synchronized(startMonitor)
+                {
+                    startMonitor.notifyAll();
+                }
+            }
+        };
+        startMonitor = new Executable(){
 
+            @Override
+            public WorkStatus getStatus()
+            {
+                return status;
             }};
-         starter.onStartLoading();
+        starter.onStartLoading();
 		
 	}
 
+	/**
+	 * onCreateOptionsMenu
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -95,6 +164,10 @@ public class MainActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
 	}
 
+	/**
+	 * onOptionsItemSelected
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -115,7 +188,11 @@ public class MainActivity extends ActionBarActivity
         }
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	/**
+	 * onNewIntent
+	 * @see android.support.v4.app.FragmentActivity#onNewIntent(android.content.Intent)
+	 */
     @Override
     protected void onNewIntent(Intent intent)
     {
@@ -124,10 +201,46 @@ public class MainActivity extends ActionBarActivity
         parseIntent(intent);
     }
 
+    /**
+     * Display content - Heading and list of top categories
+     * @param nodeDetails Bean containing details to be displayed
+     */
+    protected void displayContent(NodeDetailsBean nodeDetails)
+    {
+        TextView tv1 = (TextView)findViewById(R.id.category_title);
+        tv1.setText(nodeDetails.getHeading());
+        tv1.setTextColor(Color.BLUE);
+        ListView itemList = (ListView)findViewById(R.id.category_list);
+        PropertiesListAdapter listAdapter = new PropertiesListAdapter(this, nodeDetails.getCategoryTitles());
+        listAdapter.setSingleLine(true);
+        itemList.setAdapter(listAdapter);
+        itemList.setOnItemClickListener(new OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id)
+            {
+                Intent viewIntent = new Intent(MainActivity.this, TitleSearchResultsActivity.class);
+                viewIntent.setData(Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, String.valueOf(id)));
+                viewIntent.setAction(Intent.ACTION_VIEW);
+                startActivity(viewIntent);
+                finish();
+            }
+        });
+    }
+
+    /**
+     * Parse intent - placeholder only
+     * @param intent Intent object
+     */
     protected void parseIntent(Intent intent)
     {
     }
 
+    /**
+     * Create search view SearchableInfo (xml/searchable.xml) and IconifiedByDefault (false)
+     * @param menu Menu object
+     */
     protected void createSearchView(Menu menu)
     {
         /** Get the action view of the menu item whose id is action_search */
@@ -144,7 +257,11 @@ public class MainActivity extends ActionBarActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
     }
-    
+
+    /**
+     * Display toast
+     * @param text Message
+     */
     protected void displayToast(String text)
     {
         Log.e(TAG, text);

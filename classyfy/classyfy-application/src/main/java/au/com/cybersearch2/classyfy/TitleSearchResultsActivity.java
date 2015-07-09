@@ -46,6 +46,7 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 
 /**
  * TitleSearchResultsActivity
+ * Display record lists requested by search action and record details from search action or record selection
  * @author Andrew Bowley
  * 21/04/2014
  */
@@ -53,13 +54,19 @@ public class TitleSearchResultsActivity extends FragmentActivity
 {
     public static final String TAG = "TitleSearchResults";
 
+    /** Refine search message displayed when too many records are retrieved by a search */
     protected String REFINE_SEARCH_MESSAGE;
+    /** Progress spinner fragment */
     protected ProgressFragment progressFragment;
-    @Inject
+    @Inject /** Persistence queries to obtain record details */
     ClassyfyLogic classyfyLogic;
-    @Inject
+    @Inject /* Intent tracker */
     TicketManager ticketManager;
 
+    /**
+     * onCreate
+     * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -72,13 +79,20 @@ public class TitleSearchResultsActivity extends FragmentActivity
         parseIntent(getIntent());
     }
 
+    /**
+     * onResume
+     * @see android.support.v4.app.FragmentActivity#onResume()
+     */
     @Override
     protected void onResume()
     {
         super.onResume();
     }
 
-
+    /**
+     * onNewIntent    
+     * @see android.support.v4.app.FragmentActivity#onNewIntent(android.content.Intent)
+     */
     @Override
     protected void onNewIntent(Intent intent)
     {
@@ -87,14 +101,21 @@ public class TitleSearchResultsActivity extends FragmentActivity
         parseIntent(intent);
     }
 
+    /**
+     * Returns progress fragment
+     * @return ProgressFragment object
+     */
     protected ProgressFragment getProgressFragment()
     {
         return (ProgressFragment) getSupportFragmentManager().findFragmentById(R.id.activity_progress_fragment);
     }
 
+    /**
+     * Parse intent - ACTION_SEARCH or ACTION_VIEW
+     * @param intent Intent object
+     */
     protected void parseIntent(Intent intent)
     {
-        // If the Activity was started to service a search request, extract the search query
         if (Intent.ACTION_SEARCH.equals(intent.getAction()))
             launchSearch(intent.getStringExtra(SearchManager.QUERY), ticketManager.addIntent(intent));
         if (Intent.ACTION_VIEW.equals(intent.getAction()) && (intent.getData() != null)) 
@@ -102,6 +123,11 @@ public class TitleSearchResultsActivity extends FragmentActivity
         
     }
 
+    /**
+     * View record by id contained in Uri
+     * @param uri Uri appended with record id
+     * @param ticket Intent tracker id
+     */
     void viewUri(Uri uri, int ticket)
     {
         // Handles a click on a search suggestion
@@ -125,6 +151,11 @@ public class TitleSearchResultsActivity extends FragmentActivity
         displayNodeDetails(nodeId, ticket);
     }
 
+    /**
+     * Launch record search query
+     * @param searchQuery Search string 
+     * @param ticket Intent tracker id
+     */
     protected void launchSearch(final String searchQuery, final int ticket)
     {
         final List<ListItem> resultList = new ArrayList<ListItem>();
@@ -171,6 +202,7 @@ public class TitleSearchResultsActivity extends FragmentActivity
     /**
      * Display Node details in a dialog
      * @param uri Search suggestion containing node id in path segment 1
+     * @param ticket Intent tracker id
      */
     protected void displayNodeDetails(final int nodeId, final int ticket)
     {
@@ -183,7 +215,7 @@ public class TitleSearchResultsActivity extends FragmentActivity
             public Boolean loadInBackground()
             {
                 nodeDetails = classyfyLogic.getNodeDetails(nodeId);
-                return Boolean.TRUE;
+                return nodeDetails != null ? Boolean.TRUE : Boolean.FALSE;
             }
             @Override
             public void onLoadComplete(Loader<Boolean> loader, Boolean success)
@@ -195,7 +227,7 @@ public class TitleSearchResultsActivity extends FragmentActivity
                     if (errorMessage != null)
                         displayToast(errorMessage);
                     else
-                        showDetailsDialog(nodeDetails);
+                        showRecordDetails(nodeDetails);
                 }
                 else
                     displayToast(ClassyfyLogic.RECORD_NOT_FOUND);
@@ -205,7 +237,11 @@ public class TitleSearchResultsActivity extends FragmentActivity
        getDetailsTask.onStartLoading();
     }
 
-    protected void showDetailsDialog(NodeDetailsBean nodeDetails)
+    /**
+     * Display record details
+     * @param nodeDetails NodeDetailsBean object
+     */
+    protected void showRecordDetails(NodeDetailsBean nodeDetails)
     {
         TextView tv1 = (TextView)findViewById(R.id.node_detail_title);
         tv1.setText(nodeDetails.getHeading());
@@ -219,17 +255,14 @@ public class TitleSearchResultsActivity extends FragmentActivity
             propertiesLayout.addView(createDynamicLayout("Folders", nodeDetails.getFolderTitles(), true));
         propertiesLayout.addView(createDynamicLayout("Details", nodeDetails.getFieldList(), false));
     }
-/*    
-    public Dialog showDialog(Bundle args) 
-    {
-        NodeDetailsDialog newFragment = new NodeDetailsDialog();
-        newFragment.setArguments(args);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        newFragment.show(fragmentManager, "dialog");
-        fragmentManager.executePendingTransactions();
-        return newFragment.getDialog();
-    }
-*/
+
+    /**
+     * Returns view containg a title and list of items
+     * @param title Title text
+     * @param items ListItem list
+     * @param isSingleLine flag to indicate whether to show only value or value and name
+     * @return View object
+     */
     protected View createDynamicLayout(String title, List<ListItem> items, boolean isSingleLine)
     {
         LinearLayout dynamicLayout = new LinearLayout(this);
@@ -261,6 +294,10 @@ public class TitleSearchResultsActivity extends FragmentActivity
         return dynamicLayout;
     }
 
+    /**
+     * Display toast
+     * @param text Message
+     */
     protected void displayToast(String text)
     {
         //Log.e(TAG, text);
