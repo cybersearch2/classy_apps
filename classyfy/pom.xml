@@ -36,7 +36,6 @@
   <!-- Modules arranged according to android-maven-plugin convention -->
   <modules>
     <module>classyfy-application</module>
-    <module>classyfy-tests</module>
   </modules>
 
   <dependencyManagement>
