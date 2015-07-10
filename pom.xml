@@ -49,7 +49,7 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <classy_tools.version>1.11-SNAPSHOT</classy_tools.version>
+    <classy_tools.version>1.11</classy_tools.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.3.0</android.plugin.version>
