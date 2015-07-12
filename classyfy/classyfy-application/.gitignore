@@ -7,3 +7,4 @@
 /test-libs/
 /target/
 /pom.xml.*
+/dependency-reduced-pom.xml

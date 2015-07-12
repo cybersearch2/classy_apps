@@ -41,6 +41,36 @@
 	</repositories>
 	-->
 	<dependencies>
+         <!-- Added for Proguard -->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>${slf4j-version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <version>${slf4j-version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
+         <version>3.0.0</version>
+        </dependency> 
+        <dependency>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+          <version>1.1.1</version>
+         </dependency> 
+        <dependency>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+          <version>3.2.1</version>
+          <scope>provided</scope>
+        </dependency> 
+        <!---->
      <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -48,24 +78,8 @@
     </dependency>  
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyjava</artifactId>
-      <exclusions>
-        <exclusion>
-	      <groupId>commons-logging</groupId>
-	      <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-	      <artifactId>commons-collections</artifactId>
-        </exclusion>
-      </exclusions>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>au.com.cybersearch2</groupId>
       <artifactId>classyandroid</artifactId>
-       <exclusions>
+      <exclusions>
         <exclusion>
           <groupId>com.android.support</groupId>
           <artifactId>support-v4</artifactId>        
@@ -251,5 +265,131 @@
             </plugins>
 	      </build>
 	    </profile>
+		<profile>
+			<id>release</id>
+            <properties>
+                <sign.keystore>${android.sdk.path}/keystore/c2.keystore</sign.keystore>
+                <sign.alias>cybersearch2.com.au</sign.alias>
+                <sign.storepass>${env.C2PASS}</sign.storepass>
+                <sign.keypass>${env.C2PASS}</sign.keypass>
+                <sign.alias>cybersearch2.com.au</sign.alias>
+            </properties>
+			<!-- via this activation the profile is automatically used when the release 
+				is done with the maven release plugin -->
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>signing</id>
+								<goals>
+									<goal>sign</goal>
+									<goal>verify</goal>
+								</goals>
+								<phase>package</phase>
+								<inherited>true</inherited>
+								<configuration>
+									<removeExistingSignatures>true</removeExistingSignatures>
+									<archiveDirectory />
+									<includes>
+										<include>${project.build.directory}/${project.artifactId}.apk</include>
+									</includes>
+									<keystore>${sign.keystore}</keystore>
+									<alias>${sign.alias}</alias>
+									<storepass>${sign.storepass}</storepass>
+									<keypass>${sign.keypass}</keypass>
+									<verbose>false</verbose>
+									<arguments>
+										<argument>-sigalg</argument><argument>MD5withRSA</argument>
+										<argument>-digestalg</argument><argument>SHA1</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- the signed apk then needs to be zipaligned and we activate proguard 
+						and we run the manifest update -->
+					<plugin>
+						<groupId>com.simpligility.maven.plugins</groupId>
+						<artifactId>android-maven-plugin</artifactId>
+						<inherited>true</inherited>
+						<configuration>
+							<release>true</release>
+							<sign>
+								<debug>false</debug>
+							</sign>
+							<zipalign>
+								<skip>false</skip>
+								<verbose>true</verbose>
+								<inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
+								<outputApk>${project.build.directory}/${project.artifactId}-signed-aligned.apk</outputApk>
+							</zipalign>
+							<manifest>
+								<debuggable>false</debuggable>
+								<versionCodeAutoIncrement>true</versionCodeAutoIncrement>
+							</manifest>
+				            <proguard>
+				              <skip>false</skip>
+				              <config>proguard.cfg</config>
+				               <configs>
+				                  <config>${env.ANDROID_HOME}/tools/proguard/proguard-android.txt</config>
+				               </configs>
+				            </proguard>
+						</configuration>
+						<executions>
+							<execution>
+								<id>manifestMerger</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>manifest-merger</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>alignApk</id>
+								<phase>package</phase>
+								<goals>
+									<goal>zipalign</goal>
+								</goals>
+							</execution>
+                        </executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${project.build.directory}/${project.artifactId}-signed-aligned.apk</file>
+									<type>apk</type>
+									<classifier>signed-aligned</classifier>
+								</artifact>
+								<artifact>
+									<file>${project.build.directory}/proguard/mapping.txt</file>
+									<type>map</type>
+									<classifier>release</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-signed-aligned</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

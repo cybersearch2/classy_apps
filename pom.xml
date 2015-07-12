@@ -61,6 +61,7 @@
     <android.support.version>22.2</android.support.version>
     <robolectric.version>3.0-rc2</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
+    <slf4j-version>1.7.2</slf4j-version>
     <dagger.version>1.2.2</dagger.version>
     <release.repo.id>artifactory</release.repo.id>
     <release.repo.url>http://microserver/artifactory/libs-release-local</release.repo.url>
@@ -139,6 +140,29 @@
   </dependencyManagement>
   <build>
 	<finalName>${project.artifactId}</finalName>
+	<plugins>
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-shade-plugin</artifactId>
+         <version>2.4</version>
+         <executions>
+           <execution>
+             <phase>package</phase>
+             <goals>
+               <goal>shade</goal>
+             </goals>
+             <configuration>
+               <artifactSet>
+                 <excludes>
+                   <exclude>commons-logging:commons-logging</exclude>
+                 </excludes>
+               </artifactSet>
+               <minimizeJar>true</minimizeJar>
+            </configuration>
+          </execution>
+        </executions>
+       </plugin>
+	</plugins>
 	<pluginManagement>
 	  <plugins>
            <plugin>
@@ -213,6 +237,7 @@
                 <platform>${android.platform.version}</platform>
               </sdk>
               <undeployBeforeDeploy>true</undeployBeforeDeploy>
+              <disableConflictingDependenciesWarning>true</disableConflictingDependenciesWarning>
             </configuration>
             <extensions>true</extensions>
           </plugin>
