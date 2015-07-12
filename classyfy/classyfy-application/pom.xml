@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classyfy_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.10-SNAPSHOT</version>
+        <version>1.11-SNAPSHOT</version>
     </parent>
 	<artifactId>classyfy</artifactId>
 	<packaging>apk</packaging>
