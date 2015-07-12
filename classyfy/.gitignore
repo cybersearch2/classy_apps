@@ -1,3 +1,5 @@
 .project
 pom.xml.releaseBackup
 /.settings/
+/pom.xml.next
+/pom.xml.tag
