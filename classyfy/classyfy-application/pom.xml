@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classyfy_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.11-SNAPSHOT</version>
+        <version>1.11</version>
     </parent>
 	<artifactId>classyfy</artifactId>
 	<packaging>apk</packaging>
@@ -71,7 +71,7 @@
           <version>3.2.1</version>
           <scope>provided</scope>
         </dependency> 
-        <!---->
+        
      <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
