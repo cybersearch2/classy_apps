@@ -54,6 +54,7 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 public class TitleSearchResultsActivity extends FragmentActivity
 {
     public static final String TAG = "TitleSearchResults";
+    private static final String RECORD_NOT_FOUND = "Record not found";
 
     /** Refine search message displayed when too many records are retrieved by a search */
     protected String REFINE_SEARCH_MESSAGE;
@@ -117,8 +118,11 @@ public class TitleSearchResultsActivity extends FragmentActivity
      */
     protected void parseIntent(Intent intent)
     {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction()))
-            launchSearch(intent.getStringExtra(SearchManager.QUERY), ticketManager.addIntent(intent));
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String searchQuery = intent.getStringExtra(SearchManager.QUERY);
+            if (searchQuery != null)
+                launchSearch(searchQuery, ticketManager.addIntent(intent));
+        }
         if (Intent.ACTION_VIEW.equals(intent.getAction()) && (intent.getData() != null)) 
             viewUri(intent.getData(), ticketManager.addIntent(intent));
         
@@ -131,25 +135,27 @@ public class TitleSearchResultsActivity extends FragmentActivity
      */
     void viewUri(Uri uri, int ticket)
     {
+        int nodeId = 0;
+        String errorMessage = null;
         // Handles a click on a search suggestion
         if (uri.getPathSegments().size() < 2)
-        {
-            displayToast("Invalid resource address: \"" + uri.toString() + "\"");
-            ticketManager.removeIntent(ticket);
-            return;
-        }
-        int nodeId;
+            errorMessage = "Invalid resource address: \"" + uri.toString() + "\"";
+        else
         try
         {
             nodeId = Integer.parseInt(uri.getPathSegments().get(1)); 
         }
         catch (NumberFormatException e)
         {
-            displayToast("Resource address has invalid ID: \"" + uri.toString() + "\"");
+                errorMessage = "Resource address has invalid ID: \"" + uri.toString() + "\"";
+            }
+        if (errorMessage != null) {
+            showTitle(RECORD_NOT_FOUND);
+            displayToast(errorMessage);
             ticketManager.removeIntent(ticket);
-            return;
         }
-        displayNodeDetails(nodeId, ticket);
+        else
+            displayNodeDetails(nodeId, ticket);
     }
 
     /**
@@ -183,23 +189,31 @@ public class TitleSearchResultsActivity extends FragmentActivity
                     success = resultList.size() > 0;
                     if (success)
                     {
-                        TextView tv1 = (TextView)findViewById(R.id.node_detail_title);
-                        tv1.setText("Search: " + searchQuery);
                         LinearLayout propertiesLayout = (LinearLayout) findViewById(R.id.node_properties);
-                        propertiesLayout.removeAllViews();
                         propertiesLayout.addView(createDynamicLayout("Titles", resultList, false));
                     }
                     if (resultList.size() >= ClassyFyApplication.SEARCH_RESULTS_LIMIT)
                         displayToast(REFINE_SEARCH_MESSAGE);  
                 }
                 if (!success)
-                    displayToast("Search for \"" + searchQuery + "\" returned nothing");    
+                {
+                    showTitle(RECORD_NOT_FOUND);
+                    displayToast("Search for \"" + searchQuery + "\" returned no records");
+                }
                 ticketManager.removeIntent(ticket);
             }
         };
+        showTitle("Search: " + searchQuery);
         queryTask.onStartLoading();
     }
     
+    protected void showTitle(String title)
+    {
+        TextView tv1 = (TextView)findViewById(R.id.node_detail_title);
+        tv1.setText(title);
+        LinearLayout propertiesLayout = (LinearLayout) findViewById(R.id.node_properties);
+        propertiesLayout.removeAllViews();
+    }
     /**
      * Display Node details in a dialog
      * @param uri Search suggestion containing node id in path segment 1
@@ -222,16 +236,19 @@ public class TitleSearchResultsActivity extends FragmentActivity
             public void onLoadComplete(Loader<Boolean> loader, Boolean success)
             {
                 progressFragment.hideSpinner();
+                String errorMessage = nodeDetails.getErrorMessage();
                 if (success)
                 {
-                    String errorMessage = nodeDetails.getErrorMessage();
-                    if (errorMessage != null)
-                        displayToast(errorMessage);
-                    else
+                     if (errorMessage == null)
                         showRecordDetails(nodeDetails);
                 }
                 else
-                    displayToast(ClassyfyLogic.RECORD_NOT_FOUND);
+                    errorMessage = ClassyfyLogic.RECORD_NOT_FOUND;
+                if (errorMessage != null)
+                {
+                    showTitle(RECORD_NOT_FOUND);
+                    displayToast(errorMessage);
+                }
                 ticketManager.removeIntent(ticket);
             }
        };
@@ -242,12 +259,9 @@ public class TitleSearchResultsActivity extends FragmentActivity
      * Display record details
      * @param nodeDetails NodeDetailsBean object
      */
-    protected void showRecordDetails(NodeDetailsBean nodeDetails)
-    {
-        TextView tv1 = (TextView)findViewById(R.id.node_detail_title);
-        tv1.setText(nodeDetails.getHeading());
+    protected void showRecordDetails(NodeDetailsBean nodeDetails) {
+        showTitle(nodeDetails.getHeading());
         LinearLayout propertiesLayout = (LinearLayout) findViewById(R.id.node_properties);
-        propertiesLayout.removeAllViews();
         if (nodeDetails.getHierarchy().size() > 0)
             propertiesLayout.addView(createDynamicLayout("Hierarchy", nodeDetails.getHierarchy(), true));
         if (nodeDetails.getCategoryTitles().size() > 0)
