@@ -272,9 +272,9 @@ public class TitleSearchResultsActivityTest
     @Test 
     public void test_onCreate() throws Exception
     {
-        Intent intent = getNewIntent();
+        final Intent intent = getNewIntent();
         intent.setAction(Intent.ACTION_DEFAULT);
-        TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class).withIntent(intent)
+        final TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class).withIntent(intent)
         .create()
         .start()
         .visible()
@@ -287,9 +287,15 @@ public class TitleSearchResultsActivityTest
         // Test search suggesion initiated by intent
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, SEARCH_TEXT);
-        ShadowLooper.getUiThreadScheduler().pause();
         ShadowApplication.getInstance().getBackgroundScheduler().pause();
-        titleSearchResultsActivity.parseIntent(intent);
+        ShadowActivity activity = Shadows.shadowOf(titleSearchResultsActivity);
+        activity.runOnUiThread(new Runnable(){
+
+            @Override
+            public void run()
+            {
+                titleSearchResultsActivity.parseIntent(intent);
+            }});
         // Navigate doSearchQuery() and onLoadComplete()
         ClassyfyLogic classyfyLogic = titleSearchResultsActivity.classyfyLogic;
         ArrayList<ListItem> singletonList = new ArrayList<ListItem>();
@@ -298,8 +304,6 @@ public class TitleSearchResultsActivityTest
         when(classyfyLogic.doSearchQuery(SEARCH_TEXT)).thenReturn(singletonList);
         ShadowApplication.getInstance().getBackgroundScheduler().runOneTask();
         verify(classyfyLogic).doSearchQuery(SEARCH_TEXT);
-        assertThat(ShadowLooper.getUiThreadScheduler().runOneTask()).isTrue();
-        ShadowActivity activity = Shadows.shadowOf(titleSearchResultsActivity);
         TextView tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
         assertThat(tv1.getText()).isEqualTo("Search: " + SEARCH_TEXT);
         LinearLayout propertiesLayout = (LinearLayout)activity.findViewById(R.id.node_properties);
