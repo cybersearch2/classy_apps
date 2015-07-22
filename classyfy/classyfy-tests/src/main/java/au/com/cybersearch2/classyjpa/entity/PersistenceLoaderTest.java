@@ -15,13 +15,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyjpa.entity;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 import javax.persistence.EntityExistsException;
 
+import android.support.test.InstrumentationRegistry;
 import android.test.InstrumentationTestCase;
+import android.support.test.runner.AndroidJUnit4;
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classyfy.data.RecordFolder;
@@ -39,41 +45,34 @@ import au.com.cybersearch2.classyutil.Transcript;
  * @author Andrew Bowley
  * 16/07/2014
  */
+@RunWith(AndroidJUnit4.class)
 public class PersistenceLoaderTest extends InstrumentationTestCase
 {
     protected PersistenceLoader testLoaderTask;
     protected PersistenceLoader testUserTransLoaderTask;
 
-    @Override
-    protected void setUp() throws Exception 
-    {  
-        System.setProperty( "dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath() );
-        System.setProperty("java.util.logging.config.file", "src/logging.properties");
+    @Before
+    public void setUp() throws Exception
+    {
         super.setUp();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         testLoaderTask = new PersistenceLoader(getInstrumentation().getContext());
 	    testUserTransLoaderTask = new PersistenceLoader(getInstrumentation().getContext());
 	    testUserTransLoaderTask.setUserTransactionMode(true);
-        //assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
-        PersistenceContext persistenceContext = new PersistenceContext();
-        PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
-        EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
-        persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
-        persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
-
+        assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
     }
 
-    public void test_all() throws Throwable
+    @After
+    public void tearDown() throws Exception
     {
-        do_background_called();
-        do_rollback_only(); 
-        do_exception_thrown();
-        do_user_transaction();
-        // TODO: How to test? 
-        // Test failed to run to completion. Reason: 'Instrumentation run failed due to 'java.lang.NullPointerException''. Check device logcat for details
-        //do_npe_thrown();
+        super.tearDown();
     }
-    
-    public void do_background_called() throws Throwable
+
+
+    // Cannot test NPE
+    // Test failed to run to completion. Reason: 'Instrumentation run failed due to 'java.lang.NullPointerException''. Check device logcat for details
+    @Test
+    public void test_background_called() throws Throwable
     {
     	Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript);
@@ -88,7 +87,8 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         assertThat(status).isEqualTo(WorkStatus.FINISHED);
     }
 
-    public void do_rollback_only() throws Throwable
+    @Test
+    public void test_rollback_only() throws Throwable
     {
     	Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
@@ -113,7 +113,8 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
 
-    public void do_exception_thrown() throws Throwable
+    @Test
+    public void test_exception_thrown() throws Throwable
     {   
         final EntityExistsException persistException = new EntityExistsException("Entity of class RecordCategory, primary key 1 already exists");
     	Transcript transcript = new Transcript();
@@ -137,61 +138,4 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
 
-    public void do_npe_thrown() throws Throwable
-    {
-    	Transcript transcript = new Transcript();
-        final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
-                new TestPersistenceWork.Callable(){
-
-                    @SuppressWarnings("null")
-                    @Override
-                    public Boolean call(EntityManagerLite entityManager)
-                            throws Exception 
-                    {
-                        Object object = null;
-                        object.toString();
-                        return true;
-                    }});
-        final Executable[] exeHolder = new Executable[1];
-        runTestOnUiThread(new Runnable() {
-            public void run()
-            {
-                try
-                {
-                    exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
-                	failBecauseExceptionWasNotThrown(RuntimeException.class);
-                }
-                catch (RuntimeException e)
-                {
-                	assertThat(e.getCause()).isNotNull();
-                	assertThat(e.getCause()).isInstanceOf(NullPointerException.class);
-                }
-            }});
-    }
-
-    public void do_user_transaction() throws Throwable
-    {
-    	Transcript transcript = new Transcript();
-        final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
-                new TestPersistenceWork.Callable(){
-
-                    @Override
-                    public Boolean call(EntityManagerLite entityManager)
-                            throws Exception 
-                    {
-                        // Return false to cause transaction setRollbackOnly() to be called
-                        // User Transactions get access to actual transaction
-                        boolean isRealTransaction = entityManager.getTransaction() instanceof EntityTransactionImpl;
-                        return isRealTransaction;
-                    }});
-        final Executable[] exeHolder = new Executable[1];
-        runTestOnUiThread(new Runnable() {
-            public void run()
-            {
-                exeHolder[0] = testUserTransLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
-            }});
-        exeHolder[0].waitForTask();
-        transcript.assertEventsSoFar("background task", "onPostExecute true");
-        assertThat(exeHolder[0].getStatus()).isEqualTo(WorkStatus.FINISHED);
-    }
 }

@@ -7,7 +7,7 @@
     <uses-sdk android:minSdkVersion="8" />
 
     <instrumentation
-        android:name="android.test.InstrumentationTestRunner"
+        android:name="android.support.test.runner.AndroidJUnitRunner"
         android:targetPackage="au.com.cybersearch2.classyfy" />
 
     <application

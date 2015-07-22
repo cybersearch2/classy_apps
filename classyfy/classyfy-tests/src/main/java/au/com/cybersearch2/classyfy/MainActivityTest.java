@@ -17,38 +17,34 @@ package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.UiThreadTest;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import au.com.cybersearch2.classyfy.data.RecordCategory;
-import au.com.cybersearch2.classyfy.data.RecordFolder;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
-import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
-import au.com.cybersearch2.classynode.EntityByNodeIdGenerator;
 import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.ListItem;
@@ -58,9 +54,9 @@ import au.com.cybersearch2.classywidget.ListItem;
  * @author Andrew Bowley
  * 23/07/2014
  */
+@RunWith(AndroidJUnit4.class)
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity>
 {
-    static boolean firstTime = true;
     private static final String[][] RECORD_DETAILS_ARRAY =
     {
         { "description", "" },
@@ -71,12 +67,24 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         { "identifier", "2014-1392163053802" }
     };
  
-    private static final String[] INF_LIST =
+    private static final String[][] INF_LIST =
     {
-        "Information Management",
-        "Information Management Policy",
-        "Information & Communications Technology"
+            { "Information & Communications Technology", "Category" },
+            { "Information Management", "Folder" },
+            { "Information Management Policy", "Folder" }
     };
+
+    String[] TOP_CATS = new String[]
+            {
+                    "Administration",
+                    "Communications",
+                    "Corporate Management",
+                    "Customer Relations",
+                    "Financial Management",
+                    "Information & Communications Technology",
+                    "Workforce Management"
+            };
+
 
     protected Context context;
    
@@ -89,81 +97,85 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     }
 
-    @Override
-    protected void setUp() throws Exception 
+    @Before
+    public void setUp() throws Exception
     {
-        if (firstTime)
-        {
-            firstTime = false;
-            System.setProperty( "dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath() );
-            System.setProperty("java.util.logging.config.file", "src/logging.properties");
-            super.setUp();
-            //assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
-        }
-        //PersistenceContext persistenceContext = new PersistenceContext();
-        //PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
-        //EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
-        //persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
-        //persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
+        super.setUp();
+        // Injecting the Instrumentation instance is required
+        // for your test to run with AndroidJUnitRunner.
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+        assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
     }
 
-    @UiThreadTest
-    public void test_onCreate()
+    @After
+    public void tearDown() throws Exception
     {
-        MainActivity mainActivity = getActivity();
-        // Check that ContentProvider is available for search operations
-        ContentResolver contentResolver  = mainActivity.getContentResolver();
-        assertThat(contentResolver.getType(ClassyFySearchEngine.CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
+        super.tearDown();
     }
-    /*    
 
+    @Test
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     public void test_search() throws Throwable
     {
-        final MainActivity mainActivity = getActivity(); 
+        final MainActivity mainActivity = getActivity();
+        // Check that ContentProvider is available for search operations
+        ContentResolver contentResolver  = mainActivity.getContentResolver();
+        assertThat(contentResolver.getType(ClassyFySearchEngine.CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
+        mainActivity.startMonitor.waitForTask();
+        assertThat(mainActivity.startMonitor.getStatus()).isEqualTo(WorkStatus.FINISHED);
+        LinearLayout categoryLayout = (LinearLayout) mainActivity.findViewById(R.id.top_category);
+        LinearLayout dynamicLayout = (LinearLayout)categoryLayout.getChildAt(0);
+        LinearLayout titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        TextView titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Category: Cybersearch2 Records");
+        ListView itemList = (ListView)dynamicLayout.getChildAt(1);
+        ListAdapter adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(TOP_CATS.length);
+        for (int i = 0; i < TOP_CATS.length; i++)
+        {
+            ListItem listItem = (ListItem)adapter.getItem(i);
+            assertThat(listItem.getValue()).isEqualTo(TOP_CATS[i]);
+            assertThat(listItem.getId()).isGreaterThan(1);
+        }
         Instrumentation instrumentation = getInstrumentation();
-        ActivityMonitor am1 = instrumentation.addMonitor(MainActivity.class.getName(), null, false);
         ActivityMonitor am2 = instrumentation.addMonitor(TitleSearchResultsActivity.class.getName(), null, false);
-        final View view = mainActivity.findViewById(au.com.cybersearch2.classyfy.R.id.action_search);
-        runTestOnUiThread(new Runnable() {
-            public void run()
-            {
-                view.requestFocus();
-                view.callOnClick();
-            }});
-        ActionBar actionBar = mainActivity.getSupportActionBar();
-        assertThat(actionBar).isNotNull();
-        final FragmentManager sfm = mainActivity.getSupportFragmentManager();
-        runTestOnUiThread(new Runnable() {
-            public void run()
-            {
-                sfm.executePendingTransactions();
-            }});
-        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_SEARCH); 
-        getInstrumentation().waitForMonitorWithTimeout(am1, 5000);
-        instrumentation.sendCharacterSync(KeyEvent.KEYCODE_I); 
+        onView(withId(au.com.cybersearch2.classyfy.R.id.action_search)).perform(click());
+        // Can't find right expression for text view id
+        //onView(withId(android.support.v7.appcompat.R.id.search_src_text)).perform(typeText("inf\n"));
+        instrumentation.sendCharacterSync(KeyEvent.KEYCODE_I);
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_N); 
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_F);
         instrumentation.sendCharacterSync(KeyEvent.KEYCODE_ENTER);
         TitleSearchResultsActivity titleSearchResultsActivity = (TitleSearchResultsActivity) getInstrumentation().waitForMonitorWithTimeout(am2, 5000);
         assertThat(titleSearchResultsActivity).isNotNull();
-        assertThat(titleSearchResultsActivity.taskHandle).isNotNull();
-        synchronized(titleSearchResultsActivity.taskHandle)
+        Intent intent = titleSearchResultsActivity.getIntent();
+        synchronized(intent)
         {
-            titleSearchResultsActivity.taskHandle.wait(10000);
+           intent.wait(10000);
         }
-        assertThat(titleSearchResultsActivity.taskHandle.getStatus()).isEqualTo(WorkStatus.FINISHED);
-        PropertiesListAdapter adapter = titleSearchResultsActivity.adapter;
+        assertThat(intent.getAction()).isEqualTo(Intent.ACTION_SEARCH);
+        assertThat(intent.getStringExtra(SearchManager.QUERY)).isEqualTo("inf");
+        TextView tv1 = (TextView)titleSearchResultsActivity.findViewById(R.id.node_detail_title);
+        assertThat(tv1.getText()).isEqualTo("Search: inf");
+        LinearLayout propertiesLayout = (LinearLayout) titleSearchResultsActivity.findViewById(R.id.node_properties);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(0);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Titles");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = (PropertiesListAdapter)itemList.getAdapter();
         for (int i = 0; i < adapter.getCount(); i++)
         {
-            Value value = (Value)adapter.getItem(i);
-            assertThat(INF_LIST[i]).isEqualTo(value.getValue());
+            ListItem listItem = (ListItem)adapter.getItem(i);
+            assertThat(INF_LIST[i][0]).isEqualTo(listItem.getName());
+            assertThat(INF_LIST[i][1]).isEqualTo(listItem.getValue());
         }
     }
-    */
-    private Intent getNewIntent() 
+
+    private Intent getNewIntent()
     {
         Intent intent = new Intent();
         return intent;
     }
+
 }

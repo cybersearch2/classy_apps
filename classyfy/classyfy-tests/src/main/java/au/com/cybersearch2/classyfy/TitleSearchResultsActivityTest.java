@@ -16,15 +16,31 @@
 package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.SearchManager;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.UiThreadTest;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import au.com.cybersearch2.classyfy.data.NodeEntity;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classyfy.data.RecordFolder;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
@@ -40,9 +56,56 @@ import au.com.cybersearch2.classywidget.ListItem;
  * @author Andrew Bowley
  * 24/07/2014
  */
+@RunWith(AndroidJUnit4.class)
 public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestCase2<TitleSearchResultsActivity>
 {
-    static boolean firstTime = true;
+    class NodeField
+    {
+        public int id;
+        public int parentId;
+        public String name;
+        public String title;
+        public int model;
+        public int level;
+
+        public NodeField(
+                int id,
+                int parentId,
+                String name,
+                String title,
+                int model,
+                int level)
+        {
+            this.id = id;
+            this.parentId = parentId;
+            this.name = name;
+            this.title = title;
+            this.model = model;
+            this.level = level;
+        }
+
+        NodeEntity getNodeEntity(NodeEntity parent)
+        {
+            NodeEntity nodeEntity = new NodeEntity();
+            nodeEntity.set_id(id);
+            nodeEntity.set_parent_id(parentId);
+            nodeEntity.setLevel(level);
+            nodeEntity.setModel(model);
+            nodeEntity.setName(name);
+            nodeEntity.setParent(parent);
+            nodeEntity.setTitle(title);
+            return nodeEntity;
+        }
+    }
+
+    NodeField[] NODE_FIELDS = new NodeField[]
+            {
+                    new NodeField(1,1,"cybersearch2_records","Cybersearch2 Records",1,1),
+                    new NodeField(2,1,"administration","Administration",1,2),
+                    new NodeField(3,2,"premises","Premises",1,3),
+                    new NodeField(4,3,"maintenance","Maintenance",2,4),
+                    new NodeField(5,3,"rent","Rent",2,4)
+            };
     private static final String[][] RECORD_DETAILS_ARRAY =
     {
         { "description", "" },
@@ -62,34 +125,28 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
         super(TitleSearchResultsActivity.class);
     }
 
-    @Override
-    protected void setUp() throws Exception 
+    @Before
+    public void setUp() throws Exception
     {
-        if (firstTime)
-        {
-            firstTime = false;
-            System.setProperty( "dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath() );
-            System.setProperty("java.util.logging.config.file", "src/logging.properties");
-        }
         super.setUp();
-        /*
-        ClassyFyApplication classyfyApplication = ClassyFyApplication.getInstance();
-        classyfyApplication.waitForApplicationSetup();
-        PersistenceContext persistenceContext = new PersistenceContext();
-        PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
-        EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
-        persistenceAdmin.addNamedQuery(RecordCategory.class, ClassyFyApplication.CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
-        persistenceAdmin.addNamedQuery(RecordFolder.class, ClassyFyApplication.FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
-        */
+        // Injecting the Instrumentation instance is required
+        // for your test to run with AndroidJUnitRunner.
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+        assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
     }
 
+    @After
+    public void tearDown() throws Exception
+    {
+        super.tearDown();
+    }
+
+    @Test
     public void test_parseIntent_action_view() throws Throwable
     {
-        ClassyFyApplication classyfyApplication = ClassyFyApplication.getInstance();
-        classyfyApplication.waitForApplicationSetup();
         Intent intent = getNewIntent();
         intent.setAction(Intent.ACTION_VIEW);
-        Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "34");
+        Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "3");
         intent.setData(actionUri);
         setActivityIntent(intent); 
         final TitleSearchResultsActivity activity = getActivity(); 
@@ -100,89 +157,163 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
         ProgressBar spinner = activity.progressFragment.getSpinner();
         assertThat(spinner).isNotNull();
         assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
-     }
-
-    public void test_action_view() throws Throwable
-    {
-        Intent intent = getNewIntent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, String.valueOf(34)));
-        setActivityIntent(intent); 
-        final TitleSearchResultsActivity activity = getActivity();
-        assertThat(activity).isNotNull();
-        //assertThat(activity.taskHandle).isNotNull();
-        //assertThat(activity.taskHandle.getStatus()).isEqualTo(WorkStatus.FINISHED);
-        /*
-        PropertiesListAdapter adapter = activity.adapter;
-        for (int i = 0; (i < adapter.getCount()) && (i < RECORD_DETAILS_ARRAY.length); i++)
+        TextView tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
+        assertThat(tv1.getText()).isEqualTo("Category: " + NODE_FIELDS[2].title);
+        LinearLayout propertiesLayout = (LinearLayout)activity.findViewById(R.id.node_properties);
+        LinearLayout dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(0);
+        LinearLayout titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        TextView titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Hierarchy");
+        ListView itemList = (ListView)dynamicLayout.getChildAt(1);
+        ListAdapter adapter = (ListAdapter)itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        ListItem listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[0].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[0].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[1].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[1].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(1);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Folders");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[3].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[3].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[4].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[4].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(2);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Details");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(RECORD_DETAILS_ARRAY.length);
+        for (int i = 0; i < RECORD_DETAILS_ARRAY.length; i++)
         {
             ListItem item = (ListItem)adapter.getItem(i);
             assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
             assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
         }
-        */
-        /*
-        Runnable testTask = new Runnable(){
+    }
 
-            @Override
-            public void run()
-            {
-                synchronized(activity.taskHandle)
-                {
-                    if ((activity.taskHandle.getStatus() != WorkStatus.FAILED) && 
-                        (activity.taskHandle.getStatus() != WorkStatus.FINISHED))
-                    try
-                    {
-                        activity.taskHandle.wait(10000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                assertThat(activity.taskHandle.getStatus()).isEqualTo(WorkStatus.FINISHED);
-                PropertiesListAdapter adapter = activity.adapter;
-                for (int i = 0; (i < adapter.getCount()) && (i < RECORD_DETAILS_ARRAY.length); i++)
-                {
-                    Value item = (Value)adapter.getItem(i);
-                    assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
-                    assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
-                }
-                ProgressBar spinner = activity.progressFragment.getSpinner();
-                assertThat(spinner).isNotNull();
-                assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
-                synchronized(this)
-                {
-                    notifyAll();
-                }
-            }};
-         Thread testThread = new Thread(testTask);
-         testThread.start();
-         synchronized(testTask)
-         {
-             testTask.wait(10000);
-         }
-         */
-    }
- 
-    public void test_action_search_bad_url() throws Throwable
+    @Test
+    public void test_action_view_no_nodeid() throws Throwable
     {
-        Intent intent = getNewIntent();
+        do_action_view_bad_url(ClassyFySearchEngine.CONTENT_URI);
+    }
+
+    @Test
+    public void test_action_view_invalid_nodeid() throws Throwable
+    {
+        Uri uri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "NaN");
+        do_action_view_bad_url(uri);
+    }
+
+    @Test
+    public void test_action_view_out_of_range_nodeid() throws Throwable
+    {
+        Uri uri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, String.valueOf(Integer.MAX_VALUE));
+        do_action_view_bad_url(uri);
+    }
+
+    @Test
+    public void test_action_search_fail() throws Throwable
+    {
+        do_action_search_fail("xyz");
+    }
+
+    protected void do_action_view_bad_url(Uri uri) throws Throwable
+    {
+        final Intent intent = getNewIntent();
+        intent.setAction(Intent.ACTION_VIEW);
+        //intent.putExtra(SearchManager.QUERY, Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, ).toString());
+        setActivityIntent(intent);
+        final TitleSearchResultsActivity activity = getActivity();
+        runTestOnUiThread(new Runnable() {
+            public void run() {
+                TextView tv1 = (TextView) activity.findViewById(R.id.node_detail_title);
+                // Populate fields to test they are cleared when the error occurs
+                tv1.setText("Category: Premises");
+                LinearLayout propertiesLayout = (LinearLayout) activity.findViewById(R.id.node_properties);
+                propertiesLayout.addView(createDynamicLayout("Hierarchy", activity));
+                propertiesLayout.addView(createDynamicLayout("Categories", activity));
+            }
+        });
+        intent.setData(uri);
+        runTestOnUiThread(new Runnable() {
+            public void run() {
+                activity.onNewIntent(intent);
+            }});
+        synchronized (intent) {
+            intent.wait(10000);
+        }
+        runTestOnUiThread(new Runnable() {
+            public void run() {
+		        ProgressBar spinner = activity.progressFragment.getSpinner();
+		        assertThat(spinner).isNotNull();
+		        assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
+		        TextView tv1 = (TextView) activity.findViewById(R.id.node_detail_title);
+		        assertThat(tv1.getText()).isEqualTo("Record not found");
+		        LinearLayout propertiesLayout = (LinearLayout) activity.findViewById(R.id.node_properties);
+		        assertThat(propertiesLayout.getChildCount()).isEqualTo(0);
+            }});
+    }
+
+    protected void do_action_search_fail(String searchQuery) throws Throwable {
+        final Intent intent = getNewIntent();
+        intent.setAction(Intent.ACTION_VIEW);
+        setActivityIntent(intent);
+        final TitleSearchResultsActivity activity = getActivity();
+        runTestOnUiThread(new Runnable() {
+            public void run() {
+                TextView tv1 = (TextView) activity.findViewById(R.id.node_detail_title);
+                // Populate fields to test they are cleared when the error occurs
+                tv1.setText("Category: Premises");
+                LinearLayout propertiesLayout = (LinearLayout) activity.findViewById(R.id.node_properties);
+                propertiesLayout.addView(createDynamicLayout("Hierarchy", activity));
+                propertiesLayout.addView(createDynamicLayout("Categories", activity));
+            }
+        });
         intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(SearchManager.QUERY, Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, String.valueOf(Integer.MAX_VALUE)).toString());
-        setActivityIntent(intent); 
-        TitleSearchResultsActivity activity = getActivity();
-        assertThat(activity).isNotNull();
-        //assertThat(activity.adapter).isNotNull();
-        //assertThat(activity.resultsView).isNotNull();
-        //assertThat(activity.resultsView.getListAdapter()).isEqualTo(activity.adapter);
-        //assertThat(activity.taskHandle).isNotNull();
-        //WorkStatus status = activity.taskHandle.waitForTask();
-        //assertThat(status).isEqualTo(WorkStatus.FAILED);
+        intent.putExtra(SearchManager.QUERY, searchQuery);
+        runTestOnUiThread(new Runnable() {
+            public void run() {
+                activity.onNewIntent(intent);
+            }
+        });
+        synchronized (intent) {
+            intent.wait(10000);
+        }
+        runTestOnUiThread(new Runnable() {
+            public void run() {
+		        ProgressBar spinner = activity.progressFragment.getSpinner();
+		        assertThat(spinner).isNotNull();
+		        assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
+		        TextView tv1 = (TextView) activity.findViewById(R.id.node_detail_title);
+		        assertThat(tv1.getText()).isEqualTo("Record not found");
+		        LinearLayout propertiesLayout = (LinearLayout) activity.findViewById(R.id.node_properties);
+		        assertThat(propertiesLayout.getChildCount()).isEqualTo(0);
+            }
+        });
     }
-    
-    private Intent getNewIntent() 
-    {
+
+    private View createDynamicLayout(String title, Activity activity) {
+        LinearLayout dynamicLayout = new LinearLayout(activity);
+        dynamicLayout.setOrientation(LinearLayout.VERTICAL);
+        int layoutHeight = LinearLayout.LayoutParams.MATCH_PARENT;
+        int layoutWidth = LinearLayout.LayoutParams.MATCH_PARENT;
+        TextView titleView = new TextView(activity);
+        titleView.setText(title);
+        titleView.setTextColor(Color.BLUE);
+        return dynamicLayout;
+    }
+
+    private Intent getNewIntent() {
         Intent intent = new Intent();
         return intent;
     }

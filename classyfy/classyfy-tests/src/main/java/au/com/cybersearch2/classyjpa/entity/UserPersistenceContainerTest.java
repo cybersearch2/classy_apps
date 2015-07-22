@@ -19,7 +19,15 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 import javax.persistence.EntityExistsException;
 
+import android.support.test.InstrumentationRegistry;
 import android.test.InstrumentationTestCase;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyjpa.EntityManagerLite;
 import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
@@ -33,29 +41,28 @@ import au.com.cybersearch2.classyutil.Transcript;
  * @author Andrew Bowley
  * 15/07/2014
  */
+@RunWith(AndroidJUnit4.class)
 public class UserPersistenceContainerTest extends InstrumentationTestCase
 {
     private UserPersistenceContainer testContainer;
 
-    @Override
-    protected void setUp() throws Exception 
+    @Before
+    public void setUp() throws Exception
     {  
-        System.setProperty( "dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath() );
-        System.setProperty("java.util.logging.config.file", "src/logging.properties");
         super.setUp();
-        //assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+        assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
         testContainer = new UserPersistenceContainer(ClassyFyApplication.PU_NAME);
     }
 
-    public void test_all() throws Throwable
+    @After
+    public void tearDown() throws Exception
     {
-        do_background_called();
-        do_rollback_only(); 
-        do_exception_thrown();
-        do_user_transaction();
+        super.tearDown();
     }
-    
-    public void do_background_called() throws Throwable
+
+    @Test
+    public void test_background_called() throws Throwable
     {
         final Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript);
@@ -71,7 +78,8 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
         assertThat(status).isEqualTo(WorkStatus.FINISHED);
     }
 
-    public void do_rollback_only() throws Throwable
+    @Test
+    public void test_rollback_only() throws Throwable
     {
         Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
@@ -96,7 +104,8 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
         assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
 
-    public void do_exception_thrown() throws Throwable
+    @Test
+    public void test_exception_thrown() throws Throwable
     {   
         Transcript transcript = new Transcript();
         final EntityExistsException persistException = new EntityExistsException("Entity of class RecordCategory, primary key 1 already exists");
@@ -120,37 +129,8 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
         assertThat(status).isEqualTo(WorkStatus.FAILED);
     }
 
-    public void do_npe_thrown() throws Throwable
-    {
-        Transcript transcript = new Transcript();
-        final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
-                new TestPersistenceWork.Callable(){
-
-                    @SuppressWarnings("null")
-                    @Override
-                    public Boolean call(EntityManagerLite entityManager)
-                            throws Exception 
-                    {
-                        Object object = null;
-                        object.toString();
-                        return true;
-                    }});
-        final Executable[] exeHolder = new Executable[1];
-        runTestOnUiThread(new Runnable() {
-            public void run()
-            {
-                testContainer.setUserTransactionMode(false);
-                exeHolder[0] = testContainer.executeTask(persistenceWork);
-            }});
-        synchronized(exeHolder[0])
-        {
-            exeHolder[0].wait();
-        }
-        transcript.assertEventsSoFar("background task", "onRollback java.lang.NullPointerException");
-        assertThat(exeHolder[0].getStatus()).isEqualTo(WorkStatus.FAILED);
-    }
-
-    public void do_user_transaction() throws Throwable
+    @Test
+    public void test_user_transaction() throws Throwable
     {
         Transcript transcript = new Transcript();
         final PersistenceWork persistenceWork = new TestPersistenceWork(transcript,
@@ -171,12 +151,9 @@ public class UserPersistenceContainerTest extends InstrumentationTestCase
                 testContainer.setUserTransactionMode(true);
                 exeHolder[0] = testContainer.executeTask(persistenceWork);
             }});
-        synchronized(exeHolder[0])
-        {
-            exeHolder[0].wait();
-        }
+        WorkStatus status = exeHolder[0].waitForTask();
+        assertThat(status).isEqualTo(WorkStatus.FINISHED);
         transcript.assertEventsSoFar("background task", "onPostExecute true");
-        assertThat(exeHolder[0].getStatus()).isEqualTo(WorkStatus.FINISHED);
-    }
+     }
     
 }

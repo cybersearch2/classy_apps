@@ -15,27 +15,47 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.provider;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 import android.test.mock.MockContext;
-import android.test.suitebuilder.annotation.SmallTest;
-import android.util.Log;
+import android.support.test.runner.AndroidJUnit4;
+
+import javax.inject.Inject;
+
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
+import au.com.cybersearch2.classyinject.DI;
+import dagger.Module;
 
 
 /**
  * @author andrew
  *
  */
+@RunWith(AndroidJUnit4.class)
 public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
 {
-    
-    private static final String TAG = ClassyFyProviderTest.class.getSimpleName();
-    static boolean firstTime = true;
+    // Test database created from injected SQLiteOpenHelper - NOT USED
+    //@Module(injects = ClassyFyProviderTest.class, complete=false )
+    //public static class ClassyFyProviderTestModule
+    //{
+    //}
+    //private static final String TAG = ClassyFyProviderTest.class.getSimpleName();
 
     private MockContentResolver mockResolver;
+    // Contains an SQLite database, used as test data
+    //private SQLiteDatabase testDb;
+    /** SQLite database helper dependency accesses application persistence implementation */
+    //@Inject
+   // SQLiteOpenHelper sqLiteOpenHelper;
 
 	public ClassyFyProviderTest()
     {
@@ -43,29 +63,32 @@ public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
         super.setContext(new MockContext());
     }
 
-    @Override
-    protected void setUp() throws Exception 
+    @Before
+    public void setUp() throws Exception
     {
-        if (firstTime)
-        {
-            firstTime = false;
-            System.setProperty( "dexmaker.dexcache", "/data/data/au.com.cybersearch2.classyfy/cache");
-            System.setProperty("java.util.logging.config.file", "src/test/resources/logging.properties");
-        }
         super.setUp();
         ClassyFyApplication classyfyApplication = ClassyFyApplication.getInstance();
         classyfyApplication.waitForApplicationSetup();
+        //DI.add(new ClassyFyProviderTestModule());
+        //DI.inject(this);
         mockResolver = getMockContentResolver();
+         /*
+         * Gets a handle to the database underlying the provider. Gets the provider instance
+         * created in super.setUp(), gets the DatabaseOpenHelper for the provider, and gets
+         * a database object from the helper.
+         */
+        //assertThat(sqLiteOpenHelper).isNotNull();
+        //testDb = sqLiteOpenHelper.getWritableDatabase();
     }
 
-    @Override
-    protected void tearDown() throws Exception 
+    @After
+    public void tearDown() throws Exception
     {
-        Log.d(TAG, "tearDown:");
+        //testDb.close();
         super.tearDown();
     }
 
-    @SmallTest
+    @Test
     public void testAll_Nodes_Query()
     {
         // Defines a projection of column names to return for a query
@@ -103,8 +126,8 @@ public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
 
         int index = 0;
 
-        while (projectionCursor.moveToNext()) {
-
+        while (projectionCursor.moveToNext())
+        {
             // Asserts that the selection argument at the current index matches the value of
             // the title column (column 0) in the current record of the cursor
             assertEquals(SELECTION_ARGS[index], projectionCursor.getString(0));
@@ -116,22 +139,4 @@ public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
         // that the number of arguments tested is exactly the same as the number of rows returned.
         assertThat(SELECTION_ARGS.length).isEqualTo(index);
     }
-    /** @return a ContentValues object with a value set for each MetadataType column */
-    /*
-    public static ContentValues getFullMetadataTypeContentValues() 
-    {
-        ContentValues v = new ContentValues(2);
-        v.put(ClassyFyProvider.KEY_NAME,       VALID_METADATA_TYPE_NAME);
-        v.put(ClassyFyProvider.KEY_DESCRIPTION ,   VALID_METADATA_TYPE_DESCRIPTION);
-        return v;
-    }
-
-    @SmallTest
-    public void testMetadataTypeInsert__inserts_a_valid_record() {
-        Uri uri = mockResolver.insert(ClassyFyProvider.CONTENT_URI, getFullMetadataTypeContentValues());
-        assertEquals(1L, ContentUris.parseId(uri));
-    }
-
-*/
-    
 }

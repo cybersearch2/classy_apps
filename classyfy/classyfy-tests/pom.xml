@@ -31,6 +31,12 @@
       <timezone>+10</timezone>
     </developer>
   </developers>
+  <repositories>
+     <repository>
+        <id>android-support</id>
+        <url>file://${env.ANDROID_HOME}/extras/android/m2repository</url>
+     </repository>
+  </repositories>
   <dependencies>
     <dependency>
        <groupId>au.com.cybersearch2</groupId>
@@ -94,6 +100,30 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>com.android.support.test.espresso</groupId>
+      <artifactId>espresso-core</artifactId>
+      <exclusions>
+      	<exclusion>
+	      <groupId>com.android.support</groupId>
+	      <artifactId>support-annotations</artifactId>
+      	</exclusion>
+      	<exclusion>
+	      <groupId>com.android.support</groupId>
+	      <artifactId>support-annotations</artifactId>
+      	</exclusion>
+      </exclusions>
+      <version>2.2</version>
+      <type>aar</type>
+      <scope></scope>
+    </dependency>
+    <!--
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    -->
+     <dependency>
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert-core</artifactId>
       <scope>compile</scope>
@@ -133,7 +163,9 @@
             <sdk>
               <platform>${android.platform.version}</platform>
             </sdk>
+            <deleteConflictingFiles>true</deleteConflictingFiles>
             <undeployBeforeDeploy>true</undeployBeforeDeploy>
+            <extractDuplicates>true</extractDuplicates>
           </configuration>
           <extensions>true</extensions>
         </plugin>
@@ -155,6 +187,12 @@
                   <resourceDirectory>${project.basedir}/res</resourceDirectory>
                   <assetsDirectory>${project.basedir}/assets</assetsDirectory> 
                   <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
+		          <sdk>
+		            <platform>${android.platform.version}</platform>
+		          </sdk>
+		          <deleteConflictingFiles>true</deleteConflictingFiles>
+		          <undeployBeforeDeploy>true</undeployBeforeDeploy>
+		          <extractDuplicates>true</extractDuplicates>
                   <test>
                     <!--<skip>true|false|auto</skip>-->
                     <!--<instrumentationPackage>packageName</instrumentationPackage>-->
