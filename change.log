@@ -1,6 +1,7 @@
 Classy Apps v1.12
 
 1. Update ClassyFy to show 'Record not found' in title if search fails
+2. Add aar library references to classfyf-tests project.properties
 
 _______________________________________________________________________________________________________________________
 Classy Apps v1.11
