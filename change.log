@@ -1,7 +1,10 @@
 Classy Apps v1.12
 
 1. Update ClassyFy to show 'Record not found' in title if search fails
-2. Add aar library references to classfyf-tests project.properties
+2. Update classyfy-tests module to use AndroidJUnitTestRunner and Espresso
+3. Add aar library references to classfy-tests project.properties
+4. Remove classyfy-tests module from classyfy pom due to android-maven-plugin issue
+5. Update android.support.version to 22.2.1
 
 _______________________________________________________________________________________________________________________
 Classy Apps v1.11
