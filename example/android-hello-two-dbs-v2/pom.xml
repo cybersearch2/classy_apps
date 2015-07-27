@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.12-SNAPSHOT</version>
+        <version>1.12</version>
     </parent>
 	<artifactId>android-hello-two-dbs-v2</artifactId>
 	<packaging>apk</packaging>
