@@ -1,3 +1,7 @@
+Classy Apps v1.13
+
+1. Remove android-studio files
+_______________________________________________________________________________________________________________________
 Classy Apps v1.12
 
 1. Update ClassyFy to show 'Record not found' in title if search fails
@@ -5,9 +9,9 @@ Classy Apps v1.12
 3. Add aar library references to classfy-tests project.properties
 4. Remove classyfy-tests module from classyfy pom due to android-maven-plugin issue
 5. Update android.support.version to 22.2.1
-
 _______________________________________________________________________________________________________________________
 Classy Apps v1.11
+
 1. Complete ClassyFy release configuration and use shading for compressed release APK
 _______________________________________________________________________________________________________________________
 Classy Apps v1.10
@@ -27,7 +31,6 @@ Classy Apps v1.0.9
 
 1. Maven Release configured for Jenkins implementation
 2. Change log order reversed.
-
 _______________________________________________________________________________________________________________________
 Classy Apps v1.0.8
 Introduce Maven Release support, with snapshot versioning and SCM and Distribution Management activation.
