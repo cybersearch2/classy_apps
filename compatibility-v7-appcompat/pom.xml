@@ -36,7 +36,6 @@
     <plugins>
         <plugin>
             <artifactId>maven-install-plugin</artifactId>
-            <version>2.5.1</version>
             <configuration>
               <skip>true</skip>
             </configuration>
@@ -66,12 +65,13 @@
                 <artifactId>maven-clean-plugin</artifactId>
                 <executions>
                   <execution>
-                    <id>clean-dependencies</id>
+                    <id>default</id>
                     <phase>initialize</phase>
                     <goals>
                       <goal>clean</goal>
                     </goals>
                     <configuration>
+                      <skip>false</skip> 
                       <filesets>
                         <fileset>
                           <directory>res</directory>

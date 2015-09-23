@@ -49,14 +49,14 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <classy_tools.version>1.12</classy_tools.version>
+    <classy_tools.version>1.13-SNAPSHOT</classy_tools.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.3.0</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
-    <android.platform.version>22</android.platform.version>
+    <android.platform.version>23</android.platform.version>
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
-    <android.sdk.version>5.1.1_r2</android.sdk.version>
+    <android.sdk.version>6.0.0_r1</android.sdk.version>
     <!-- Android Suport Library version - always 3-part -->
     <android.support.version>22.2.1</android.support.version>
     <robolectric.version>3.0-rc2</robolectric.version>
