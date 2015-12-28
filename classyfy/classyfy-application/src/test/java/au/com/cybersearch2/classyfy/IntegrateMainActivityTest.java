@@ -56,6 +56,7 @@ import au.com.cybersearch2.classyfy.data.NodeEntity;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyinject.DI;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.ListItem;
 
@@ -86,7 +87,7 @@ public class IntegrateMainActivityTest
               @Override protected void done() {
                 try {
                   final D result = get();
-                  ShadowLooper.getUiThreadScheduler().post(new Runnable() {
+                  Robolectric.getForegroundThreadScheduler().post(new Runnable() {
                     @Override public void run() {
                       realLoader.deliverResult(result);
                     }
@@ -100,7 +101,7 @@ public class IntegrateMainActivityTest
 
           @Implementation
           public void onForceLoad() {
-            ShadowApplication.getInstance().getBackgroundScheduler().post(new Runnable() {
+              Robolectric.getBackgroundThreadScheduler().post(new Runnable() {
               @Override
               public void run() {
                 future.run();
@@ -137,7 +138,7 @@ public class IntegrateMainActivityTest
     public static class TestModule implements ApplicationModule
     {   // Note there will be two  ClassyfyLogic "singletons" if both 
         // MainActivy and TitleSearchResultsActivity are included in the same test.
-        @Provides @Singleton ClassyfyLogic proviceClassyfyLogic()
+        @Provides @Singleton ClassyfyLogic provideClassyfyLogic()
         {
             return new ClassyfyLogic();
         }
@@ -229,13 +230,18 @@ public class IntegrateMainActivityTest
     @After
     public void tearDown() 
     {
+        PersistenceContext persistenceContext = new PersistenceContext();
+        persistenceContext.getDatabaseSupport().close();
     }
 
     private Intent getNewIntent()
     {
         return new Intent(RuntimeEnvironment.application, MainActivity.class);
     }
-
+/*
+    ** Combined with test_parseIntent_action_view() as workaround for https://github.com/robolectric/robolectric/issues/1890
+    *  Robolectric 3.0 has new requirement for SQLite clean up between tests.
+    *  TODO - Fix this issue by improving persistenceContext.getDatabaseSupport().close()
     @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
     @Test
     public void test_mainActivity_onCreate() throws InterruptedException
@@ -248,26 +254,20 @@ public class IntegrateMainActivityTest
         .get();
         mainActivity.startMonitor.waitForTask();
         assertThat(mainActivity.startMonitor.getStatus()).isEqualTo(WorkStatus.FINISHED);
-        /*
-        ShadowActivity activity = Shadows.shadowOf(mainActivity);
-        TextView tv1 = (TextView)activity.findViewById(R.id.category_title);
-        assertThat(tv1.getText()).isEqualTo("Category: Cybersearch2 Records");
-        ListView listView = (ListView)activity.findViewById(R.id.category_list);
-        ListAdapter adapter = listView.getAdapter();
-        assertThat(adapter.getCount()).isEqualTo(TOP_CATS.length);
-        for (int i = 0; i < TOP_CATS.length; i++)
-        {
-            ListItem listItem = (ListItem)adapter.getItem(i);
-            assertThat(listItem.getValue()).isEqualTo(TOP_CATS[i]);
-            assertThat(listItem.getId()).isGreaterThan(1);
-        }
-        */
     }
-    
+*/    
     @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
     @Test
     public void test_parseIntent_action_view() throws InterruptedException
     {
+        // Create MainActivity
+        MainActivity mainActivity = Robolectric.buildActivity(TestMainActivity.class)
+        .create()
+        .start()
+        .visible()
+        .get();
+        mainActivity.startMonitor.waitForTask();
+        assertThat(mainActivity.startMonitor.getStatus()).isEqualTo(WorkStatus.FINISHED);
         // Check that ContentProvider is available for search operations
         ContentResolver contentResolver  = TestClassyFyApplication.getTestInstance().getContentResolver();
         assertThat(contentResolver.getType(ClassyFySearchEngine.CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
@@ -281,11 +281,11 @@ public class IntegrateMainActivityTest
         .start()
         .visible()
         .get();
-        ShadowLooper.getUiThreadScheduler().pause();
-        ShadowApplication.getInstance().getBackgroundScheduler().pause();
+        Robolectric.getForegroundThreadScheduler().pause();
+        Robolectric.getBackgroundThreadScheduler().pause();
         titleSearchResultsActivity.parseIntent(intent);
-        ShadowApplication.getInstance().getBackgroundScheduler().runOneTask();
-        Robolectric.flushForegroundScheduler();
+        Robolectric.getBackgroundThreadScheduler().runOneTask();
+        Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
         assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.GONE);
         TextView tv1 = (TextView)titleSearchResultsActivity.findViewById(R.id.node_detail_title);
         assertThat(tv1.getText()).isEqualTo("Category: " + NODE_FIELDS[2].title);

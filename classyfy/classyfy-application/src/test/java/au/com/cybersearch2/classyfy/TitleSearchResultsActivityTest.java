@@ -156,7 +156,7 @@ public class TitleSearchResultsActivityTest
               @Override protected void done() {
                 try {
                   final D result = get();
-                  ShadowLooper.getUiThreadScheduler().post(new Runnable() {
+                  Robolectric.getForegroundThreadScheduler().post(new Runnable() {
                     @Override public void run() {
                       realLoader.deliverResult(result);
                     }
@@ -170,7 +170,7 @@ public class TitleSearchResultsActivityTest
 
           @Implementation
           public void onForceLoad() {
-            ShadowApplication.getInstance().getBackgroundScheduler().post(new Runnable() {
+              Robolectric.getBackgroundThreadScheduler().post(new Runnable() {
               @Override
               public void run() {
                 future.run();
@@ -287,7 +287,7 @@ public class TitleSearchResultsActivityTest
         // Test search suggesion initiated by intent
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, SEARCH_TEXT);
-        ShadowApplication.getInstance().getBackgroundScheduler().pause();
+        Robolectric.getBackgroundThreadScheduler().pause();
         ShadowActivity activity = Shadows.shadowOf(titleSearchResultsActivity);
         activity.runOnUiThread(new Runnable(){
 
@@ -302,7 +302,7 @@ public class TitleSearchResultsActivityTest
         ListItem listItem = new ListItem(RECORD_NAME, RECORD_VALUE, NODE_ID);
         singletonList.add(listItem);
         when(classyfyLogic.doSearchQuery(SEARCH_TEXT)).thenReturn(singletonList);
-        ShadowApplication.getInstance().getBackgroundScheduler().runOneTask();
+        Robolectric.getBackgroundThreadScheduler().runOneTask();
         verify(classyfyLogic).doSearchQuery(SEARCH_TEXT);
         TextView tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
         assertThat(tv1.getText()).isEqualTo("Search: " + SEARCH_TEXT);
@@ -318,15 +318,15 @@ public class TitleSearchResultsActivityTest
         
         // Test item selection by activating the onItemClickListener
         OnItemClickListener onItemClickListener = itemList.getOnItemClickListener();
-        ShadowApplication.getInstance().getBackgroundScheduler().advanceToLastPostedRunnable();
+        Robolectric.getBackgroundThreadScheduler().advanceToLastPostedRunnable();
         Node data = getTestNode();
         NodeDetailsBean nodeDetails = getNodeDetails(data);
         when(classyfyLogic.getNodeDetails((int)NODE_ID)).thenReturn(nodeDetails);
         onItemClickListener.onItemClick(null, null, 0, NODE_ID);
         assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.VISIBLE);
-        ShadowApplication.getInstance().getBackgroundScheduler().runOneTask();
+        Robolectric.getBackgroundThreadScheduler().runOneTask();
         verify(classyfyLogic).getNodeDetails((int)NODE_ID);
-        Robolectric.flushForegroundScheduler();
+        Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
         assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.GONE);
         tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
         assertThat(tv1.getText()).isEqualTo(nodeDetails.getHeading());
