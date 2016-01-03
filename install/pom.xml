@@ -3,7 +3,7 @@
   <parent>
     <groupId>au.com.cybersearch2</groupId>
     <artifactId>classy_apps</artifactId>
-    <version>1.13-SNAPSHOT</version>
+    <version>1.13</version>
   </parent>
   <groupId>com.android.support</groupId>
   <artifactId>appcompat-v7</artifactId>
