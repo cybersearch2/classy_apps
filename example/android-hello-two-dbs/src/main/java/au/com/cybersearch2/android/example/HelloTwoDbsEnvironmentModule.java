@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example;
+package au.com.cybersearch2.android.example;
 
 /**
  * HellowoDbsEnvironmentModule
@@ -31,13 +31,9 @@ import dagger.Provides;
 import au.com.cybersearch2.classyapp.ApplicationContext;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
-import au.com.cybersearch2.classydb.DatabaseAdminImpl;
 import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
-import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
-import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classytask.ThreadHelper;
-import au.com.cybersearch2.classytask.WorkerRunnable;
 
 /**
  * AndroidHelloTwoDbsModule
@@ -45,14 +41,14 @@ import au.com.cybersearch2.classytask.WorkerRunnable;
  * @author Andrew Bowley
  * 23 Sep 2014
  */
-@Module(injects = { 
+@Module(/*injects = { 
         AndroidHelloTwoDbs.class, 
         WorkerRunnable.class,
         PersistenceFactory.class,
         NativeScriptDatabaseWork.class,
         PersistenceContext.class,
         DatabaseAdminImpl.class
-        })
+        }*/)
 public class HelloTwoDbsEnvironmentModule 
 {
 	ConnectionType CONNECTION_TYPE = ConnectionType.file;

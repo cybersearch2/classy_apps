@@ -20,7 +20,6 @@ import javax.persistence.PersistenceException;
 
 import android.content.Context;
 import android.util.Log;
-import au.com.cybersearch2.classyapp.ContextModule;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classyfy.data.RecordFolder;
 import au.com.cybersearch2.classyinject.DI;
@@ -75,9 +74,9 @@ public class ClassyFyStartup
     	// Clear out ORMLite internal caches.
         DaoManager.clearCache();
         // Create application Object Graph for Dependency Injection
-        classyFyApplicationModule = new ClassyFyApplicationModule();
-        DI dependencyInjection = new DI(classyFyApplicationModule, new ContextModule(context));
-        dependencyInjection.validate();
+        //classyFyApplicationModule = new ClassyFyApplicationModule();
+        //DI dependencyInjection = new DI(classyFyApplicationModule, new ContextModule(context));
+        //dependencyInjection.validate();
         persistenceContext = new PersistenceContext();
         // Inject threadHelper
         DI.inject(this);

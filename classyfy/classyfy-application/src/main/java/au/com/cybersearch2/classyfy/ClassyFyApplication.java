@@ -15,15 +15,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy;
 
+import javax.inject.Singleton;
+
 import android.app.Application;
 import android.util.Log;
+import au.com.cybersearch2.classyapp.ApplicationContext;
+import au.com.cybersearch2.classyapp.ApplicationLocale;
 import au.com.cybersearch2.classyapp.PrimaryContentProvider;
+import au.com.cybersearch2.classydb.DatabaseAdminImpl;
+import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
 import au.com.cybersearch2.classyfts.FtsEngine;
 import au.com.cybersearch2.classyfy.data.RecordModel;
 import au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import au.com.cybersearch2.classyinject.ApplicationModule;
+import au.com.cybersearch2.classyinject.DI;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classynode.Node;
 import au.com.cybersearch2.classytask.WorkStatus;
+import dagger.Component;
 
 /**
  * ClassyFyApplication
@@ -33,6 +45,23 @@ import au.com.cybersearch2.classytask.WorkStatus;
  */
 public class ClassyFyApplication extends Application implements ClassyFyLauncher
 {
+    @Singleton
+    @Component(modules = ClassyFyApplicationModule.class)  
+    static interface ClassyFyComponent extends ApplicationModule
+    {
+        void inject(MainActivity mainActivity);
+        void inject(TitleSearchResultsActivity titleSearchResultsActivity);
+        void inject(ApplicationContext applicationContext);
+        void inject(ClassyFyStartup classyFyStartup); 
+        void inject(ClassyFyProvider classyFyProvider);
+        void inject(ClassyFySearchEngine classyFySearchEngine);
+        void inject(ApplicationLocale ApplicationLocale);
+        void inject(PersistenceContext persistenceContext);
+        void inject(PersistenceFactory persistenceFactory);
+        void inject(NativeScriptDatabaseWork nativeScriptDatabaseWork);
+        void inject(DatabaseAdminImpl databaseAdminImpl);
+    }
+    
     public static final String TAG = "ClassyFyApplication";
     /** Persistence unit name refers to peristence.xml in assets */
     public static final String PU_NAME = "classyfy";
@@ -67,9 +96,19 @@ public class ClassyFyApplication extends Application implements ClassyFyLauncher
     @Override public void onCreate() 
     {
         super.onCreate();
+        ClassyFyComponent component = 
+                DaggerClassyFyApplication_ClassyFyComponent.builder()
+                .classyFyApplicationModule(new ClassyFyApplicationModule(this))
+                .build();
+        DI.getInstance(component);
         startApplicationSetup();
     }
 
+    protected void onAndroidCreate()
+    {
+        super.onCreate();
+    }
+    
     /**
      * Wait for application setup
      * @see au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher#waitForApplicationSetup()

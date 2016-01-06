@@ -17,12 +17,13 @@ package au.com.cybersearch2.classyfy;
 
 import javax.inject.Inject;
 
+import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -32,13 +33,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 import au.com.cybersearch2.classyfy.helper.ViewHelper;
 import au.com.cybersearch2.classyfy.interfaces.ClassyFyLauncher;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
@@ -46,7 +44,6 @@ import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classytask.BackgroundTask;
 import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.classytask.WorkStatus;
-import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 
 /**
  * ClassyFy MainActivity
@@ -56,6 +53,7 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter;
  * @author Andrew Bowley
  * 26 Jun 2015
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity 
 {
@@ -76,7 +74,6 @@ public class MainActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		final ClassyFyLauncher classyfyLauncher = (ClassyFyLauncher)getApplication();
         // Complete initialization in background
         BackgroundTask starter = new BackgroundTask(this)
         {
@@ -89,28 +86,17 @@ public class MainActivity extends ActionBarActivity
             @Override
             public Boolean loadInBackground()
             {
-                // Wait for database initialzation started by Application object
-                status = classyfyLauncher.waitForApplicationSetup();
-                if (status != WorkStatus.FINISHED)
-                    return Boolean.FALSE;
-                // Reset status for database query
-                status = WorkStatus.RUNNING;
-                // Dependency injection delayed until database initialization complete
                 try
                 {
-                    DI.inject(MainActivity.this);
+                    // Get first node, which is root of records tree
+                    nodeDetails = getNodeDetailsBean();
                 }
                 catch (IllegalArgumentException e)
                 {   // DI may throw this exception
                     notifyStatus(WorkStatus.FAILED);
                     Log.e(TAG, "Fatal initialization error", e);
-                    return Boolean.FALSE;
                 }
-                // Get first node, which is root of records tree
-                nodeDetails = classyfyLogic.getNodeDetails(1);
-                if ((nodeDetails == null) || nodeDetails.getCategoryTitles().isEmpty())
-                    return Boolean.FALSE;
-                return  Boolean.TRUE;
+                return nodeDetails != null;
             }
 
             /**
@@ -153,6 +139,28 @@ public class MainActivity extends ActionBarActivity
         starter.onStartLoading();
 		
 	}
+
+    private NodeDetailsBean getNodeDetailsBean()
+    {
+        NodeDetailsBean nodeDetails;
+        if (classyfyLogic == null)
+        {
+            // Dependency injection delayed until database initialization complete
+            final ClassyFyLauncher classyfyLauncher = (ClassyFyLauncher)getApplication();
+            // Wait for database initialzation started by Application object
+            status = classyfyLauncher.waitForApplicationSetup();
+            if (status != WorkStatus.FINISHED)
+                return null;
+            // Reset status for database query
+            status = WorkStatus.RUNNING;
+            DI.inject(this);
+        }
+        // Get first node, which is root of records tree
+        nodeDetails = classyfyLogic.getNodeDetails(1);
+        if ((nodeDetails == null) || nodeDetails.getCategoryTitles().isEmpty())
+            return null;
+        return  nodeDetails;
+    }
 
 	/**
 	 * onCreateOptionsMenu

@@ -49,7 +49,7 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <classy_tools.version>1.13-SNAPSHOT</classy_tools.version>
+    <classy_tools.version>1.2-SNAPSHOT</classy_tools.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.3.0</android.plugin.version>
@@ -62,7 +62,7 @@
     <robolectric.version>3.0</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <slf4j-version>1.7.2</slf4j-version>
-    <dagger.version>1.2.2</dagger.version>
+    <dagger.version>2.0.2</dagger.version>
     <release.repo.id>artifactory</release.repo.id>
     <release.repo.url>http://microserver/artifactory/libs-release-local</release.repo.url>
     <snapshot.repo.id>artifactory</snapshot.repo.id>
@@ -86,6 +86,11 @@
           <artifactId>javax.inject</artifactId>
           <version>1</version>
         </dependency>
+        <dependency>
+	       <groupId>javax.annotation</groupId>
+	       <artifactId>jsr250-api</artifactId>
+	       <version>1.0</version>
+        </dependency>    
         <dependency> 
           <groupId>org.hibernate.javax.persistence</groupId>
           <artifactId>hibernate-jpa-2.0-api</artifactId>

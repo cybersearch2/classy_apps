@@ -13,22 +13,23 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example.v2;
+package au.com.cybersearch2.android.example;
 
 import javax.inject.Singleton;
 
-import com.example.hellotwodbs.v2.HelloTwoDbs;
+import com.example.hellotwodbs.HelloTwoDbs;
 
 import android.content.Context;
+import au.com.cybersearch2.classyapp.ApplicationContext;
+import au.com.cybersearch2.classyapp.ApplicationLocale;
 import au.com.cybersearch2.classydb.DatabaseAdminImpl;
 import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
+import au.com.cybersearch2.example.HelloTwoDbsMain;
 import dagger.Component;
-import au.com.cybersearch2.classyapp.ApplicationContext;
-import au.com.cybersearch2.classyapp.ApplicationLocale;
 
 /**
  * AndroidHelloTwoDbs
@@ -41,12 +42,10 @@ public class AndroidHelloTwoDbs extends HelloTwoDbsMain
     @Component(modules = AndroidHelloTwoDbsModule.class)  
     static interface AndroidHelloTwoDbsComponent extends ApplicationModule
     {
+        void inject(AndroidHelloTwoDbs helloTwoDbs);
         void inject(HelloTwoDbs helloTwoDbs);
-        void inject(AndroidHelloTwoDbs androidHelloTwoDbs);
-        void inject(SimpleOpenHelperCallbacks simpleOpenHelperCallbacks);
-        void inject(ComplexOpenHelperCallbacks complexOpenHelperCallbacks);
         void inject(ApplicationContext applicationContext);
-        void inject(ApplicationLocale applicationLocale);
+        void inject(ApplicationLocale ApplicationLocale);
         void inject(PersistenceContext persistenceContext);
         void inject(PersistenceFactory persistenceFactory);
         void inject(NativeScriptDatabaseWork nativeScriptDatabaseWork);
@@ -58,23 +57,17 @@ public class AndroidHelloTwoDbs extends HelloTwoDbsMain
    
     public AndroidHelloTwoDbs(final Context context)
     {
-       super();
-       if (context == null)
-            throw new IllegalArgumentException("Paramemter \"context\" is null");
-       this.context = context;
+        super();
+        this.context = context;
     }
 
+ 
     @Override
     protected void createObjectGraph()
     {
         // Set up dependency injection, which creates an ObjectGraph from a HelloTwoDbsModule configuration object
         AndroidHelloTwoDbsComponent component = 
-                DaggerAndroidHelloTwoDbs_AndroidHelloTwoDbsComponent.builder().androidHelloTwoDbsModule(new AndroidHelloTwoDbsModule(context)).build(); 
+            DaggerAndroidHelloTwoDbs_AndroidHelloTwoDbsComponent.builder().androidHelloTwoDbsModule(new AndroidHelloTwoDbsModule(context)).build(); 
         DI.getInstance(component).validate();
-        ApplicationContext applicationContex = new ApplicationContext();
-       if (applicationContex.getContext() == null)
-            throw new IllegalStateException("ApplicationContext \"context\" is null");
-       if (applicationContex.getContext().getAssets() == null)
-            throw new IllegalStateException("ApplicationContext \"assets\" is null");
     }
 }

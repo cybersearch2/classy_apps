@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
+import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
@@ -32,8 +32,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
@@ -41,9 +39,6 @@ import au.com.cybersearch2.classyfy.helper.ViewHelper;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classytask.BackgroundTask;
 import au.com.cybersearch2.classywidget.ListItem;
-import au.com.cybersearch2.classywidget.PropertiesListAdapter;
-//import au.com.cybersearch2.classynode.Node;
-//import au.com.cybersearch2.classynode.NodeFinder;
 
 /**
  * TitleSearchResultsActivity
@@ -51,6 +46,7 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter;
  * @author Andrew Bowley
  * 21/04/2014
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class TitleSearchResultsActivity extends FragmentActivity
 {
     public static final String TAG = "TitleSearchResults";

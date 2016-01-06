@@ -17,10 +17,9 @@ package au.com.cybersearch2.classyfy;
 
 import javax.inject.Singleton;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
-import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
-import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.AndroidPersistenceEnvironment;
 import au.com.cybersearch2.classyjpa.AndroidPersistenceFactory;
@@ -32,15 +31,22 @@ import dagger.Provides;
  * @author Andrew Bowley
  * 08/07/2014
  */
-@Module(injects = { 
+@Module(/*injects = { 
     ClassyFyStartup.class, 
     ClassyFyProvider.class,
     ClassyFySearchEngine.class,
     MainActivity.class,
     TitleSearchResultsActivity.class
-    }, includes = ClassyFyEnvironmentModule.class)
+    }, */includes = ClassyFyEnvironmentModule.class)
 public class ClassyFyApplicationModule implements ApplicationModule
 {
+    private Context context;
+
+    public ClassyFyApplicationModule(Context context)
+    {
+        this.context = context;
+    }
+    
     @Provides @Singleton SQLiteOpenHelper provideSQLiteOpenHelper()
     {
         AndroidPersistenceFactory androidPersistenceFactory = 
@@ -50,7 +56,7 @@ public class ClassyFyApplicationModule implements ApplicationModule
         return androidPersistence.getSQLiteOpenHelper();
     }
     
-    @Provides @Singleton ClassyfyLogic proviceClassyfyLogic()
+    @Provides @Singleton ClassyfyLogic provideClassyfyLogic()
     {
         return new ClassyfyLogic();
     }
@@ -59,4 +65,13 @@ public class ClassyFyApplicationModule implements ApplicationModule
     {
         return new TicketManager();
     }
+    /**
+     * Returns Android Application Context
+     * @return Context
+     */
+    @Provides @Singleton Context provideContext()
+    {
+        return context;
+    }
+    
 }

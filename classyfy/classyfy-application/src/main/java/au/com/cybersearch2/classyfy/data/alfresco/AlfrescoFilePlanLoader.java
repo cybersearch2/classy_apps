@@ -65,7 +65,7 @@ public class AlfrescoFilePlanLoader implements DataLoader
     
     public AlfrescoFilePlanLoader()
     {
-        DI.inject(new AlfrescoFilePlanLoaderModule(), this);
+        DI.inject(this);
         persistenceAdmin = new PersistenceContext().getPersistenceAdmin(ClassyFyApplication.PU_NAME);
     }
     

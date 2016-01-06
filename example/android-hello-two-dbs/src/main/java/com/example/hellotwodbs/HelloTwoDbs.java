@@ -6,8 +6,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import au.com.cybersearch2.android.example.AndroidHelloTwoDbs;
 import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.example.AndroidHelloTwoDbs;
 import au.com.cybersearch2.example.HelloTwoDbsMain;
 
 /**

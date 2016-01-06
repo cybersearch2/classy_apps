@@ -13,15 +13,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example;
+package au.com.cybersearch2.android.example;
 
 import javax.inject.Singleton;
 
 import au.com.cybersearch2.classyinject.ApplicationModule;
 
-import com.example.hellotwodbs.HelloTwoDbs;
 import com.example.hellotwodbs.HelloTwoDbsApplication;
 
+import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 
@@ -32,12 +32,27 @@ import dagger.Provides;
  * @author Andrew Bowley
  * 23 Sep 2014
  */
-@Module(injects = HelloTwoDbs.class, includes = HelloTwoDbsEnvironmentModule.class) 
+@Module(/*injects = HelloTwoDbs.class,*/ includes = HelloTwoDbsEnvironmentModule.class) 
 public class AndroidHelloTwoDbsModule implements ApplicationModule
 {
+    private Context context;
+
+    public AndroidHelloTwoDbsModule(Context context)
+    {
+        this.context = context;
+    }
+    
 	@Provides @Singleton AndroidHelloTwoDbs provideAndroidHelloTwoDbs()
 	{
 		return HelloTwoDbsApplication.getAndroidHelloTwoDbsSingleton();
 	}
 	
+    /**
+     * Returns Android Application Context
+     * @return Context
+     */
+    @Provides @Singleton Context provideContext()
+    {
+        return context;
+    }
 }

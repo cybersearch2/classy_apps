@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 
@@ -45,8 +46,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.app.SearchManager;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import au.com.cybersearch2.classyapp.ApplicationContext;
 import au.com.cybersearch2.classyapp.ApplicationLocale;
-import au.com.cybersearch2.classyapp.ContextModule;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classyfts.FtsOpenHelper;
 import au.com.cybersearch2.classyfts.FtsQuery;
@@ -121,14 +122,20 @@ public class ClassyFySearchEngineTest
         }
     }
  
-    @Module(injects = { 
+    @Module(/*injects = { 
             TestClassyFySearchEngine.class, 
             ClassyFySearchEngine.class,
             ApplicationLocale.class
-            }, complete = false)
+            }, complete = false*/)
     static class TestClassyFySearchEngineModule implements ApplicationModule
     {
-        SQLiteOpenHelper sqliteOpenHelper = mock(SQLiteOpenHelper.class);
+        private SQLiteOpenHelper sqliteOpenHelper = mock(SQLiteOpenHelper.class);
+        private Context context;
+        
+        public TestClassyFySearchEngineModule(Context context)
+        {
+            this.context = context;
+        }
         
         @Provides @Singleton
         SQLiteOpenHelper provideSqLiteOpenHelper()
@@ -142,6 +149,24 @@ public class ClassyFySearchEngineTest
         {
             return new ClassyFyResourceEnvironment();
         }
+        /**
+         * Returns Android Application Context
+         * @return Context
+         */
+        @Provides @Singleton Context provideContext()
+        {
+            return context;
+        }
+    }
+ 
+    @Singleton
+    @Component(modules = TestClassyFySearchEngineModule.class)  
+    static interface TestComponent extends ApplicationModule
+    {
+        void inject(TestClassyFySearchEngine testClassyFySearchEngine);
+        void inject(ApplicationContext applicationContext);
+        void inject(ClassyFySearchEngine classyFySearchEngine);
+        void inject(ApplicationLocale ApplicationLocale);
     }
     
     class TestClassyFySearchEngine extends ClassyFySearchEngine
@@ -190,10 +215,12 @@ public class ClassyFySearchEngineTest
     {
         if (context == null)
         {
-            TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
-            context = classyfyLauncher;
-            Object[] initModules = new Object[] { new ContextModule(context) }; 
-            new DI(new TestClassyFySearchEngineModule(), initModules);
+            context = TestClassyFyApplication.getTestInstance();
+            TestComponent component = 
+                    DaggerClassyFySearchEngineTest_TestComponent.builder()
+                    .testClassyFySearchEngineModule(new TestClassyFySearchEngineModule(context))
+                    .build();
+            DI.getInstance(component);
         }
         ftsOpenHelper = mock(FtsOpenHelper.class);
         cursor = mock(Cursor.class);

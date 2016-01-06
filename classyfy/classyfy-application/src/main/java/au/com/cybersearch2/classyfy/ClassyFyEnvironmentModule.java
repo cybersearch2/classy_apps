@@ -17,17 +17,11 @@ package au.com.cybersearch2.classyfy;
 
 import javax.inject.Singleton;
 
-import au.com.cybersearch2.classyapp.ApplicationLocale;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
-import au.com.cybersearch2.classydb.DatabaseAdminImpl;
-import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
-import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classytask.InternalHandler;
 import au.com.cybersearch2.classytask.ThreadHelper;
-import au.com.cybersearch2.classytask.UserTaskContext;
-import au.com.cybersearch2.classytask.WorkerRunnable;
 import dagger.Module;
 import dagger.Provides;
 
@@ -37,14 +31,14 @@ import dagger.Provides;
  * @author Andrew Bowley
  * 18/04/2014
  */
-@Module(injects = { WorkerRunnable.class,
+@Module(/*injects = { WorkerRunnable.class,
                     NativeScriptDatabaseWork.class,
                     DatabaseAdminImpl.class,
                     UserTaskContext.class,
                     PersistenceFactory.class,
                     PersistenceContext.class,
-                    ApplicationLocale.class
-})
+                    ApplicationLocale.class 
+}*/)
 public class ClassyFyEnvironmentModule
 {
     @Provides @Singleton ThreadHelper provideThreadHelper()

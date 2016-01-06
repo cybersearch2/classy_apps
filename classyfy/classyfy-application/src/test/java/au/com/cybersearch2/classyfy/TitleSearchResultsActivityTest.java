@@ -48,10 +48,10 @@ import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.SimpleFuture;
+
+import com.j256.ormlite.support.ConnectionSource;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -65,7 +65,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import au.com.cybersearch2.classyapp.ContextModule;
+import au.com.cybersearch2.classyapp.ApplicationContext;
 import au.com.cybersearch2.classybean.BeanMap;
 import au.com.cybersearch2.classyfy.data.FieldDescriptor;
 import au.com.cybersearch2.classyfy.data.FieldDescriptorSetFactory;
@@ -86,9 +86,7 @@ import au.com.cybersearch2.classynode.NodeType;
 import au.com.cybersearch2.classytask.ThreadHelper;
 import au.com.cybersearch2.classytask.WorkerRunnable;
 import au.com.cybersearch2.classywidget.ListItem;
-
-import com.j256.ormlite.support.ConnectionSource;
-
+import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 
@@ -101,12 +99,19 @@ import dagger.Provides;
 @RunWith(RobolectricTestRunner.class)
 public class TitleSearchResultsActivityTest
 {
-    @Module(injects = { 
+    @Module(/*injects = { 
             PersistenceContext.class, 
             WorkerRunnable.class,
-            TitleSearchResultsActivity.class})
+            TitleSearchResultsActivity.class}*/)
     static class TestModule implements ApplicationModule
     {
+        private Context context;
+
+        public TestModule(Context context)
+        {
+            this.context = context;
+        }
+        
         @Provides @Singleton PersistenceFactory providePersistenceModule() 
         {
             PersistenceFactory persistenceFactory = mock(PersistenceFactory.class);
@@ -135,8 +140,28 @@ public class TitleSearchResultsActivityTest
         {
             return new TicketManager();
         }
+        /**
+         * Returns Android Application Context
+         * @return Context
+         */
+        @Provides @Singleton Context provideContext()
+        {
+            return context;
+        }
+        
     }
-    
+
+    @Singleton
+    @Component(modules = TestModule.class)  
+    static interface TestComponent extends ApplicationModule
+    {
+        void inject(TitleSearchResultsActivity titleSearchResultsActivity);
+        void inject(ApplicationContext applicationContext);
+        void inject(PersistenceContext persistenceContext);
+        void inject(WorkerRunnable<Boolean> workerRunnable);
+    }
+
+
     @Implements(value = SystemClock.class, callThroughByDefault = true)
     public static class MyShadowSystemClock {
         public static long elapsedRealtime() {
@@ -254,8 +279,10 @@ public class TitleSearchResultsActivityTest
     @Before
     public void setUp() 
     {
-        ContextModule contextModule = new ContextModule(TestClassyFyApplication.getTestInstance());
-        new DI(new TestModule(), contextModule);
+        Context context = TestClassyFyApplication.getTestInstance();
+         TestComponent component = 
+                DaggerTitleSearchResultsActivityTest_TestComponent.builder().testModule(new TestModule(context)).build();
+         DI.getInstance(component);
     }
 
     @After

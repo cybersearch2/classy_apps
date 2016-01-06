@@ -19,9 +19,9 @@ import javax.inject.Singleton;
 
 import au.com.cybersearch2.classyinject.ApplicationModule;
 
-import com.example.hellotwodbs.v2.HelloTwoDbs;
 import com.example.hellotwodbs.v2.HelloTwoDbsApplication;
 
+import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 
@@ -31,15 +31,30 @@ import dagger.Provides;
  * @author Andrew Bowley
  * 23 Sep 2014
  */
-@Module(injects = { HelloTwoDbs.class, AndroidHelloTwoDbs.class, SimpleOpenHelperCallbacks.class, ComplexOpenHelperCallbacks.class },
+@Module(/*injects = { HelloTwoDbs.class, AndroidHelloTwoDbs.class, SimpleOpenHelperCallbacks.class, ComplexOpenHelperCallbacks.class },*/
         includes = HelloTwoDbsEnvironmentModule.class) 
 public class AndroidHelloTwoDbsModule implements ApplicationModule
 {
+    private Context context;
+
+    public AndroidHelloTwoDbsModule(Context context)
+    {
+        this.context = context;
+    }
+    
 	@Provides @Singleton AndroidHelloTwoDbs provideAndroidHelloTwoDbs()
 	{
 		return HelloTwoDbsApplication.getAndroidHelloTwoDbsSingleton();
 	}
 	
+    /**
+     * Returns Android Application Context
+     * @return Context
+     */
+    @Provides @Singleton Context provideContext()
+    {
+        return context;
+    }
 }
 
 

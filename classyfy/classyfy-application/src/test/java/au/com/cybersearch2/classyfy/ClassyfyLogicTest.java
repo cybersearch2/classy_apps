@@ -40,7 +40,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import au.com.cybersearch2.classyapp.ContextModule;
+import au.com.cybersearch2.classyapp.ApplicationContext;
 import au.com.cybersearch2.classybean.BeanMap;
 import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
@@ -63,6 +63,7 @@ import au.com.cybersearch2.classywidget.ListItem;
 
 import com.j256.ormlite.support.ConnectionSource;
 
+import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 
@@ -74,9 +75,16 @@ import dagger.Provides;
 @RunWith(RobolectricTestRunner.class)
 public class ClassyfyLogicTest
 {
-    @Module(injects = { PersistenceContext.class, WorkerRunnable.class })
+    @Module(/*injects = { PersistenceContext.class, WorkerRunnable.class } */)
     static class TestModule implements ApplicationModule
     {
+        private Context context;
+
+        public TestModule(Context context)
+        {
+            this.context = context;
+        }
+        
         @Provides @Singleton PersistenceFactory providePersistenceModule() 
         {
             PersistenceFactory persistenceFactory = mock(PersistenceFactory.class);
@@ -95,7 +103,25 @@ public class ClassyfyLogicTest
         {
             return new ClassyFyThreadHelper();
         }
+        /**
+         * Returns Android Application Context
+         * @return Context
+         */
+        @Provides @Singleton Context provideContext()
+        {
+            return context;
+        }
     }
+    
+    @Singleton
+    @Component(modules = TestModule.class)  
+    static interface TestComponent extends ApplicationModule
+    {
+        void inject(ApplicationContext applicationContext);
+        void inject(PersistenceContext persistenceContext);
+        void inject(WorkerRunnable<Boolean> workerRunnable);
+    }
+
 
     class NodeField
     {
@@ -170,8 +196,11 @@ public class ClassyfyLogicTest
         contentResolver = mock(ContentResolver.class);
         mockContext = mock(Context.class);
         when(mockContext.getContentResolver()).thenReturn(contentResolver);
-        ContextModule contextModule = new ContextModule(mockContext);
-        new DI(new TestModule(), contextModule);
+        TestComponent component = 
+                DaggerClassyfyLogicTest_TestComponent.builder()
+                .testModule(new TestModule(mockContext))
+                .build();
+        DI.getInstance(component);
         TestEntityManagerFactory.setEntityManagerInstance();
         /*(entityManager = (EntityManagerImpl) */TestEntityManagerFactory.getEntityManager();
     }

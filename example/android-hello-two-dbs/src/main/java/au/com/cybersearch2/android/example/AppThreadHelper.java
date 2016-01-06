@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example;
+package au.com.cybersearch2.android.example;
 
 import android.os.Process;
 import au.com.cybersearch2.classytask.ThreadHelper;

@@ -30,7 +30,7 @@ import au.com.cybersearch2.classyinject.DependencyProvider;
  * @author Andrew Bowley
  * 14/04/2014
  */
-@Module(injects = AlfrescoFilePlanLoader.class, complete = false)
+@Module(/*injects = AlfrescoFilePlanLoader.class, complete = false*/)
 public class AlfrescoFilePlanLoaderModule implements DependencyProvider<AlfrescoFilePlanLoader>
 {
 

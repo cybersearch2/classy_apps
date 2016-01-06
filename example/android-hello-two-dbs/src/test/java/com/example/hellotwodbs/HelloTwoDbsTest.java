@@ -27,7 +27,6 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class HelloTwoDbsTest 
 {
-
 	@Test
 	public void test_doSampleDatabaseStuff()
 	{

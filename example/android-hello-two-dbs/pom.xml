@@ -110,7 +110,11 @@
         <scope>provided</scope>
       </dependency>  
       <dependency>
-         <groupId>com.squareup.dagger</groupId>
+	    <groupId>javax.annotation</groupId>
+	    <artifactId>jsr250-api</artifactId>
+      </dependency>    
+      <dependency>
+         <groupId>com.google.dagger</groupId>
          <artifactId>dagger-compiler</artifactId>
          <optional>true</optional>
          <version>${dagger.version}</version>

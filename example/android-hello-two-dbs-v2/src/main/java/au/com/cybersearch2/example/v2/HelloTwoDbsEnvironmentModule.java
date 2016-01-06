@@ -31,13 +31,9 @@ import dagger.Provides;
 import au.com.cybersearch2.classyapp.ApplicationContext;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
-import au.com.cybersearch2.classydb.DatabaseAdminImpl;
 import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
-import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
-import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classytask.ThreadHelper;
-import au.com.cybersearch2.classytask.WorkerRunnable;
 import au.com.cybersearch2.example.AppThreadHelper;
 
 /**
@@ -46,13 +42,13 @@ import au.com.cybersearch2.example.AppThreadHelper;
  * @author Andrew Bowley
  * 23 Sep 2014
  */
-@Module(injects = { 
+@Module(/*injects = { 
         WorkerRunnable.class,
         PersistenceFactory.class,
         NativeScriptDatabaseWork.class,
         PersistenceContext.class,
         DatabaseAdminImpl.class
-        })
+        }*/)
 public class HelloTwoDbsEnvironmentModule 
 {
 	ConnectionType CONNECTION_TYPE = ConnectionType.file;

@@ -16,7 +16,7 @@
 package com.example.hellotwodbs;
 
 import android.app.Application;
-import au.com.cybersearch2.example.AndroidHelloTwoDbs;
+import au.com.cybersearch2.android.example.AndroidHelloTwoDbs;
 
 /**
  * HelloTwoDbsApplication

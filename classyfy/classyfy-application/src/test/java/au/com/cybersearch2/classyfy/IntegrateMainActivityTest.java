@@ -28,18 +28,13 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
-import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.shadows.ShadowSQLiteConnection;
 import org.robolectric.util.SimpleFuture;
 
-import dagger.Module;
-import dagger.Provides;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -52,13 +47,20 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import au.com.cybersearch2.classyapp.ApplicationContext;
+import au.com.cybersearch2.classyapp.ApplicationLocale;
+import au.com.cybersearch2.classydb.DatabaseAdminImpl;
+import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.ListItem;
+import dagger.Component;
 
 /**
  * IntegrateMainActivityTest
@@ -68,6 +70,23 @@ import au.com.cybersearch2.classywidget.ListItem;
 @RunWith(RobolectricTestRunner.class)
 public class IntegrateMainActivityTest
 {
+    @Singleton
+    @Component(modules = ClassyFyApplicationModule.class)  
+    static interface TestComponent extends ApplicationModule
+    {
+        void inject(TestMainActivity mainActivity);
+        void inject(TitleSearchResultsActivity titleSearchResultsActivity);
+        void inject(ApplicationContext applicationContext);
+        void inject(ClassyFyStartup classyFyStartup); 
+        void inject(ClassyFyProvider classyFyProvider);
+        void inject(ClassyFySearchEngine classyFySearchEngine);
+        void inject(ApplicationLocale ApplicationLocale);
+        void inject(PersistenceContext persistenceContext);
+        void inject(PersistenceFactory persistenceFactory);
+        void inject(NativeScriptDatabaseWork nativeScriptDatabaseWork);
+        void inject(DatabaseAdminImpl databaseAdminImpl);
+    }
+
     @Implements(value = SystemClock.class, callThroughByDefault = true)
     public static class MyShadowSystemClock {
         public static long elapsedRealtime() {
@@ -133,17 +152,6 @@ public class IntegrateMainActivityTest
             super.createSearchView(menu);
         }
     }
-
-    @Module(injects=TestMainActivity.class)
-    public static class TestModule implements ApplicationModule
-    {   // Note there will be two  ClassyfyLogic "singletons" if both 
-        // MainActivy and TitleSearchResultsActivity are included in the same test.
-        @Provides @Singleton ClassyfyLogic provideClassyfyLogic()
-        {
-            return new ClassyfyLogic();
-        }
-    }
-    
 
     class NodeField
     {
@@ -220,10 +228,15 @@ public class IntegrateMainActivityTest
     @Before
     public void setUp() throws Exception 
     {
+        // Reset ShadowSQLiteConnection to avoid "Illegal connection pointer" exception 
+        ShadowSQLiteConnection.reset();
         TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
+        TestComponent component = 
+                DaggerIntegrateMainActivityTest_TestComponent.builder()
+                .classyFyApplicationModule(new ClassyFyApplicationModule(classyfyLauncher))
+                .build();
+        DI.getInstance(component);
         classyfyLauncher.startup();
-        // Add TestModule to graph to cover TestMainActivity
-        DI.add(new TestModule());
         classyfyLauncher.waitForApplicationSetup();
     }
     
@@ -238,10 +251,10 @@ public class IntegrateMainActivityTest
     {
         return new Intent(RuntimeEnvironment.application, MainActivity.class);
     }
-/*
-    ** Combined with test_parseIntent_action_view() as workaround for https://github.com/robolectric/robolectric/issues/1890
+
+    /** Combined with test_parseIntent_action_view() as workaround for https://github.com/robolectric/robolectric/issues/1890
     *  Robolectric 3.0 has new requirement for SQLite clean up between tests.
-    *  TODO - Fix this issue by improving persistenceContext.getDatabaseSupport().close()
+    *  TODO - Fix this issue by improving persistenceContext.getDatabaseSupport().close() 
     @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
     @Test
     public void test_mainActivity_onCreate() throws InterruptedException

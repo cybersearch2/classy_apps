@@ -21,7 +21,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
 
 import android.app.Application;
-import au.com.cybersearch2.example.AndroidHelloTwoDbs;
+import au.com.cybersearch2.android.example.AndroidHelloTwoDbs;
 
 /**
  * TestHelloTwoDbsApplication

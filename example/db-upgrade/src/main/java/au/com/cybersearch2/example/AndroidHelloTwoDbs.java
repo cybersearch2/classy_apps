@@ -15,10 +15,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.example;
 
-import android.content.Context;
+import javax.inject.Singleton;
 
-import au.com.cybersearch2.classyapp.ContextModule;
+import com.example.hellotwodbs.upgrade.HelloTwoDbs;
+
+import android.content.Context;
+import au.com.cybersearch2.classyapp.ApplicationContext;
+import au.com.cybersearch2.classyapp.ApplicationLocale;
+import au.com.cybersearch2.classydb.DatabaseAdminImpl;
+import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
+import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyinject.DI;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
+import dagger.Component;
 
 /**
  * AndroidHelloTwoDbs
@@ -27,22 +37,36 @@ import au.com.cybersearch2.classyinject.DI;
  */
 public class AndroidHelloTwoDbs extends HelloTwoDbsMain
 {
+    @Singleton
+    @Component(modules = AndroidHelloTwoDbsModule.class)  
+    static interface AndroidHelloTwoDbsComponent extends ApplicationModule
+    {
+        void inject(HelloTwoDbs helloTwoDbs);
+        void inject(AndroidHelloTwoDbs androidHelloTwoDbs);
+        void inject(ApplicationContext applicationContext);
+        void inject(ApplicationLocale applicationLocale);
+        void inject(PersistenceContext persistenceContext);
+        void inject(PersistenceFactory persistenceFactory);
+        void inject(NativeScriptDatabaseWork nativeScriptDatabaseWork);
+        void inject(DatabaseAdminImpl databaseAdminImpl);
+    }
+
     protected AndroidHelloTwoDbsModule androidHelloTwoDbsModule;
     protected Context context;
    
-   public AndroidHelloTwoDbs(final Context context)
-   {
+    public AndroidHelloTwoDbs(final Context context)
+    {
        super();
        this.context = context;
-   }
+    }
 
  
     @Override
     protected void createObjectGraph()
     {
         // Set up dependency injection, which creates an ObjectGraph from a HelloTwoDbsModule configuration object
-        androidHelloTwoDbsModule = new AndroidHelloTwoDbsModule();
-        ContextModule contextModule = new ContextModule(context);
-        new DI(androidHelloTwoDbsModule, contextModule).validate();
+        AndroidHelloTwoDbsComponent component = 
+                DaggerAndroidHelloTwoDbs_AndroidHelloTwoDbsComponent.builder().androidHelloTwoDbsModule(new AndroidHelloTwoDbsModule(context)).build(); 
+        DI.getInstance(component).validate();
     }
 }

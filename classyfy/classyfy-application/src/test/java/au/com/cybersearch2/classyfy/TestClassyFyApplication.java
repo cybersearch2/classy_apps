@@ -20,9 +20,6 @@ import java.lang.reflect.Method;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
 
-import android.util.Log;
-import au.com.cybersearch2.classyapp.ContextModule;
-import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.classytask.WorkStatus;
 
 /**
@@ -41,6 +38,18 @@ public class TestClassyFyApplication extends ClassyFyApplication implements Test
     {
         singleton = this;
         RuntimeEnvironment.application = singleton;
+    }
+
+    /**
+     * onCreate
+     * @see android.app.Application#onCreate()
+     */
+    @Override public void onCreate() 
+    {
+        // Don't call super.onCreate() as this initializes dependency injection
+        // The following method is super.super.onCreate()
+        onAndroidCreate();
+        startApplicationSetup();
     }
 
     @Override
@@ -70,18 +79,6 @@ public class TestClassyFyApplication extends ClassyFyApplication implements Test
         return classyFyApplicationModule;
     }
 
-    public void init(Object... extraModules)
-    {
-        classyFyApplicationModule = new ClassyFyApplicationModule();
-        ContextModule contextModule = new ContextModule(this);
-        Object[] initModules = new Object[extraModules.length + 1];
-        initModules[0] = contextModule;
-        if (extraModules.length > 0)
-            for (int i = 0; i < extraModules.length; i++)
-                initModules[i + 1] = extraModules[i];
-        new DI(classyFyApplicationModule, initModules);
-    }
-    
     public void startup()
     {
         super.startApplicationSetup();
