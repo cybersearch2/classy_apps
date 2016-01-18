@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.provider;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -24,8 +25,15 @@ import static org.mockito.Mockito.*;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.CancellationSignal;
-import au.com.cybersearch2.classyapp.PrimaryContentProvider;
+import au.com.cybersearch2.classyfy.ClassyFyComponent;
+import au.com.cybersearch2.classyfy.ClassyLogicComponent;
+import au.com.cybersearch2.classyfy.MainActivity;
 import au.com.cybersearch2.classyfy.TestClassyFyApplication;
+import au.com.cybersearch2.classyfy.TitleSearchResultsActivity;
+import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanSubcomponent;
+import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
+import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
+import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 
 /**
  * ClassyFyProviderTest
@@ -35,10 +43,60 @@ import au.com.cybersearch2.classyfy.TestClassyFyApplication;
 @RunWith(RobolectricTestRunner.class)
 public class ClassyFyProviderTest
 {
+    static class TestClassyFyComponent implements ClassyFyComponent
+    {
+
+        @Override
+        public PersistenceContext persistenceContext()
+        {
+            return null;
+        }
+
+        @Override
+        public ClassyFySearchEngine classyFySearchEngine()
+        {
+            return mock(ClassyFySearchEngine.class);
+        }
+
+        @Override
+        public void inject(ClassyFyProvider classyFyProvider)
+        {
+            classyFyProvider.classyFySearchEngine = classyFySearchEngine();
+            when(classyFyProvider.classyFySearchEngine.getType(Uri.EMPTY)).thenReturn("vnd.android.cursor.dir/vnd.classyfy.node");
+        }
+
+        @Override
+        public void inject(MainActivity mainActivity)
+        {
+        }
+
+        @Override
+        public void inject(TitleSearchResultsActivity titleSearchResultsActivity)
+        {
+        }
+
+        @Override
+        public ClassyLogicComponent plus(ClassyLogicModule classyLogicModule)
+        {
+            return null;
+        }
+
+        @Override
+        public AlfrescoFilePlanSubcomponent plus(AlfrescoFilePlanModule alfrescoFilePlanModule)
+        {
+            return null;
+        }
+        
+    }
+    
     public static final String PROVIDER_AUTHORITY = "au.com.cybersearch2.classyfy.ClassyFyProvider";
-    // The scheme part for this provider's URI
-    private static final String SCHEME = "content://";
-    private static final String PATH_ALL_NODES = "/all_nodes";
+
+    @Before
+    public void setUp() throws Exception 
+    {
+        TestClassyFyApplication testClassyFyApplication = TestClassyFyApplication.getTestInstance();
+        testClassyFyApplication.setTestClassyFyComponent(new TestClassyFyComponent());
+    }
 
     @Test
     public void test_onCreate()
@@ -51,8 +109,8 @@ public class ClassyFyProviderTest
     public void testPrimaryContentProvider()
     {
         ClassyFyProvider classyFyProvider = new ClassyFyProvider();
-        PrimaryContentProvider classyFySearchEngine = mock(PrimaryContentProvider.class);
-        classyFyProvider.classyFySearchEngine = classyFySearchEngine;
+        classyFyProvider.onCreate();
+        ClassyFySearchEngine classyFySearchEngine = classyFyProvider.classyFySearchEngine;
         classyFyProvider.getType(Uri.EMPTY);
         verify(classyFySearchEngine).getType(Uri.EMPTY);
         CancellationSignal cancellationSignal = mock(CancellationSignal.class);
@@ -73,18 +131,4 @@ public class ClassyFyProviderTest
         verify(classyFySearchEngine).delete(Uri.EMPTY, selection, selectionArgs);
     }
     
-    @Test
-    public void test_getClassyFySearchEngine()
-    {
-        Uri uri = Uri.parse(SCHEME + PROVIDER_AUTHORITY + PATH_ALL_NODES);
-        // Because ClassyFySearchEngine is fetched from the ClassFyApplication object,
-        // there is no way to orchestrate getClassyFySearchEngine() testing with mocks.
-        // Context.getContentResolver() is used to access Android's ClassyFyContentProvider instance
-        TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
-        classyfyLauncher.startup();
-        classyfyLauncher.waitForApplicationSetup();
-        // Get type has a simple code implementation and therefore suitable to test the
-        // ContentProvider has populated it's ClassyFySearchEngine field.
-        assertThat(classyfyLauncher.getContentResolver().getType(uri)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
-    }
 }

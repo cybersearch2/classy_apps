@@ -17,6 +17,7 @@ package com.example.hellotwodbs.v2;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 import com.example.hellotwodbs.v2.HelloTwoDbs;
@@ -33,7 +34,7 @@ public class HelloTwoDbsTest
 	@Test
 	public void test_doSampleDatabaseStuff()
 	{
-		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
+        HelloTwoDbs helloTwoDbs = Robolectric.buildActivity(HelloTwoDbs.class).create().get();
 		System.out.println(helloTwoDbs.doSampleDatabaseStuff("robolectric"));
 	}
 }

@@ -13,14 +13,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.classyfy;
+package au.com.cybersearch2.classyfy.module;
+
+import java.util.Locale;
 
 import javax.inject.Singleton;
 
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
+import au.com.cybersearch2.classyfy.ClassyFyResourceEnvironment;
+import au.com.cybersearch2.classyfy.ClassyFyThreadHelper;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.classytask.InternalHandler;
+import au.com.cybersearch2.classytask.TaskManager;
 import au.com.cybersearch2.classytask.ThreadHelper;
 import dagger.Module;
 import dagger.Provides;
@@ -31,14 +36,7 @@ import dagger.Provides;
  * @author Andrew Bowley
  * 18/04/2014
  */
-@Module(/*injects = { WorkerRunnable.class,
-                    NativeScriptDatabaseWork.class,
-                    DatabaseAdminImpl.class,
-                    UserTaskContext.class,
-                    PersistenceFactory.class,
-                    PersistenceContext.class,
-                    ApplicationLocale.class 
-}*/)
+@Module
 public class ClassyFyEnvironmentModule
 {
     @Provides @Singleton ThreadHelper provideThreadHelper()
@@ -56,9 +54,25 @@ public class ClassyFyEnvironmentModule
         return new InternalHandler();
     }
 
-    @Provides @Singleton PersistenceFactory providePersistenceFactory()
+    @Provides @Singleton TaskManager provideTaskManager()
     {
-        return new PersistenceFactory(new AndroidDatabaseSupport());
+        return new TaskManager();
+    }
+
+    @Provides @Singleton AndroidDatabaseSupport provideDatabaseSupport()
+    {
+        return new AndroidDatabaseSupport();
     }
     
+    @Provides @Singleton PersistenceFactory providePersistenceFactory(
+            AndroidDatabaseSupport databaseSupport, 
+            ResourceEnvironment resourceEnvironment)
+    {
+        return new PersistenceFactory(databaseSupport, resourceEnvironment);
+    }
+
+    @Provides @Singleton Locale provideLocale(ResourceEnvironment resourceEnvironment)
+    {
+        return resourceEnvironment.getLocale();
+    }
 }

@@ -41,7 +41,11 @@
 	</repositories>
 	-->
 	<dependencies>
-         <!-- Added for Proguard -->
+        <dependency>
+          <groupId>de.mindpipe.android</groupId>
+          <artifactId>android-logging-log4j</artifactId>
+          <version>1.0.3</version>
+        </dependency>
         <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
@@ -54,6 +58,7 @@
           <version>${slf4j-version}</version>
           <scope>provided</scope>
         </dependency>
+        <!-- Added for Proguard -->
         <dependency>
           <groupId>com.google.code.findbugs</groupId>
           <artifactId>jsr305</artifactId>
@@ -71,7 +76,7 @@
           <version>3.2.1</version>
           <scope>provided</scope>
         </dependency> 
-        
+        <!--                    -->
      <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -143,10 +148,12 @@
       <version>${ormlite.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--
     <dependency>
 	    <groupId>javax.annotation</groupId>
 	    <artifactId>jsr250-api</artifactId>
-    </dependency>    
+    </dependency>
+    -->    
     <dependency>
       <groupId>com.google.dagger</groupId>
       <artifactId>dagger-compiler</artifactId>
@@ -211,7 +218,7 @@
     	    <artifactId>maven-surefire-plugin</artifactId>
     	    <configuration>
     	     <argLine> -XX:-UseSplitVerifier</argLine>
-    	     <skipTests>false</skipTests>
+    	     <skipTests>true</skipTests>
     	    </configuration>
     	</plugin>
 	  </plugins>

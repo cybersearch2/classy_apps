@@ -68,9 +68,6 @@ public class ClassyFyProviderTest extends ProviderTestCase2<ClassyFyProvider>
     {
         super.setUp();
         ClassyFyApplication classyfyApplication = ClassyFyApplication.getInstance();
-        classyfyApplication.waitForApplicationSetup();
-        //DI.add(new ClassyFyProviderTestModule());
-        //DI.inject(this);
         mockResolver = getMockContentResolver();
          /*
          * Gets a handle to the database underlying the provider. Gets the provider instance

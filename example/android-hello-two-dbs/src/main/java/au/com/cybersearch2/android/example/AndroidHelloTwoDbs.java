@@ -15,21 +15,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.android.example;
 
-import javax.inject.Singleton;
-
-import com.example.hellotwodbs.HelloTwoDbs;
-
 import android.content.Context;
-import au.com.cybersearch2.classyapp.ApplicationContext;
-import au.com.cybersearch2.classyapp.ApplicationLocale;
-import au.com.cybersearch2.classydb.DatabaseAdminImpl;
-import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
-import au.com.cybersearch2.classyinject.ApplicationModule;
-import au.com.cybersearch2.classyinject.DI;
+import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
+import au.com.cybersearch2.classyjpa.entity.PersistenceWork;
+import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
-import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
+import au.com.cybersearch2.classytask.Executable;
 import au.com.cybersearch2.example.HelloTwoDbsMain;
-import dagger.Component;
 
 /**
  * AndroidHelloTwoDbs
@@ -38,22 +30,9 @@ import dagger.Component;
  */
 public class AndroidHelloTwoDbs extends HelloTwoDbsMain
 {
-    @Singleton
-    @Component(modules = AndroidHelloTwoDbsModule.class)  
-    static interface AndroidHelloTwoDbsComponent extends ApplicationModule
-    {
-        void inject(AndroidHelloTwoDbs helloTwoDbs);
-        void inject(HelloTwoDbs helloTwoDbs);
-        void inject(ApplicationContext applicationContext);
-        void inject(ApplicationLocale ApplicationLocale);
-        void inject(PersistenceContext persistenceContext);
-        void inject(PersistenceFactory persistenceFactory);
-        void inject(NativeScriptDatabaseWork nativeScriptDatabaseWork);
-        void inject(DatabaseAdminImpl databaseAdminImpl);
-    }
-
     protected AndroidHelloTwoDbsModule androidHelloTwoDbsModule;
     protected Context context;
+    protected AndroidHelloTwoDbsComponent component;
    
     public AndroidHelloTwoDbs(final Context context)
     {
@@ -63,11 +42,31 @@ public class AndroidHelloTwoDbs extends HelloTwoDbsMain
 
  
     @Override
-    protected void createObjectGraph()
+    protected PersistenceContext createObjectGraph()
     {
         // Set up dependency injection, which creates an ObjectGraph from a HelloTwoDbsModule configuration object
-        AndroidHelloTwoDbsComponent component = 
-            DaggerAndroidHelloTwoDbs_AndroidHelloTwoDbsComponent.builder().androidHelloTwoDbsModule(new AndroidHelloTwoDbsModule(context)).build(); 
-        DI.getInstance(component).validate();
+        component = 
+            DaggerAndroidHelloTwoDbsComponent.builder()
+            .androidHelloTwoDbsModule(new AndroidHelloTwoDbsModule(context, this))
+            .build(); 
+        return component.persistenceContext();
     }
+
+    public Executable getExecutable(String puName, PersistenceWork persistenceWork)
+    {
+        persistenceWorkModule = new PersistenceWorkModule(puName, true, persistenceWork);
+        return component.plus(persistenceWorkModule).executable();
+    }
+
+    protected ConnectionType getConnectionType()
+    {
+        return component.connectionType();
+    }
+
+
+    public AndroidHelloTwoDbsComponent getComponent()
+    {
+        return component;
+    }
+    
 }

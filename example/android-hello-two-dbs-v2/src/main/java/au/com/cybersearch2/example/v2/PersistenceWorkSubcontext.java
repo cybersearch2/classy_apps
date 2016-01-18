@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014  www.cybersearch2.com.au
+    Copyright (C) 2015  www.cybersearch2.com.au
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,24 +13,22 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package com.example.hellotwodbs;
+package au.com.cybersearch2.example.v2;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import javax.inject.Singleton;
+
+import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
+import au.com.cybersearch2.classytask.Executable;
+import dagger.Subcomponent;
 
 /**
- * HelloTwoDebsTest
+ * PersistenceWorkSubcontext
  * @author Andrew Bowley
- * 24 Nov 2014
+ * 15 Jan 2016
  */
-@RunWith(RobolectricTestRunner.class)
-public class HelloTwoDbsTest 
+@Singleton
+@Subcomponent(modules = PersistenceWorkModule.class)
+public interface PersistenceWorkSubcontext
 {
-	@Test
-	public void test_doSampleDatabaseStuff()
-	{
-		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
-		System.out.println(helloTwoDbs.doSampleDatabaseStuff("robolectric"));
-	}
+    Executable executable();
 }

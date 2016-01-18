@@ -54,11 +54,11 @@
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.3.0</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
-    <android.platform.version>23</android.platform.version>
+    <android.platform.version>22</android.platform.version>
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
-    <android.sdk.version>6.0.0_r2</android.sdk.version>
+    <android.sdk.version>5.1.1_r2</android.sdk.version>
     <!-- Android Suport Library version - always 3-part -->
-    <android.support.version>23.1.1</android.support.version>
+    <android.support.version>22.2.1</android.support.version>
     <robolectric.version>3.0</robolectric.version>
     <ormlite.version>4.49-SNAPSHOT</ormlite.version>
     <slf4j-version>1.7.2</slf4j-version>
@@ -271,6 +271,26 @@
                                 <goals>
                                     <goal>emma</goal>
                                 </goals>
+                            </pluginExecutionFilter>
+                            <action>
+                                <ignore />
+                            </action>
+                        </pluginExecution>
+                        <pluginExecution>
+                            <pluginExecutionFilter>
+                                <groupId>
+                                    org.bitbucket.komo81
+                                </groupId>
+                                <artifactId>
+                                    eclipse-aar-maven-plugin
+                                </artifactId>
+                                <versionRange>
+                                    [1.0.0,)
+                                </versionRange>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>generate</goal>
+                               </goals>
                             </pluginExecutionFilter>
                             <action>
                                 <ignore />

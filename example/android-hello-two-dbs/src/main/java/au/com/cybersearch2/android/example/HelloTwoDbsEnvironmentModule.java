@@ -15,25 +15,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.android.example;
 
-/**
- * HellowoDbsEnvironmentModule
- * @author Andrew Bowley
- * 22 Nov 2014
- */
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-
 import javax.inject.Singleton;
 
-import dagger.Module;
-import dagger.Provides;
-import au.com.cybersearch2.classyapp.ApplicationContext;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classydb.AndroidDatabaseSupport;
 import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
+import au.com.cybersearch2.classytask.InternalHandler;
+import au.com.cybersearch2.classytask.TaskManager;
 import au.com.cybersearch2.classytask.ThreadHelper;
+import dagger.Module;
+import dagger.Provides;
 
 /**
  * AndroidHelloTwoDbsModule
@@ -41,50 +33,41 @@ import au.com.cybersearch2.classytask.ThreadHelper;
  * @author Andrew Bowley
  * 23 Sep 2014
  */
-@Module(/*injects = { 
-        AndroidHelloTwoDbs.class, 
-        WorkerRunnable.class,
-        PersistenceFactory.class,
-        NativeScriptDatabaseWork.class,
-        PersistenceContext.class,
-        DatabaseAdminImpl.class
-        }*/)
+@Module
 public class HelloTwoDbsEnvironmentModule 
 {
-	ConnectionType CONNECTION_TYPE = ConnectionType.file;
-	
-    @Provides @Singleton ThreadHelper provideSystemEnvironment()
+    private ConnectionType CONNECTION_TYPE = ConnectionType.file;
+
+    @Provides @Singleton ThreadHelper provideThreadHelper()
     {
         return new AppThreadHelper();
     }
     
-    @Provides @Singleton ResourceEnvironment provideResourceEnvironment()
-    {
-        return new ResourceEnvironment(){
-
-            @Override
-            public InputStream openResource(String resourceName)
-                    throws IOException
-            {
-                ApplicationContext applicationContext = new ApplicationContext();
-                return applicationContext.getContext().getAssets().open("v1/" + resourceName);
-            }
-
-            @Override
-            public Locale getLocale()
-            {
-                return new Locale("en", "AU");
-            }};
-    }
-
-    @Provides @Singleton PersistenceFactory providePersistenceFactory()
-    {
-        return new PersistenceFactory(new AndroidDatabaseSupport());
-    }
-
     @Provides @Singleton ConnectionType provideConnectionType()
     {
     	return CONNECTION_TYPE;
+    }
+    
+    @Provides @Singleton InternalHandler provideInternalHandler()
+    {
+        return new InternalHandler();
+    }
+
+    @Provides @Singleton TaskManager provideTaskManager()
+    {
+        return new TaskManager();
+    }
+
+    @Provides @Singleton AndroidDatabaseSupport provideDatabaseSupport()
+    {
+        return new AndroidDatabaseSupport();
+    }
+    
+    @Provides @Singleton PersistenceFactory providePersistenceFactory(
+            AndroidDatabaseSupport databaseSupport, 
+            ResourceEnvironment resourceEnvironment)
+    {
+        return new PersistenceFactory(databaseSupport, resourceEnvironment);
     }
 
 }

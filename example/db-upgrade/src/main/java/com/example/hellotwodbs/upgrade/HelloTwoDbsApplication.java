@@ -16,7 +16,6 @@
 package com.example.hellotwodbs.upgrade;
 
 import android.app.Application;
-import au.com.cybersearch2.example.AndroidHelloTwoDbs;
 
 /**
  * HelloTwoDbsApplication
@@ -25,26 +24,17 @@ import au.com.cybersearch2.example.AndroidHelloTwoDbs;
  */
 public class HelloTwoDbsApplication extends Application 
 {
-	static AndroidHelloTwoDbs androidHelloTwoDbsSingleton;
+	static HelloTwoDbsApplication singleton;
 	
     @Override public void onCreate() 
     {
         super.onCreate();
-        androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
-        try 
-        {
-        	// Set up v1 from start which causes the database tables to be dropped and the version reset to 0
-			androidHelloTwoDbsSingleton.setUp(true);
-		} 
-        catch (InterruptedException e) 
-        {   // This not expected to ever happen
-			throw new IllegalStateException("onCreate()  interrupted in AndroidHelloTwoDbs setUp()", e);
-		}
+        singleton = this;
    }
 
-   public static AndroidHelloTwoDbs getAndroidHelloTwoDbsSingleton()
+   public static HelloTwoDbsApplication getInstance()
    {
-	   return androidHelloTwoDbsSingleton;
+	   return singleton;
    }
     
 }

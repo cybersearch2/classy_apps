@@ -13,10 +13,11 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package com.example.hellotwodbs;
+package com.example.hellotwodbs.v1;
 
 import android.app.Application;
 import au.com.cybersearch2.android.example.AndroidHelloTwoDbs;
+import au.com.cybersearch2.android.example.AndroidHelloTwoDbsComponent;
 
 /**
  * HelloTwoDbsApplication
@@ -25,15 +26,19 @@ import au.com.cybersearch2.android.example.AndroidHelloTwoDbs;
  */
 public class HelloTwoDbsApplication extends Application 
 {
-	static AndroidHelloTwoDbs androidHelloTwoDbsSingleton;
+    private static HelloTwoDbsApplication singleton;
+    private static AndroidHelloTwoDbsComponent helloTwoDbsComponent;
+    private AndroidHelloTwoDbs androidHelloTwoDbsSingleton;
 	
     @Override public void onCreate() 
     {
         super.onCreate();
+        singleton = this;
         androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
         try 
         {   // Start from beginning in case database at v2
 			androidHelloTwoDbsSingleton.setUp(true);
+			helloTwoDbsComponent = androidHelloTwoDbsSingleton.getComponent();
 		} 
         catch (InterruptedException e) 
         {   // This not expected to ever happen
@@ -41,9 +46,15 @@ public class HelloTwoDbsApplication extends Application
 		}
    }
 
-   public static AndroidHelloTwoDbs getAndroidHelloTwoDbsSingleton()
+   public AndroidHelloTwoDbsComponent getHelloTwoDbsComponent()
    {
-	   return androidHelloTwoDbsSingleton;
+	   return helloTwoDbsComponent;
    }
     
+   public static HelloTwoDbsApplication getInstance()
+   {
+       if (singleton == null)
+           throw new IllegalStateException("HelloTwoDbsApplication called while not initialized");
+       return singleton;
+   }
 }

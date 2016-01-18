@@ -22,15 +22,12 @@ import org.robolectric.TestLifecycleApplication;
 
 import com.example.hellotwodbs.upgrade.HelloTwoDbsApplication;
 
-import android.app.Application;
-import au.com.cybersearch2.example.AndroidHelloTwoDbs;
-
 /**
  * TestHelloTwoDbsApplication
  * @author Andrew Bowley
  * 22 Nov 2014
  */
-public class TestHelloTwoDbsApplication extends Application implements TestLifecycleApplication 
+public class TestHelloTwoDbsApplication extends HelloTwoDbsApplication implements TestLifecycleApplication 
 {
 	private static TestHelloTwoDbsApplication singleton;
 
@@ -44,12 +41,6 @@ public class TestHelloTwoDbsApplication extends Application implements TestLifec
     public void onCreate() 
     {
         super.onCreate();
-        HelloTwoDbsApplication.androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
-        try {
-			HelloTwoDbsApplication.androidHelloTwoDbsSingleton.setUp();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
     }
 
 	@Override

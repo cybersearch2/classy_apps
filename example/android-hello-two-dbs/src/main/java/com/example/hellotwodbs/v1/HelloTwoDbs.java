@@ -1,4 +1,4 @@
-package com.example.hellotwodbs;
+package com.example.hellotwodbs.v1;
 
 import javax.inject.Inject;
 
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import au.com.cybersearch2.android.example.AndroidHelloTwoDbs;
-import au.com.cybersearch2.classyinject.DI;
 import au.com.cybersearch2.example.HelloTwoDbsMain;
 
 /**
@@ -18,14 +17,9 @@ public class HelloTwoDbs extends Activity
 {
 
 	private final String LOG_TAG = getClass().getSimpleName();
-	@Inject AndroidHelloTwoDbs androidHelloTwoDbs;
+	@Inject
+	AndroidHelloTwoDbs androidHelloTwoDbs;
 
-
-	public HelloTwoDbs()
-	{
-		DI.inject(this);
-	}
-	
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -33,6 +27,9 @@ public class HelloTwoDbs extends Activity
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+		HelloTwoDbsApplication.getInstance()
+		    .getHelloTwoDbsComponent()
+		    .inject(this);
 		Log.i(LOG_TAG, "creating " + getClass() + " at " + System.currentTimeMillis());
 		TextView tv = new TextView(this);
 		tv.append(doSampleDatabaseStuff("onCreate"));

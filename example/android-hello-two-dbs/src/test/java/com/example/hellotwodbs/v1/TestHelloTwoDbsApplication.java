@@ -13,41 +13,32 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package com.example.hellotwodbs;
+package com.example.hellotwodbs.v1;
 
 import java.lang.reflect.Method;
 
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
 
-import android.app.Application;
-import au.com.cybersearch2.android.example.AndroidHelloTwoDbs;
+import com.example.hellotwodbs.v1.HelloTwoDbsApplication;
 
 /**
  * TestHelloTwoDbsApplication
  * @author Andrew Bowley
  * 22 Nov 2014
  */
-public class TestHelloTwoDbsApplication extends Application implements TestLifecycleApplication 
+public class TestHelloTwoDbsApplication extends HelloTwoDbsApplication implements TestLifecycleApplication 
 {
-	private static TestHelloTwoDbsApplication singleton;
-
+    private static TestHelloTwoDbsApplication singleton;
+    
 	public TestHelloTwoDbsApplication()
 	{
 		singleton = this;
-		RuntimeEnvironment.application = singleton;
 	}
 	
     @Override 
     public void onCreate() 
     {
         super.onCreate();
-        HelloTwoDbsApplication.androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
-        try {
-			HelloTwoDbsApplication.androidHelloTwoDbsSingleton.setUp();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
     }
 
 	@Override

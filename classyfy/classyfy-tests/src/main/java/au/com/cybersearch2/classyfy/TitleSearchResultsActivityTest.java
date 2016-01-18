@@ -132,7 +132,6 @@ public class TitleSearchResultsActivityTest extends ActivityInstrumentationTestC
         // Injecting the Instrumentation instance is required
         // for your test to run with AndroidJUnitRunner.
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-        assertThat(ClassyFyApplication.getInstance().waitForApplicationSetup()).isEqualTo(WorkStatus.FINISHED);
     }
 
     @After

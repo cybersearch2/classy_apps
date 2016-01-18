@@ -17,9 +17,13 @@ package com.example.hellotwodbs.upgrade;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 import com.example.hellotwodbs.upgrade.HelloTwoDbs;
+
+import au.com.cybersearch2.classytask.InternalHandler;
+import au.com.cybersearch2.classytask.ResultMessage;
 
 /**
  * HelloTwoDebsTest
@@ -31,11 +35,15 @@ public class HelloTwoDbsTest
 {
 
 	@Test
-	public void test_doSampleDatabaseStuff()
+	public void test_doSampleDatabaseStuff() throws InterruptedException
 	{
-		HelloTwoDbs helloTwoDbs = new HelloTwoDbs();
-		System.out.println(helloTwoDbs.doSampleDatabaseV1Stuff("robolectric"));
-		System.out.println(helloTwoDbs.doDatabaseUpgradeV1ToV2("robolectric"));
-		System.out.println(helloTwoDbs.doSampleDatabaseV2Stuff("robolectric"));
-	}
+        final HelloTwoDbs helloTwoDbs = Robolectric.buildActivity(HelloTwoDbs.class).create().get();
+        synchronized(helloTwoDbs)
+        {
+            helloTwoDbs.wait(10000);
+        }
+        System.out.println(helloTwoDbs.v1Details);
+        System.out.println(helloTwoDbs.updateDetails);
+        System.out.println(helloTwoDbs.v2Details);
+ 	}
 }

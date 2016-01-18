@@ -19,8 +19,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.util.concurrent.Callable;
 
-import javax.inject.Singleton;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,26 +39,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v4.content.AsyncTaskLoader;
-import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import au.com.cybersearch2.classyapp.ApplicationContext;
-import au.com.cybersearch2.classyapp.ApplicationLocale;
-import au.com.cybersearch2.classydb.DatabaseAdminImpl;
-import au.com.cybersearch2.classydb.NativeScriptDatabaseWork;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
-import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyinject.ApplicationModule;
-import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
-import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
-import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.ListItem;
-import dagger.Component;
 
 /**
  * IntegrateMainActivityTest
@@ -70,23 +56,6 @@ import dagger.Component;
 @RunWith(RobolectricTestRunner.class)
 public class IntegrateMainActivityTest
 {
-    @Singleton
-    @Component(modules = ClassyFyApplicationModule.class)  
-    static interface TestComponent extends ApplicationModule
-    {
-        void inject(TestMainActivity mainActivity);
-        void inject(TitleSearchResultsActivity titleSearchResultsActivity);
-        void inject(ApplicationContext applicationContext);
-        void inject(ClassyFyStartup classyFyStartup); 
-        void inject(ClassyFyProvider classyFyProvider);
-        void inject(ClassyFySearchEngine classyFySearchEngine);
-        void inject(ApplicationLocale ApplicationLocale);
-        void inject(PersistenceContext persistenceContext);
-        void inject(PersistenceFactory persistenceFactory);
-        void inject(NativeScriptDatabaseWork nativeScriptDatabaseWork);
-        void inject(DatabaseAdminImpl databaseAdminImpl);
-    }
-
     @Implements(value = SystemClock.class, callThroughByDefault = true)
     public static class MyShadowSystemClock {
         public static long elapsedRealtime() {
@@ -133,24 +102,6 @@ public class IntegrateMainActivityTest
               return realLoader.loadInBackground();
             }
           }
-    }
-
-    public static class TestMainActivity extends MainActivity
-    {
-        /**
-         * Bypass search action view creation
-         * which Robolectric does not support because of Shadow MenuItemCompat.getActionView() bug
-         * @return 
-         */
-        @Override
-        protected void createSearchView(Menu menu)
-        {
-        }
-        
-        public void doCreateSearchView(Menu menu)
-        {
-            super.createSearchView(menu);
-        }
     }
 
     class NodeField
@@ -231,20 +182,12 @@ public class IntegrateMainActivityTest
         // Reset ShadowSQLiteConnection to avoid "Illegal connection pointer" exception 
         ShadowSQLiteConnection.reset();
         TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
-        TestComponent component = 
-                DaggerIntegrateMainActivityTest_TestComponent.builder()
-                .classyFyApplicationModule(new ClassyFyApplicationModule(classyfyLauncher))
-                .build();
-        DI.getInstance(component);
-        classyfyLauncher.startup();
-        classyfyLauncher.waitForApplicationSetup();
+        classyfyLauncher.startApplication();
     }
     
     @After
     public void tearDown() 
     {
-        PersistenceContext persistenceContext = new PersistenceContext();
-        persistenceContext.getDatabaseSupport().close();
     }
 
     private Intent getNewIntent()
@@ -274,13 +217,13 @@ public class IntegrateMainActivityTest
     public void test_parseIntent_action_view() throws InterruptedException
     {
         // Create MainActivity
-        MainActivity mainActivity = Robolectric.buildActivity(TestMainActivity.class)
+        MainActivity mainActivity = Robolectric.buildActivity(MainActivity.class)
         .create()
         .start()
         .visible()
         .get();
-        mainActivity.startMonitor.waitForTask();
-        assertThat(mainActivity.startMonitor.getStatus()).isEqualTo(WorkStatus.FINISHED);
+        assertThat(mainActivity).isNotNull();
+        assertThat(mainActivity.startState).isEqualTo(StartState.run);
         // Check that ContentProvider is available for search operations
         ContentResolver contentResolver  = TestClassyFyApplication.getTestInstance().getContentResolver();
         assertThat(contentResolver.getType(ClassyFySearchEngine.CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");

@@ -16,10 +16,7 @@
 package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -32,8 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
-import javax.inject.Singleton;
 
 import org.junit.After;
 import org.junit.Before;
@@ -51,8 +46,6 @@ import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.SimpleFuture;
 
-import com.j256.ormlite.support.ConnectionSource;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -65,7 +58,6 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import au.com.cybersearch2.classyapp.ApplicationContext;
 import au.com.cybersearch2.classybean.BeanMap;
 import au.com.cybersearch2.classyfy.data.FieldDescriptor;
 import au.com.cybersearch2.classyfy.data.FieldDescriptorSetFactory;
@@ -73,22 +65,15 @@ import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classyfy.data.RecordModel;
+import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanSubcomponent;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
+import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
+import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyinject.ApplicationModule;
-import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classyjpa.persist.Persistence;
-import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
-import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
-import au.com.cybersearch2.classyjpa.persist.TestEntityManagerFactory;
 import au.com.cybersearch2.classynode.NodeType;
-import au.com.cybersearch2.classytask.ThreadHelper;
-import au.com.cybersearch2.classytask.WorkerRunnable;
 import au.com.cybersearch2.classywidget.ListItem;
-import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
 
 
 /**
@@ -99,69 +84,69 @@ import dagger.Provides;
 @RunWith(RobolectricTestRunner.class)
 public class TitleSearchResultsActivityTest
 {
-    @Module(/*injects = { 
-            PersistenceContext.class, 
-            WorkerRunnable.class,
-            TitleSearchResultsActivity.class}*/)
-    static class TestModule implements ApplicationModule
+    class TestClassyFyComponent implements ClassyFyComponent
     {
-        private Context context;
 
-        public TestModule(Context context)
+        @Override
+        public PersistenceContext persistenceContext()
         {
-            this.context = context;
+            return null;
         }
-        
-        @Provides @Singleton PersistenceFactory providePersistenceModule() 
+
+        @Override
+        public ClassyFySearchEngine classyFySearchEngine()
         {
-            PersistenceFactory persistenceFactory = mock(PersistenceFactory.class);
-            Persistence persistence = mock(Persistence.class);
-            when(persistenceFactory.getPersistenceUnit(isA(String.class))).thenReturn(persistence);
-            PersistenceAdmin persistenceAdmin = mock(PersistenceAdmin.class);
-            ConnectionSource connectionSource = mock(ConnectionSource.class);
-            when(persistenceAdmin.isSingleConnection()).thenReturn(false);
-            when(persistenceAdmin.getConnectionSource()).thenReturn(connectionSource);
-            when(persistence.getPersistenceAdmin()).thenReturn(persistenceAdmin);
-            when(persistenceAdmin.getEntityManagerFactory()).thenReturn(new TestEntityManagerFactory());
-            return persistenceFactory;
+            ClassyFySearchEngine classyFySearchEngine = mock(ClassyFySearchEngine.class);
+            return classyFySearchEngine;
         }
-        
-        @Provides @Singleton ThreadHelper provideThreadHelper()
+
+        @Override
+        public void inject(ClassyFyProvider classyFyProvider)
         {
-            return new ClassyFyThreadHelper();
         }
-        
-        @Provides @Singleton ClassyfyLogic proviceClassyfyLogic()
+
+        @Override
+        public void inject(TitleSearchResultsActivity titleSearchResultsActivity)
         {
-            return mock(ClassyfyLogic.class);
+            titleSearchResultsActivity.ticketManager = new TicketManager();
+            titleSearchResultsActivity.classyfyLogic = mock(ClassyfyLogic.class);
+            nodeDetails = getNodeDetails(testNode);
+            when(titleSearchResultsActivity.classyfyLogic.getNodeDetails(testNode)).thenReturn(nodeDetails);
+       }
+
+        @Override
+        public ClassyLogicComponent plus(ClassyLogicModule classyLogicModule)
+        {
+            return new ClassyLogicComponent(){
+
+                @Override
+                public Node node()
+                {
+                    try
+                    {
+                        return testNode;
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }};
         }
-        
-        @Provides @Singleton TicketManager provideTicketManager()
+
+        @Override
+        public void inject(MainActivity mainActivity)
         {
-            return new TicketManager();
         }
-        /**
-         * Returns Android Application Context
-         * @return Context
-         */
-        @Provides @Singleton Context provideContext()
+
+        @Override
+        public AlfrescoFilePlanSubcomponent plus(AlfrescoFilePlanModule alfrescoFilePlanModule)
         {
-            return context;
+            return null;
         }
         
     }
-
-    @Singleton
-    @Component(modules = TestModule.class)  
-    static interface TestComponent extends ApplicationModule
-    {
-        void inject(TitleSearchResultsActivity titleSearchResultsActivity);
-        void inject(ApplicationContext applicationContext);
-        void inject(PersistenceContext persistenceContext);
-        void inject(WorkerRunnable<Boolean> workerRunnable);
-    }
-
-
+    
     @Implements(value = SystemClock.class, callThroughByDefault = true)
     public static class MyShadowSystemClock {
         public static long elapsedRealtime() {
@@ -275,14 +260,15 @@ public class TitleSearchResultsActivityTest
     private static final String RECORD_NAME = "Cybersearch2-Records";
     private static final String RECORD_VALUE = "Cybersearch2 Records";
     private static final long NODE_ID = 34L;
+    private Node testNode;
+    private NodeDetailsBean nodeDetails;
 
     @Before
-    public void setUp() 
+    public void setUp() throws Exception 
     {
-        Context context = TestClassyFyApplication.getTestInstance();
-         TestComponent component = 
-                DaggerTitleSearchResultsActivityTest_TestComponent.builder().testModule(new TestModule(context)).build();
-         DI.getInstance(component);
+        testNode = getTestNode();
+        TestClassyFyApplication testClassyFyApplication = TestClassyFyApplication.getTestInstance();
+        testClassyFyApplication.setTestClassyFyComponent(new TestClassyFyComponent());
     }
 
     @After
@@ -308,7 +294,6 @@ public class TitleSearchResultsActivityTest
         .get();
         // Check activity fields initialization
         assertThat(titleSearchResultsActivity.progressFragment).isNotNull();
-        assertThat(titleSearchResultsActivity.classyfyLogic).isNotNull();
         assertThat(titleSearchResultsActivity.REFINE_SEARCH_MESSAGE).isEqualTo("Only first 50 hits displayed. Please refine search.");
         
         // Test search suggesion initiated by intent
@@ -324,10 +309,10 @@ public class TitleSearchResultsActivityTest
                 titleSearchResultsActivity.parseIntent(intent);
             }});
         // Navigate doSearchQuery() and onLoadComplete()
-        ClassyfyLogic classyfyLogic = titleSearchResultsActivity.classyfyLogic;
         ArrayList<ListItem> singletonList = new ArrayList<ListItem>();
         ListItem listItem = new ListItem(RECORD_NAME, RECORD_VALUE, NODE_ID);
         singletonList.add(listItem);
+        ClassyfyLogic classyfyLogic = titleSearchResultsActivity.classyfyLogic;
         when(classyfyLogic.doSearchQuery(SEARCH_TEXT)).thenReturn(singletonList);
         Robolectric.getBackgroundThreadScheduler().runOneTask();
         verify(classyfyLogic).doSearchQuery(SEARCH_TEXT);
@@ -346,13 +331,10 @@ public class TitleSearchResultsActivityTest
         // Test item selection by activating the onItemClickListener
         OnItemClickListener onItemClickListener = itemList.getOnItemClickListener();
         Robolectric.getBackgroundThreadScheduler().advanceToLastPostedRunnable();
-        Node data = getTestNode();
-        NodeDetailsBean nodeDetails = getNodeDetails(data);
-        when(classyfyLogic.getNodeDetails((int)NODE_ID)).thenReturn(nodeDetails);
-        onItemClickListener.onItemClick(null, null, 0, NODE_ID);
+         onItemClickListener.onItemClick(null, null, 0, NODE_ID);
         assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.VISIBLE);
         Robolectric.getBackgroundThreadScheduler().runOneTask();
-        verify(classyfyLogic).getNodeDetails((int)NODE_ID);
+        verify(classyfyLogic).getNodeDetails(testNode);
         Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
         assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.GONE);
         tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
@@ -374,6 +356,19 @@ public class TitleSearchResultsActivityTest
         dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(1);
         titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
         titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Categories");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[3].id + 2);
+        assertThat(listItem.getValue()).isEqualTo("Category " + NODE_FIELDS[3].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[4].id + 2);
+        assertThat(listItem.getValue()).isEqualTo("Category " + NODE_FIELDS[4].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(2);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
         assertThat(titleView.getText()).isEqualTo("Folders");
         itemList = (ListView)dynamicLayout.getChildAt(1);
         adapter = itemList.getAdapter();
@@ -384,7 +379,7 @@ public class TitleSearchResultsActivityTest
         listItem = (ListItem)adapter.getItem(1);
         assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[4].id);
         assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[4].title);
-        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(2);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(3);
         titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
         titleView = (TextView) titleLayout.getChildAt(0);
         assertThat(titleView.getText()).isEqualTo("Details");
@@ -397,7 +392,7 @@ public class TitleSearchResultsActivityTest
             assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
             assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
         }
-    }
+     }
  
     @Test
     public void test_parseIntent_action_view_invalid_uri()
@@ -520,6 +515,17 @@ public class TitleSearchResultsActivityTest
         Node node = new Node(nodeEntity0, null);
         node = node.getChildren().get(0).getChildren().get(0);
         node.setProperties(getNodeProperties());
+        // Add 2 Category children to data to test setting CategoryTitles 
+        NodeEntity nodeEntity5 = NODE_FIELDS[3].getNodeEntity(null);
+        nodeEntity5.set_id(6);
+        nodeEntity5.setTitle("Category " + NODE_FIELDS[3].title);
+        nodeEntity5.setModel(1);
+        new Node(nodeEntity5, node);
+        NodeEntity nodeEntity6 = NODE_FIELDS[4].getNodeEntity(null);
+        nodeEntity6.set_id(7);
+        nodeEntity6.setTitle("Category " + NODE_FIELDS[4].title);
+        nodeEntity6.setModel(1);
+        new Node(nodeEntity6, node);
         return node;
     }
 

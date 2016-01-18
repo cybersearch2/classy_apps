@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014  www.cybersearch2.com.au
+    Copyright (C) 2015  www.cybersearch2.com.au
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,22 +13,22 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.example;
+package au.com.cybersearch2.classyfy;
 
-import android.os.Process;
-import au.com.cybersearch2.classytask.ThreadHelper;
+import javax.inject.Singleton;
+
+import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
+import au.com.cybersearch2.classytask.Executable;
+import dagger.Subcomponent;
 
 /**
- * AppThreadHelper
+ * PersistenceWorkSubcontext
  * @author Andrew Bowley
- * 07/07/2014
+ * 13 Jan 2016
  */
-public class AppThreadHelper implements ThreadHelper
+@Singleton
+@Subcomponent(modules = PersistenceWorkModule.class)
+public interface PersistenceWorkSubcontext
 {
-    @Override
-    public void setBackgroundPriority() 
-    {
-        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-    }
-
+    Executable executable();
 }

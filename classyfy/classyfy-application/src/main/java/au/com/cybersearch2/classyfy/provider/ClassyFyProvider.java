@@ -15,12 +15,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.provider;
 
+import javax.inject.Inject;
+
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.CancellationSignal;
-import au.com.cybersearch2.classyapp.PrimaryContentProvider;
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
 
 
@@ -38,7 +39,7 @@ public class ClassyFyProvider extends ContentProvider
 {
 	/** The actual ContentProvider implementation - 
 	 * lazily loaded because it is available only when Application startup is completed */
-    protected PrimaryContentProvider classyFySearchEngine;
+    @Inject ClassyFySearchEngine classyFySearchEngine;
 
 	/**
 	 * onCreate() called before Application onCreate(), so can do nothing as DI not initialized.
@@ -47,6 +48,8 @@ public class ClassyFyProvider extends ContentProvider
 	@Override
 	public boolean onCreate()
 	{
+        ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
+        classyFyApplication.getClassyFyComponent().inject(this);
         return true;
 	}
 
@@ -59,22 +62,6 @@ public class ClassyFyProvider extends ContentProvider
 	{
 	}
 
-	/**
-	 * Returns PrimaryContentProvider implementation. May wait for application startup if
-	 * called too soon after application launch.
-	 * @return PrimaryContentProvider object 
-	 */
-	protected PrimaryContentProvider getClassyFySearchEngine()
-	{
-	    if (classyFySearchEngine == null)
-	    {
-	        ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
-	        classyFyApplication.waitForApplicationSetup();
-	        classyFySearchEngine = classyFyApplication.getContentProvider();
-	    }
-	    return classyFySearchEngine;
-	}
-	
    /**
     * This is called when a client calls {@link android.content.ContentResolver#getType(Uri)}.
     * Returns the "custom" or "vendor-specific" MIME data type of the URI given as a parameter.
@@ -88,7 +75,7 @@ public class ClassyFyProvider extends ContentProvider
     @Override
     public String getType(Uri uri)
     {   
-        return getClassyFySearchEngine().getType(uri);
+        return classyFySearchEngine.getType(uri);
     }
 
 	/**
@@ -99,7 +86,7 @@ public class ClassyFyProvider extends ContentProvider
 	public Cursor query(Uri uri, String[] projection, String selection,
 	        String[] selectionArgs, String sortOrder)
 	{
-	    return getClassyFySearchEngine().query(uri, projection, selection, selectionArgs, sortOrder);
+	    return classyFySearchEngine.query(uri, projection, selection, selectionArgs, sortOrder);
 	}
 
     /**
@@ -111,7 +98,7 @@ public class ClassyFyProvider extends ContentProvider
             String[] selectionArgs, String sortOrder,
             CancellationSignal cancellationSignal)
     {
-        return getClassyFySearchEngine().query(uri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+        return classyFySearchEngine.query(uri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
     }
     
     /**
@@ -121,7 +108,7 @@ public class ClassyFyProvider extends ContentProvider
 	@Override
 	public Uri insert(Uri uri, ContentValues values)
 	{
-	    return getClassyFySearchEngine().insert(uri, values);
+	    return classyFySearchEngine.insert(uri, values);
 	}
 
 	/**
@@ -131,7 +118,7 @@ public class ClassyFyProvider extends ContentProvider
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs)
 	{
-	    return getClassyFySearchEngine().delete(uri, selection, selectionArgs);
+	    return classyFySearchEngine.delete(uri, selection, selectionArgs);
 	}
 
 	/**
@@ -142,6 +129,6 @@ public class ClassyFyProvider extends ContentProvider
 	public int update(Uri uri, ContentValues values, String selection,
 	        String[] selectionArgs)
 	{
-	    return getClassyFySearchEngine().update(uri, values, selection, selectionArgs);
+	    return classyFySearchEngine.update(uri, values, selection, selectionArgs);
 	}
 }

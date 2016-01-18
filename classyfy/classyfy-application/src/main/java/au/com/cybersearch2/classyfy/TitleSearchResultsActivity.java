@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
 import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -34,10 +35,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
 import au.com.cybersearch2.classyfy.helper.ViewHelper;
-import au.com.cybersearch2.classyinject.DI;
-import au.com.cybersearch2.classytask.BackgroundTask;
+import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
+import au.com.cybersearch2.classytask.AsyncBackgroundTask;
 import au.com.cybersearch2.classywidget.ListItem;
 
 /**
@@ -56,11 +58,11 @@ public class TitleSearchResultsActivity extends FragmentActivity
     protected String REFINE_SEARCH_MESSAGE;
     /** Progress spinner fragment */
     protected ProgressFragment progressFragment;
-    @Inject /** Persistence queries to obtain record details */
-    ClassyfyLogic classyfyLogic;
+     
     @Inject /* Intent tracker */
     TicketManager ticketManager;
-
+    @Inject
+    ClassyfyLogic classyfyLogic;
     /**
      * onCreate
      * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
@@ -69,11 +71,12 @@ public class TitleSearchResultsActivity extends FragmentActivity
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
+        ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
+        classyFyApplication.getClassyFyComponent().inject(this);
         setContentView(R.layout.results_list);
         progressFragment = getProgressFragment();
         REFINE_SEARCH_MESSAGE = this.getString(R.string.refine_search);
-        DI.inject(this);
-        // Process intent
+         // Process intent
         parseIntent(getIntent());
     }
 
@@ -162,7 +165,8 @@ public class TitleSearchResultsActivity extends FragmentActivity
     protected void launchSearch(final String searchQuery, final int ticket)
     {
         final List<ListItem> resultList = new ArrayList<ListItem>();
-        BackgroundTask queryTask = new BackgroundTask(this)
+        final ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
+        AsyncBackgroundTask queryTask = new AsyncBackgroundTask(classyFyApplication)
         {
             /**
              * Execute task in  background thread
@@ -218,24 +222,31 @@ public class TitleSearchResultsActivity extends FragmentActivity
     protected void displayNodeDetails(final int nodeId, final int ticket)
     {
         progressFragment.showSpinner();
-        BackgroundTask getDetailsTask = new BackgroundTask(this)
+        final ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
+        final TitleSearchResultsActivity activity = this;
+        AsyncBackgroundTask getDetailsTask = new AsyncBackgroundTask(classyFyApplication)
         {
             NodeDetailsBean nodeDetails;
             
             @Override
             public Boolean loadInBackground()
             {
-                nodeDetails = classyfyLogic.getNodeDetails(nodeId);
+                
+                ClassyLogicModule classyLogicModule = 
+                        new ClassyLogicModule(activity, ClassyFyApplication.PU_NAME, nodeId);
+                ClassyLogicComponent classyLogicComponent = classyFyApplication.plus(classyLogicModule );
+                nodeDetails = getNodeDetailsBean(classyLogicComponent.node());
                 return nodeDetails != null ? Boolean.TRUE : Boolean.FALSE;
             }
             @Override
             public void onLoadComplete(Loader<Boolean> loader, Boolean success)
             {
                 progressFragment.hideSpinner();
-                String errorMessage = nodeDetails.getErrorMessage();
+                String errorMessage = null;
                 if (success)
                 {
-                     if (errorMessage == null)
+                    errorMessage = nodeDetails.getErrorMessage();
+                    if (errorMessage == null)
                         showRecordDetails(nodeDetails);
                 }
                 else
@@ -247,8 +258,20 @@ public class TitleSearchResultsActivity extends FragmentActivity
                 }
                 ticketManager.removeIntent(ticket);
             }
-       };
-       getDetailsTask.onStartLoading();
+        };
+        getDetailsTask.onStartLoading();
+    }
+
+    private NodeDetailsBean getNodeDetailsBean(Node node)
+    {   // Use NodeFinder to perform persistence query
+        if (node == null)
+            return null;
+        // Get first node, which is root of records tree
+        NodeDetailsBean nodeDetails = classyfyLogic.getNodeDetails(node);
+        // TODO - investigate why CategoryTitles is mandatory
+        if ((nodeDetails == null)/* || nodeDetails.getCategoryTitles().isEmpty()*/)
+            return null;
+        return  nodeDetails;
     }
 
     /**

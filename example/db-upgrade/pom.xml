@@ -40,8 +40,34 @@
       </dependency>  
       <dependency>
         <groupId>au.com.cybersearch2</groupId>
+        <artifactId>android-hello-two-dbs</artifactId>
+        <version>${project.version}</version>
+        <exclusions>
+         <exclusion>
+	      <groupId>*</groupId>
+	      <artifactId>*</artifactId>
+         </exclusion>
+        </exclusions>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>au.com.cybersearch2</groupId>
+        <artifactId>android-hello-two-dbs-v2</artifactId>
+        <version>${project.version}</version>
+        <exclusions>
+         <exclusion>
+	      <groupId>*</groupId>
+	      <artifactId>*</artifactId>
+         </exclusion>
+        </exclusions>
+        <type>jar</type>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>au.com.cybersearch2</groupId>
         <artifactId>classyjava</artifactId>
-       <exclusions>
+        <exclusions>
          <exclusion>
 	      <groupId>commons-logging</groupId>
 	      <artifactId>commons-logging</artifactId>
@@ -50,9 +76,9 @@
           <groupId>commons-collections</groupId>
 	      <artifactId>commons-collections</artifactId>
         </exclusion>
-         </exclusions>
-         <type>jar</type>
-        <scope>compile</scope>
+       </exclusions>
+       <type>jar</type>
+       <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>au.com.cybersearch2</groupId>

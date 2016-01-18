@@ -16,7 +16,8 @@
 package com.example.hellotwodbs.v2;
 
 import android.app.Application;
-import au.com.cybersearch2.example.v2.AndroidHelloTwoDbs;
+import au.com.cybersearch2.android.example.v2.AndroidHelloTwoDbs;
+import au.com.cybersearch2.android.example.v2.AndroidHelloTwoDbsComponent;
 
 /**
  * HelloTwoDbsApplication
@@ -25,25 +26,35 @@ import au.com.cybersearch2.example.v2.AndroidHelloTwoDbs;
  */
 public class HelloTwoDbsApplication extends Application 
 {
-	static AndroidHelloTwoDbs androidHelloTwoDbsSingleton;
-	
+    private static HelloTwoDbsApplication singleton;
+    private static AndroidHelloTwoDbsComponent helloTwoDbsComponent;
+    private AndroidHelloTwoDbs androidHelloTwoDbsSingleton;
+    
     @Override public void onCreate() 
     {
         super.onCreate();
+        singleton = this;
         androidHelloTwoDbsSingleton = new AndroidHelloTwoDbs(this);
         try 
-        {
-			androidHelloTwoDbsSingleton.setUp();
-		} 
+        {   // Start from beginning in case database at v2
+            androidHelloTwoDbsSingleton.setUp();
+            helloTwoDbsComponent = androidHelloTwoDbsSingleton.getComponent();
+        } 
         catch (InterruptedException e) 
         {   // This not expected to ever happen
-			throw new IllegalStateException("onCreate()  interrupted in AndroidHelloTwoDbs setUp()", e);
-		}
+            throw new IllegalStateException("onCreate()  interrupted in AndroidHelloTwoDbs setUp()", e);
+        }
    }
 
-   public static AndroidHelloTwoDbs getAndroidHelloTwoDbsSingleton()
+   public AndroidHelloTwoDbsComponent getHelloTwoDbsComponent()
    {
-	   return androidHelloTwoDbsSingleton;
+       return helloTwoDbsComponent;
    }
     
+   public static HelloTwoDbsApplication getInstance()
+   {
+       if (singleton == null)
+           throw new IllegalStateException("HelloTwoDbsApplication called while not initialized");
+       return singleton;
+   }
 }
