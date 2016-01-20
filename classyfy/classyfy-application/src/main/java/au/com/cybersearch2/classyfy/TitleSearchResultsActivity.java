@@ -39,6 +39,7 @@ import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
 import au.com.cybersearch2.classyfy.helper.ViewHelper;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classytask.AsyncBackgroundTask;
 import au.com.cybersearch2.classywidget.ListItem;
 
@@ -192,7 +193,7 @@ public class TitleSearchResultsActivity extends FragmentActivity
                         LinearLayout propertiesLayout = (LinearLayout) findViewById(R.id.node_properties);
                         propertiesLayout.addView(createDynamicLayout("Titles", resultList, false));
                     }
-                    if (resultList.size() >= ClassyFyApplication.SEARCH_RESULTS_LIMIT)
+                    if (resultList.size() >= ClassyFyProvider.SEARCH_RESULTS_LIMIT)
                         displayToast(REFINE_SEARCH_MESSAGE);  
                 }
                 if (!success)
@@ -222,19 +223,14 @@ public class TitleSearchResultsActivity extends FragmentActivity
     protected void displayNodeDetails(final int nodeId, final int ticket)
     {
         progressFragment.showSpinner();
-        final ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
-        final TitleSearchResultsActivity activity = this;
-        AsyncBackgroundTask getDetailsTask = new AsyncBackgroundTask(classyFyApplication)
+        AsyncBackgroundTask getDetailsTask = new AsyncBackgroundTask(getApplication())
         {
             NodeDetailsBean nodeDetails;
             
             @Override
             public Boolean loadInBackground()
             {
-                
-                ClassyLogicModule classyLogicModule = 
-                        new ClassyLogicModule(activity, ClassyFyApplication.PU_NAME, nodeId);
-                ClassyLogicComponent classyLogicComponent = classyFyApplication.plus(classyLogicModule );
+                ClassyLogicComponent classyLogicComponent = getClassyLogicComponent(nodeId);
                 nodeDetails = getNodeDetailsBean(classyLogicComponent.node());
                 return nodeDetails != null ? Boolean.TRUE : Boolean.FALSE;
             }
@@ -262,6 +258,14 @@ public class TitleSearchResultsActivity extends FragmentActivity
         getDetailsTask.onStartLoading();
     }
 
+    protected ClassyLogicComponent getClassyLogicComponent(int nodeId)
+    {
+        ClassyLogicModule classyLogicModule = 
+                new ClassyLogicModule(this, ClassyFyProvider.PU_NAME, nodeId);
+        ClassyFyComponent component = ClassyFyApplication.getInstance().getClassyFyComponent();
+        return component.plus(classyLogicModule );
+    }
+    
     private NodeDetailsBean getNodeDetailsBean(Node node)
     {   // Use NodeFinder to perform persistence query
         if (node == null)

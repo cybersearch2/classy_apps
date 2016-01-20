@@ -41,6 +41,7 @@ import au.com.cybersearch2.classybean.BeanMap;
 import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classywidget.ListItem;
 
@@ -141,7 +142,7 @@ public class ClassyfyLogicTest
         when(cursor.getLong(0)).thenReturn(NODE_ID);
         Uri uri = Uri.parse(ClassyFySearchEngine.LEX_CONTENT_URI + "?" + 
                             SearchManager.SUGGEST_PARAMETER_LIMIT + "=" +
-                            String.valueOf(ClassyFyApplication.SEARCH_RESULTS_LIMIT));
+                            String.valueOf(ClassyFyProvider.SEARCH_RESULTS_LIMIT));
         when(contentResolver.query(uri, null, "word MATCH ?", new String[] { SEARCH_TEXT }, null)).thenReturn(cursor);
         List<ListItem> result = classyfyLogic.doSearchQuery(SEARCH_TEXT);
         assertThat(result.size()).isEqualTo(1);
@@ -163,7 +164,7 @@ public class ClassyfyLogicTest
         when(cursor.getCount()).thenReturn(0);
         Uri uri = Uri.parse(ClassyFySearchEngine.LEX_CONTENT_URI + "?" + 
                             SearchManager.SUGGEST_PARAMETER_LIMIT + "=" +
-                            String.valueOf(ClassyFyApplication.SEARCH_RESULTS_LIMIT));
+                            String.valueOf(ClassyFyProvider.SEARCH_RESULTS_LIMIT));
         when(contentResolver.query(uri, null, "word MATCH ?", new String[] { SEARCH_TEXT }, null)).thenReturn(cursor);
         List<ListItem> result = classyfyLogic.doSearchQuery(SEARCH_TEXT);
         assertThat(result.size()).isEqualTo(0);

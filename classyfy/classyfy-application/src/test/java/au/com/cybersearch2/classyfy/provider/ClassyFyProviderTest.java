@@ -15,25 +15,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.provider;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.CancellationSignal;
-import au.com.cybersearch2.classyfy.ClassyFyComponent;
-import au.com.cybersearch2.classyfy.ClassyLogicComponent;
-import au.com.cybersearch2.classyfy.MainActivity;
-import au.com.cybersearch2.classyfy.TestClassyFyApplication;
-import au.com.cybersearch2.classyfy.TitleSearchResultsActivity;
-import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanSubcomponent;
-import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
-import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
-import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.classyfy.ClassyFyApplication;
 
 /**
  * ClassyFyProviderTest
@@ -43,59 +38,11 @@ import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 @RunWith(RobolectricTestRunner.class)
 public class ClassyFyProviderTest
 {
-    static class TestClassyFyComponent implements ClassyFyComponent
-    {
-
-        @Override
-        public PersistenceContext persistenceContext()
-        {
-            return null;
-        }
-
-        @Override
-        public ClassyFySearchEngine classyFySearchEngine()
-        {
-            return mock(ClassyFySearchEngine.class);
-        }
-
-        @Override
-        public void inject(ClassyFyProvider classyFyProvider)
-        {
-            classyFyProvider.classyFySearchEngine = classyFySearchEngine();
-            when(classyFyProvider.classyFySearchEngine.getType(Uri.EMPTY)).thenReturn("vnd.android.cursor.dir/vnd.classyfy.node");
-        }
-
-        @Override
-        public void inject(MainActivity mainActivity)
-        {
-        }
-
-        @Override
-        public void inject(TitleSearchResultsActivity titleSearchResultsActivity)
-        {
-        }
-
-        @Override
-        public ClassyLogicComponent plus(ClassyLogicModule classyLogicModule)
-        {
-            return null;
-        }
-
-        @Override
-        public AlfrescoFilePlanSubcomponent plus(AlfrescoFilePlanModule alfrescoFilePlanModule)
-        {
-            return null;
-        }
-        
-    }
-    
     public static final String PROVIDER_AUTHORITY = "au.com.cybersearch2.classyfy.ClassyFyProvider";
 
     @Before
     public void setUp() throws Exception 
     {
-        TestClassyFyApplication testClassyFyApplication = TestClassyFyApplication.getTestInstance();
-        testClassyFyApplication.setTestClassyFyComponent(new TestClassyFyComponent());
     }
 
     @Test
@@ -103,14 +50,17 @@ public class ClassyFyProviderTest
     {
         ClassyFyProvider classyFyProvider = new ClassyFyProvider();
         assertThat(classyFyProvider.onCreate()).isTrue();
+        assertThat(ClassyFyApplication.getInstance().getClassyFyComponent()).isNotNull();
+        classyFyProvider.shutdown();
     }
     
     @Test
     public void testPrimaryContentProvider()
     {
         ClassyFyProvider classyFyProvider = new ClassyFyProvider();
-        classyFyProvider.onCreate();
-        ClassyFySearchEngine classyFySearchEngine = classyFyProvider.classyFySearchEngine;
+        ClassyFySearchEngine classyFySearchEngine = mock(ClassyFySearchEngine.class);
+        when(classyFySearchEngine.getType(Uri.EMPTY)).thenReturn("vnd.android.cursor.dir/vnd.classyfy.node");
+        classyFyProvider.classyFySearchEngine = classyFySearchEngine;
         classyFyProvider.getType(Uri.EMPTY);
         verify(classyFySearchEngine).getType(Uri.EMPTY);
         CancellationSignal cancellationSignal = mock(CancellationSignal.class);

@@ -32,6 +32,7 @@ import au.com.cybersearch2.classyfy.data.FieldDescriptor;
 import au.com.cybersearch2.classyfy.data.FieldDescriptorSetFactory;
 import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.data.RecordModel;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classynode.NodeType;
 import au.com.cybersearch2.classywidget.ListItem;
@@ -72,7 +73,7 @@ public class ClassyfyLogic
         SuggestionCursorParameters params = 
                 new SuggestionCursorParameters(searchQuery, 
                                                ClassyFySearchEngine.LEX_CONTENT_URI, 
-                                               ClassyFyApplication.SEARCH_RESULTS_LIMIT); 
+                                               ClassyFyProvider.SEARCH_RESULTS_LIMIT); 
         
         ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(

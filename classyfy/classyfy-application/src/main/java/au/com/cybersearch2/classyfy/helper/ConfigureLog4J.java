@@ -15,11 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.helper;
 
-import java.io.File;
-
 import org.apache.log4j.Level;
 
-import android.os.Environment;
 import de.mindpipe.android.logging.log4j.LogConfigurator;
 
 /**
@@ -34,7 +31,8 @@ public class ConfigureLog4J
     {
         final LogConfigurator logConfigurator = new LogConfigurator();
                 
-        logConfigurator.setFileName(Environment.getExternalStorageDirectory() + File.separator + "classyfy.log");
+        logConfigurator.setUseFileAppender(false);
+        logConfigurator.setUseLogCatAppender(true);
         logConfigurator.setRootLevel(Level.ERROR);
         // Set log level of a specific logger
         logConfigurator.setLevel("com.j256.ormlite", Level.INFO);

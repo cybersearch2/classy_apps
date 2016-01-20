@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import javax.inject.Provider;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +43,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
+import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.util.SimpleFuture;
 
 import android.annotation.TargetApi;
@@ -54,9 +53,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -71,14 +67,10 @@ import au.com.cybersearch2.classyfy.data.RecordModel;
 import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanSubcomponent;
 import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
-import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
-import au.com.cybersearch2.classyfy.provider.ClassyFyProvider_MembersInjector;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classynode.NodeType;
 import au.com.cybersearch2.classywidget.ListItem;
-import dagger.MembersInjector;
-import dagger.internal.MembersInjectors;
 
 /**
  * MainActivityTest
@@ -103,25 +95,6 @@ public class MainActivityTest
             ClassyFySearchEngine classyFySearchEngine = mock(ClassyFySearchEngine.class);
             when(classyFySearchEngine.getType(isA(Uri.class))).thenReturn(ClassyFySearchEngine.CONTENT_URI.toString());
             return classyFySearchEngine;
-        }
-
-        @Override
-        public void inject(ClassyFyProvider classyFyProvider)
-        {
-            Provider<ClassyFySearchEngine> classyFySearchEngineProvider =
-                    new Provider<ClassyFySearchEngine>(){
-
-                        @Override
-                        public ClassyFySearchEngine get()
-                        {
-                            return classyFySearchEngine();
-                        }};
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            MembersInjector<ContentProvider> supertypeInjector =
-                    (MembersInjector) MembersInjectors.noOp();
-            MembersInjector<ClassyFyProvider> injector = 
-                    ClassyFyProvider_MembersInjector.create(supertypeInjector, classyFySearchEngineProvider);
-            injector.injectMembers(classyFyProvider);
         }
 
         @Override
@@ -262,24 +235,6 @@ public class MainActivityTest
         new NodeField(5,3,"rent","Rent",2,4)
     };
     
-    public static class TestMainActivity extends MainActivity
-    {
-        /**
-         * Bypass search action view creation
-         * which Robolectric does not support because of Shadow MenuItemCompat.getActionView() bug
-         * @return 
-         */
-        @Override
-        protected void createSearchView(Menu menu)
-        {
-        }
-        
-        public void doCreateSearchView(Menu menu)
-        {
-            super.createSearchView(menu);
-        }
-    }
-    
     public static final long ID = 1L;
     public static final String NAME = "name";
     public static final String TITLE = "Corporate Management";
@@ -293,6 +248,10 @@ public class MainActivityTest
         testNode = getTestNode();
         TestClassyFyApplication testClassyFyApplication = TestClassyFyApplication.getTestInstance();
         testClassyFyApplication.setTestClassyFyComponent(new TestClassyFyComponent());
+        //register the ContentProvider
+        ContentProvider provider = mock(ContentProvider.class);
+        when(provider.getType(ClassyFySearchEngine.CONTENT_URI)).thenReturn(ClassyFySearchEngine.CONTENT_URI.toString());
+        ShadowContentResolver.registerProvider(ClassyFySearchEngine.PROVIDER_AUTHORITY, provider);
     }
 
 
@@ -306,16 +265,7 @@ public class MainActivityTest
 	@Test
     public void test_createSearchView() throws Exception
     {
-        Menu menu = mock(Menu.class);
-        MenuItem searchMenuItem = mock(MenuItem.class);
-        SearchView searchView = mock(SearchView.class);
-        MainActivity mainActivity = Robolectric.buildActivity(TestMainActivity.class).create().get();
-        when(menu.findItem(R.id.action_search)).thenReturn(searchMenuItem);
-        when(searchMenuItem.getActionView()).thenReturn(searchView);
-        ((TestMainActivity)mainActivity).doCreateSearchView(menu);
-        // Shadow SearchManager returns null for SearchablInfo
-        //verify(searchView).setSearchableInfo(isA(SearchableInfo.class));
-        verify(searchView).setIconifiedByDefault(false);
+        MainActivity mainActivity = Robolectric.buildActivity(MainActivity.class).create().get();
         Robolectric.getBackgroundThreadScheduler().runOneTask();
         ClassyfyLogic classyfyLogic = mainActivity.classyfyLogic;
         verify(classyfyLogic).getNodeDetails(testNode);

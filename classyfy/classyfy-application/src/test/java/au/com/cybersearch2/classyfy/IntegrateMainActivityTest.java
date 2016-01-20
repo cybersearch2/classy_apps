@@ -30,6 +30,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
+import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowSQLiteConnection;
 import org.robolectric.util.SimpleFuture;
 
@@ -45,6 +46,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classywidget.ListItem;
 
@@ -183,6 +185,11 @@ public class IntegrateMainActivityTest
         ShadowSQLiteConnection.reset();
         TestClassyFyApplication classyfyLauncher = TestClassyFyApplication.getTestInstance();
         classyfyLauncher.startApplication();
+        ClassyFyProvider classyFyProvider = new ClassyFyProvider();
+        classyFyProvider.onCreate();
+        ShadowContentResolver.registerProvider(
+                ClassyFySearchEngine.PROVIDER_AUTHORITY, 
+                classyFyProvider);
     }
     
     @After

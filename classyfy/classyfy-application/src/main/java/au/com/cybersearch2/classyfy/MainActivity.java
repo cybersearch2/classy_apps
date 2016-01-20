@@ -16,17 +16,15 @@
 package au.com.cybersearch2.classyfy;
 
 import javax.inject.Inject;
-import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
@@ -39,6 +37,7 @@ import android.widget.Toast;
 import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.helper.ViewHelper;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classytask.AsyncBackgroundTask;
 
@@ -50,9 +49,7 @@ import au.com.cybersearch2.classytask.AsyncBackgroundTask;
  * @author Andrew Bowley
  * 26 Jun 2015
  */
-@SuppressLint("NewApi")
-@SuppressWarnings("deprecation")
-public class MainActivity extends ActionBarActivity 
+public class MainActivity extends AppCompatActivity 
 {
     public static final String TAG = "MainActivity";
     /** Error message for interrupted node search. Not expected to happen in normal operation */
@@ -74,7 +71,8 @@ public class MainActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "In MainActivity onCreate()");
-        final ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
+        final ClassyFyApplication classyFyApplication = 
+                ClassyFyApplication.getInstance();
         final MainActivity activity = this;
         setContentView(R.layout.activity_main);
          // Complete initialization in background
@@ -82,30 +80,22 @@ public class MainActivity extends ActionBarActivity
         {
             NodeDetailsBean nodeDetails;
             
-            /**
-             * The background task
-             * @see au.com.cybersearch2.classytask.BackgroundTask#loadInBackground()
-             */
             @Override
             public Boolean loadInBackground()
             {
                 Log.i(TAG, "Loading in background...");
                 startState = StartState.build;
+                classyFyApplication.getClassyFyComponent().inject(activity);
                 // Invoke ClassyFyProvider using ContentResolver to force initialization
                 ContentResolver contentResolver = getContentResolver();
-                contentResolver.getType(ClassyFySearchEngine.CONTENT_URI);
-                Log.i(TAG, "Injecting MainActivity...");
-                classyFyApplication.getClassyFyComponent().inject(activity);
+                String type = contentResolver.getType(ClassyFySearchEngine.CONTENT_URI);
+                Log.i(TAG, "Search Engine initialized for content type: " + type);
                 Log.i(TAG, "Getting top level record...");
                 // Get first node, which is root of records tree
-                nodeDetails = getNodeDetailsBean(1);
+                nodeDetails = getNodeDetailsBean(classyFyApplication, 1);
                 return nodeDetails != null;
             }
 
-            /**
-             * onLoadComplete
-             * @see au.com.cybersearch2.classytask.BackgroundTask#onLoadComplete(android.support.v4.content.Loader, java.lang.Boolean)
-             */
             @Override
             public void onLoadComplete(Loader<Boolean> loader, Boolean success)
             {
@@ -120,13 +110,13 @@ public class MainActivity extends ActionBarActivity
         starter.onStartLoading();
 	}
 
-    private NodeDetailsBean getNodeDetailsBean(int nodeId)
+    private NodeDetailsBean getNodeDetailsBean(ClassyFyApplication classyFyApplication, int nodeId)
     {   
-        ClassyFyApplication classyFyApplication = ClassyFyApplication.getInstance();
         MainActivity activity = this;
         ClassyLogicModule classyLogicModule = 
-                new ClassyLogicModule(activity, ClassyFyApplication.PU_NAME, nodeId);
-        ClassyLogicComponent classyLogicComponent = classyFyApplication.plus(classyLogicModule );
+                new ClassyLogicModule(activity, ClassyFyProvider.PU_NAME, nodeId);
+        ClassyLogicComponent classyLogicComponent = 
+                classyFyApplication.getClassyFyComponent().plus(classyLogicModule );
         Node data = classyLogicComponent.node();
         if (data == null)
             return null;

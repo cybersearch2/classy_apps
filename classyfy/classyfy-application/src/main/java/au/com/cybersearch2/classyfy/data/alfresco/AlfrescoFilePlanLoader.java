@@ -39,6 +39,7 @@ import au.com.cybersearch2.classyfy.data.DataLoader;
 import au.com.cybersearch2.classyfy.data.DataStreamParser;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyfy.helper.FileUtils;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.transaction.EntityTransactionImpl;
@@ -128,7 +129,7 @@ public class AlfrescoFilePlanLoader implements DataLoader
 				{
 					workTracker.setStatus(WorkStatus.RUNNING);
 			        // Execute task on transaction commit using Callable
-					PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME);
+					PersistenceAdmin persistenceAdmin = persistenceContext.getPersistenceAdmin(ClassyFyProvider.PU_NAME);
 			        ConnectionSource connectionSource = persistenceAdmin.getConnectionSource();
 			     	EntityTransaction transaction = new EntityTransactionImpl(connectionSource, processFilesCallable);
 			        transaction.begin();

@@ -21,6 +21,7 @@ import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.ClassyFyResourceEnvironment;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyfy.data.TestDataStreamParser;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.test.AndroidEnvironmentFile;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
@@ -52,7 +53,7 @@ public class AlfrescoFilePlanLoaderTest
     {
         PersistenceContext persistenceContext = mock(PersistenceContext.class);
         PersistenceAdmin persistenceAdmin = mock(PersistenceAdmin.class);
-        when(persistenceContext.getPersistenceAdmin(ClassyFyApplication.PU_NAME)).thenReturn(persistenceAdmin);
+        when(persistenceContext.getPersistenceAdmin(ClassyFyProvider.PU_NAME)).thenReturn(persistenceAdmin);
         TestDataStreamParser dataStreamLoader = new TestDataStreamParser();
         SqlFromNodeGenerator sqlFromNodeGenerator = mock(SqlFromNodeGenerator.class);
         Node rootNode = Node.rootNodeNewInstance();

@@ -28,6 +28,7 @@ import au.com.cybersearch2.classyfts.FtsEngine;
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.ClassyfyLogic;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
@@ -62,7 +63,7 @@ public class ClassyFyApplicationModule implements ApplicationModule
     @Provides @Singleton OpenEventHandler provideOpenEventHandler(Context context, PersistenceFactory persistenceFactory)
     {
         // NOTE: This class extends Android SQLiteHelper 
-        return new OpenEventHandler(new AndroidSqliteParams(context, ClassyFyApplication.PU_NAME, persistenceFactory));
+        return new OpenEventHandler(new AndroidSqliteParams(context, ClassyFyProvider.PU_NAME, persistenceFactory));
     }
     
     @Provides @Singleton ConnectionSourceFactory provideConnectionSourceFactory(OpenEventHandler openEventHandler)

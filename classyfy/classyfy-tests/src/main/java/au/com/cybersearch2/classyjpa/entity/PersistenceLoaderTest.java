@@ -32,6 +32,7 @@ import android.support.test.runner.AndroidJUnit4;
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.data.RecordCategory;
 import au.com.cybersearch2.classyfy.data.RecordFolder;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyjpa.EntityManagerLite;
 import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
@@ -81,7 +82,7 @@ public class PersistenceLoaderTest extends InstrumentationTestCase
         runTestOnUiThread(new Runnable() {
             public void run()
             {
-                 exeHolder[0] = testLoaderTask.execute(ClassyFyApplication.PU_NAME, persistenceWork);
+                 exeHolder[0] = testLoaderTask.execute(ClassyFyProvider.PU_NAME, persistenceWork);
             }});
         WorkStatus status = exeHolder[0].waitForTask();
         transcript.assertEventsSoFar("background task", "onPostExecute true");

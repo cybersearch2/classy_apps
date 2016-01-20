@@ -38,7 +38,6 @@ public interface ClassyFyComponent extends ApplicationModule
 {
     PersistenceContext persistenceContext();
     ClassyFySearchEngine classyFySearchEngine();
-    void inject(ClassyFyProvider classyFyProvider);
     void inject(MainActivity mainActivity);
     void inject(TitleSearchResultsActivity titleSearchResultsActivity);
     ClassyLogicComponent plus(ClassyLogicModule classyLogicModule);

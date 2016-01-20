@@ -43,10 +43,12 @@ import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.SimpleFuture;
 
 import android.app.SearchManager;
+import android.content.ContentProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -69,7 +71,6 @@ import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanSubcomponent;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
 import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
-import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classynode.NodeType;
@@ -98,11 +99,6 @@ public class TitleSearchResultsActivityTest
         {
             ClassyFySearchEngine classyFySearchEngine = mock(ClassyFySearchEngine.class);
             return classyFySearchEngine;
-        }
-
-        @Override
-        public void inject(ClassyFyProvider classyFyProvider)
-        {
         }
 
         @Override
@@ -269,6 +265,10 @@ public class TitleSearchResultsActivityTest
         testNode = getTestNode();
         TestClassyFyApplication testClassyFyApplication = TestClassyFyApplication.getTestInstance();
         testClassyFyApplication.setTestClassyFyComponent(new TestClassyFyComponent());
+        // Register the ContentProvider
+        ContentProvider provider = mock(ContentProvider.class);
+        when(provider.getType(ClassyFySearchEngine.CONTENT_URI)).thenReturn(ClassyFySearchEngine.CONTENT_URI.toString());
+        ShadowContentResolver.registerProvider(ClassyFySearchEngine.PROVIDER_AUTHORITY, provider);
     }
 
     @After
