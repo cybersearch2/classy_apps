@@ -20,7 +20,6 @@ import javax.inject.Singleton;
 import com.example.hellotwodbs.v1.HelloTwoDbs;
 
 import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
-import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import dagger.Component;
@@ -32,7 +31,7 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = AndroidHelloTwoDbsModule.class)  
-public interface AndroidHelloTwoDbsComponent extends ApplicationModule
+public interface AndroidHelloTwoDbsComponent
 {
     void inject(HelloTwoDbs helloTwoDbs);
     PersistenceContext persistenceContext();

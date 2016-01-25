@@ -33,6 +33,12 @@
       <timezone>+10</timezone>
     </developer>
   </developers>
+  <repositories>
+    <repository>
+        <id>android-support</id>
+        <url>file://${env.ANDROID_HOME}/extras/android/m2repository</url>
+    </repository>
+  </repositories>
   <!-- Modules arranged according to android-maven-plugin convention -->
   <modules>
     <module>android-hello-two-dbs</module>
@@ -71,22 +77,19 @@
           <version>${ormlite.version}</version>
         </dependency>
         <dependency>
-          <groupId>android.support</groupId>
-          <artifactId>compatibility-v7-appcompat</artifactId>
+          <groupId>com.android.support</groupId>
+          <artifactId>appcompat-v7</artifactId>
           <version>${android.support.version}</version>
-          <type>apklib</type>
-        </dependency>  
-         <dependency>
-          <groupId>android.support</groupId>
-          <artifactId>compatibility-v7-appcompat</artifactId>
-          <version>${android.support.version}</version>
-          <type>jar</type>
+          <type>aar</type>
+          <scope>compile</scope>
         </dependency>  
         <dependency>
-          <groupId>android.support</groupId>
-          <artifactId>compatibility-v4</artifactId>
+          <groupId>com.android.support</groupId>
+          <artifactId>support-v4</artifactId>
           <version>${android.support.version}</version>
-        </dependency>  
+          <type>aar</type>
+          <scope>compile</scope>
+        </dependency>
         <dependency>
           <groupId>android</groupId>
           <artifactId>android</artifactId>

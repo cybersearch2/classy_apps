@@ -25,12 +25,10 @@ import au.com.cybersearch2.classydb.AndroidSqliteParams;
 import au.com.cybersearch2.classydb.ConnectionSourceFactory;
 import au.com.cybersearch2.classydb.OpenEventHandler;
 import au.com.cybersearch2.classyfts.FtsEngine;
-import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.ClassyfyLogic;
 import au.com.cybersearch2.classyfy.helper.TicketManager;
 import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import dagger.Module;
@@ -42,7 +40,7 @@ import dagger.Provides;
  * 08/07/2014
  */
 @Module(includes = ClassyFyEnvironmentModule.class)
-public class ClassyFyApplicationModule implements ApplicationModule
+public class ClassyFyApplicationModule
 {
     private Context context;
 

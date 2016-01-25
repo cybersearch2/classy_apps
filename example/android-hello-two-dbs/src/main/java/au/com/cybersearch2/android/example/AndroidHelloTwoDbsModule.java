@@ -24,7 +24,6 @@ import au.com.cybersearch2.classydb.AndroidConnectionSourceFactory;
 import au.com.cybersearch2.classydb.AndroidSqliteParams;
 import au.com.cybersearch2.classydb.ConnectionSourceFactory;
 import au.com.cybersearch2.classydb.OpenEventHandler;
-import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classyjpa.persist.PersistenceFactory;
 import au.com.cybersearch2.example.HelloTwoDbsMain;
@@ -39,7 +38,7 @@ import dagger.Provides;
  * 23 Sep 2014
  */
 @Module(includes = HelloTwoDbsEnvironmentModule.class) 
-public class AndroidHelloTwoDbsModule implements ApplicationModule
+public class AndroidHelloTwoDbsModule
 {
     private Context context;
     private AndroidHelloTwoDbs androidHelloTwoDbs;

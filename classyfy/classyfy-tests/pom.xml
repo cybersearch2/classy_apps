@@ -37,12 +37,12 @@
         <url>file://${env.ANDROID_HOME}/extras/android/m2repository</url>
      </repository>
   </repositories>
-<pluginRepositories>
+  <pluginRepositories>
     <pluginRepository>
         <id>dropbox</id>
         <url>https://dl.dropboxusercontent.com/u/52711537/maven-repo/</url>
     </pluginRepository>
-</pluginRepositories>
+  </pluginRepositories>
   <dependencies>
     <dependency>
        <groupId>au.com.cybersearch2</groupId>
@@ -117,18 +117,31 @@
           <groupId>javax.annotation</groupId>
           <artifactId>javax.annotation-api</artifactId>
       	</exclusion>
+       	<exclusion>
+     	  <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
+      	</exclusion>
+       	<exclusion>
+      	  <groupId>com.squareup</groupId>
+          <artifactId>javawriter</artifactId>
+     	</exclusion>
+       	<exclusion>
+         <groupId>org.hamcrest</groupId>
+         <artifactId>hamcrest-library</artifactId>
+     	</exclusion>
+       	<exclusion>
+         <groupId>com.google.code.findbugs</groupId>
+         <artifactId>jsr305</artifactId>
+     	</exclusion>
+       	<exclusion>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+     	</exclusion>
       </exclusions>
-      <version>2.2</version>
+      <version>2.2.1</version>
       <type>aar</type>
       <scope></scope>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    -->
      <dependency>
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert-core</artifactId>
@@ -151,7 +164,14 @@
       <type>aar</type>
       <scope>provided</scope>
     </dependency>
-  </dependencies>
+    <dependency>
+      <groupId>com.android.support</groupId>
+      <artifactId>support-v4</artifactId>
+      <version>${android.support.version}</version>
+      <type>aar</type>
+      <scope>provided</scope>
+     </dependency>
+   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
@@ -185,6 +205,9 @@
             <goal>clean</goal>
             <goal>generate</goal>
           </goals>
+          <configuration>
+             <androidSdk>${android.platform.version}</androidSdk>
+          </configuration>
         </execution>
       </executions>
     </plugin>
@@ -234,60 +257,5 @@
             </plugins>
           </build>
         </profile>
-	    <profile>
-	        <id>eclipse</id>
-	        <build>
-              <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>libs</id>
-                            <phase>initialize</phase>
-                            <goals><goal>copy-dependencies</goal></goals>
-                            <configuration>
-                              <outputDirectory>libs</outputDirectory>
-                              <overWriteReleases>false</overWriteReleases>
-                              <overWriteSnapshots>false</overWriteSnapshots>
-                              <overWriteIfNewer>true</overWriteIfNewer>
-                              <includeScope>runtime</includeScope>
-                		      <includeArtifactIds>
-                		        openbeans,
-                		        persistence-api,
-                		        javax.inject,
-                		        commons-beanutils,
-                		        dagger,
-                		        ormlite-core,
-                		        ormlite-android,
-                		        classyandroid,
-                		        classyjava,
-                		        fest-assert-core,
-                		        fest-util,
-                                compatibility-v4,
-                                compatibility-v7-appcompat
-                 		      </includeArtifactIds>
-                		      <excludeArtifactIds>
-                		      	dagger-compiler
-                		      </excludeArtifactIds>
-                           </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                  <artifactId>maven-clean-plugin</artifactId>
-                  <configuration>
-                    <filesets>
-                      <fileset>
-                        <directory>libs</directory>
-                        <includes><include>*.jar</include></includes>
-                        <excludes><exclude>.gitignore</exclude></excludes>
-                      </fileset>
-                   </filesets>
-                 </configuration>
-               </plugin>
-            </plugins>
-	      </build>
-	    </profile>
 	</profiles>
 </project>

@@ -132,7 +132,7 @@ public class ClassyFySearchEngine extends SearchEngineBase
         COLUMN_MAP.put(SearchManager.SUGGEST_COLUMN_TEXT_1, "title");
         COLUMN_MAP.put(SearchManager.SUGGEST_COLUMN_TEXT_2, "model");
         COLUMN_MAP.put(SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID, "_id");
-        FtsOpenHelper ftsOpenHelper = new FtsOpenHelper(sqLiteOpenHelper);
+        FtsOpenHelper ftsOpenHelper = new FtsOpenHelper(context, sqLiteOpenHelper);
         FtsEngine ftsEngine = new FtsEngine(ftsOpenHelper, "all_nodes", COLUMN_MAP);
         ftsEngine.setOrderbyText2(true);
         ftsEngine.setText2Filter(text2Filter);

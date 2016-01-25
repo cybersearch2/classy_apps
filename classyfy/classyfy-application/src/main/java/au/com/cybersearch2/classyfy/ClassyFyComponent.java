@@ -21,9 +21,7 @@ import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanSubcomponent;
 import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
 import au.com.cybersearch2.classyfy.module.ClassyFyApplicationModule;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
-import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyinject.ApplicationModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import dagger.Component;
 
@@ -34,7 +32,7 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = ClassyFyApplicationModule.class)  
-public interface ClassyFyComponent extends ApplicationModule
+public interface ClassyFyComponent
 {
     PersistenceContext persistenceContext();
     ClassyFySearchEngine classyFySearchEngine();

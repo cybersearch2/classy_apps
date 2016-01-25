@@ -101,8 +101,6 @@ public class ClassyFyProvider extends ContentProvider
                     Log.e(TAG, "Database error on initialization", e);
                     return Boolean.FALSE;
                 }
-                PersistenceContext persistenceContext = classyFyComponent.persistenceContext();
-                startApplicationSetup(persistenceContext);
                 classyFySearchEngine = classyFyComponent.classyFySearchEngine();
                 application.setComponent(classyFyComponent);
                 return Boolean.TRUE;

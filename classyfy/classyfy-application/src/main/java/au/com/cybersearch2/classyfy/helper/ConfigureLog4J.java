@@ -15,9 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.helper;
 
-import org.apache.log4j.Level;
 
-import de.mindpipe.android.logging.log4j.LogConfigurator;
+// Ucomment here and in pom.xml where log4j dependencies are commented out
+//import org.apache.log4j.Level;
+//import de.mindpipe.android.logging.log4j.LogConfigurator;
 
 /**
  * ConfigureLog4J
@@ -29,6 +30,7 @@ public class ConfigureLog4J
 {
     public static void configure() 
     {
+        /*
         final LogConfigurator logConfigurator = new LogConfigurator();
                 
         logConfigurator.setUseFileAppender(false);
@@ -37,6 +39,7 @@ public class ConfigureLog4J
         // Set log level of a specific logger
         logConfigurator.setLevel("com.j256.ormlite", Level.INFO);
         logConfigurator.configure();
+        */
     }
 
 }
