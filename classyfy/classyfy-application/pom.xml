@@ -96,11 +96,16 @@
     </dependency>  
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyandroid</artifactId>
+      <artifactId>classy_tools_lib</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.android.support</groupId>
           <artifactId>support-v4</artifactId>        
+        </exclusion>
+        <exclusion>
+          <groupId>com.android.support</groupId>
+          <artifactId>appcompat-v7</artifactId>        
         </exclusion>
         <exclusion>
           <groupId>com.j256.ormlite</groupId>
@@ -119,7 +124,7 @@
 	      <artifactId>commons-collections</artifactId>
         </exclusion>
       </exclusions>
-      <type>jar</type>
+      <type>aar</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -183,6 +188,11 @@
       </exclusions>
       <scope>test</scope>
     </dependency>  
+    <dependency>
+      <groupId>org.robolectric</groupId>
+      <artifactId>shadows-support-v4</artifactId>
+      <scope>test</scope>
+    </dependency> 
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-ant-tasks</artifactId>

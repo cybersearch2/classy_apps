@@ -40,56 +40,15 @@
       </dependency>  
       <dependency>
         <groupId>au.com.cybersearch2</groupId>
-        <artifactId>android-hello-two-dbs</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-         <exclusion>
-	      <groupId>*</groupId>
-	      <artifactId>*</artifactId>
-         </exclusion>
-        </exclusions>
-        <type>jar</type>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>au.com.cybersearch2</groupId>
-        <artifactId>android-hello-two-dbs-v2</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-         <exclusion>
-	      <groupId>*</groupId>
-	      <artifactId>*</artifactId>
-         </exclusion>
-        </exclusions>
-        <type>jar</type>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>au.com.cybersearch2</groupId>
-        <artifactId>classyjava</artifactId>
-        <exclusions>
-         <exclusion>
-	      <groupId>commons-logging</groupId>
-	      <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-	      <artifactId>commons-collections</artifactId>
-        </exclusion>
-       </exclusions>
-       <type>jar</type>
-       <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>au.com.cybersearch2</groupId>
-        <artifactId>classyandroid</artifactId>
-         <exclusions>
+         <artifactId>classy_tools_lib</artifactId>
+         <version>${project.version}</version>
+          <exclusions>
           <exclusion>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-jdbc</artifactId>
           </exclusion>
         </exclusions>
-        <type>jar</type>
+        <type>aar</type>
         <scope>compile</scope>
        </dependency>
        <dependency>
@@ -160,69 +119,4 @@
         </plugin>
 	  </plugins>
 	</build>
-	<profiles>
-	    <profile>
-	        <id>eclipse</id>
-	        <build>
-              <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>libs</id>
-                            <phase>initialize</phase>
-                            <goals><goal>copy-dependencies</goal></goals>
-                            <configuration>
-                              <outputDirectory>libs</outputDirectory>
-                              <overWriteReleases>false</overWriteReleases>
-                              <overWriteSnapshots>false</overWriteSnapshots>
-                              <overWriteIfNewer>true</overWriteIfNewer>
-                              <includeScope>runtime</includeScope>
-                              <includeArtifactIds>
-                                hello-two-dbs-example,
-                                fest-util,
-                                openbeans,
-                                persistence-api,
-                                javax.inject,
-                                commons-beanutils,
-                                dagger,
-                                ormlite-core,
-                                ormlite-android,
-                                classyandroid,
-                                classyjava,
-                                compatibility-v4,
-                                compatibility-v7-appcompat
-                              </includeArtifactIds>
-                              <excludeArtifactIds>
-                                commons-logging,
-                                commons-collections,
-                                objenesis,
-                                kxml2,
-                                fest-assert-core,
-                                ormlite-jdbc,
-                                junit,
-                                dagger-compiler,
-                                android
-                             </excludeArtifactIds>
-                           </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                  <artifactId>maven-clean-plugin</artifactId>
-                  <configuration>
-                    <filesets>
-                      <fileset>
-                        <directory>libs</directory>
-                        <includes><include>*</include></includes>
-                        <followSymlinks>false</followSymlinks>
-                      </fileset>
-                   </filesets>
-                 </configuration>
-               </plugin>
-            </plugins>
-	      </build>
-	    </profile>
-	</profiles>
 </project>

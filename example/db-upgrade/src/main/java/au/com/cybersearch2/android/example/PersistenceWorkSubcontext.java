@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2016  www.cybersearch2.com.au
+    Copyright (C) 2015  www.cybersearch2.com.au
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,22 +13,22 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.classyfy;
+package au.com.cybersearch2.android.example;
+
+import javax.inject.Singleton;
+
+import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
+import au.com.cybersearch2.classytask.Executable;
+import dagger.Subcomponent;
 
 /**
- * StartState
+ * PersistenceWorkSubcontext
  * @author Andrew Bowley
- * 14 Jan 2016
+ * 15 Jan 2016
  */
-public enum StartState
+@Singleton
+@Subcomponent(modules = PersistenceWorkModule.class)
+public interface PersistenceWorkSubcontext
 {
-    precreate,
-    build,
-    run,
-    fail;
-    
-    boolean isStarting()
-    {
-        return this.ordinal() < 2; 
-    }
+    Executable executable();
 }

@@ -13,14 +13,22 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.classyfy.module;
+package au.com.cybersearch2.example.v2;
+
+import javax.inject.Singleton;
+
+import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
+import au.com.cybersearch2.classytask.Executable;
+import dagger.Subcomponent;
 
 /**
- * MainActivityModule
+ * PersistenceWorkSubcontext
  * @author Andrew Bowley
- * 13 Jan 2016
+ * 15 Jan 2016
  */
-public class MainActivityModule
+@Singleton
+@Subcomponent(modules = PersistenceWorkModule.class)
+public interface PersistenceWorkSubcontext
 {
-
+    Executable executable();
 }

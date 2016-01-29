@@ -59,7 +59,8 @@
     </dependency>
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyjava</artifactId>
+      <artifactId>classy_tools_lib</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.j256.ormlite</groupId>
@@ -78,32 +79,14 @@
 	      <artifactId>commons-collections</artifactId>
         </exclusion>
       </exclusions>
-      <type>jar</type>
-      <scope>compile</scope>
+      <type>aar</type>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>au.com.cybersearch2</groupId>
-      <artifactId>classyandroid</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.j256.ormlite</groupId>
-          <artifactId>ormlite-jdbc</artifactId>
-        </exclusion>
-        <exclusion>
-           <groupId>net.sf.kxml</groupId>
-           <artifactId>kxml2</artifactId>
-        </exclusion>
-        <exclusion>
-	      <groupId>commons-logging</groupId>
-	      <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-	      <artifactId>commons-collections</artifactId>
-        </exclusion>
-      </exclusions>
-      <type>jar</type>
-      <scope>compile</scope>
+      <groupId>com.android.support.test</groupId>
+      <artifactId>runner</artifactId>
+      <version>0.4.1</version>
+      <type>aar</type>
     </dependency>
     <dependency>
       <groupId>com.android.support.test.espresso</groupId>
@@ -121,28 +104,12 @@
      	  <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
       	</exclusion>
-       	<exclusion>
-      	  <groupId>com.squareup</groupId>
-          <artifactId>javawriter</artifactId>
-     	</exclusion>
-       	<exclusion>
-         <groupId>org.hamcrest</groupId>
-         <artifactId>hamcrest-library</artifactId>
-     	</exclusion>
-       	<exclusion>
-         <groupId>com.google.code.findbugs</groupId>
-         <artifactId>jsr305</artifactId>
-     	</exclusion>
-       	<exclusion>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-     	</exclusion>
       </exclusions>
-      <version>2.2.1</version>
+       <version>2.2.1</version>
       <type>aar</type>
       <scope></scope>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert-core</artifactId>
       <scope>compile</scope>

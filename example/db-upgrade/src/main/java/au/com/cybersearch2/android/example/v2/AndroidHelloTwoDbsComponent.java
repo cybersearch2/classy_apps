@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2016  www.cybersearch2.com.au
+    Copyright (C) 2015  www.cybersearch2.com.au
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,35 +13,29 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.classyfy;
+package au.com.cybersearch2.android.example.v2;
 
 import javax.inject.Singleton;
 
-import au.com.cybersearch2.classyfts.FtsEngine;
-import au.com.cybersearch2.classyfy.data.alfresco.AlfrescoFilePlanSubcomponent;
-import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
-import au.com.cybersearch2.classyfy.module.ClassyFyApplicationModule;
-import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
-import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import com.example.hellotwodbs.v2.HelloTwoDbs;
+
+import au.com.cybersearch2.classydb.DatabaseSupport.ConnectionType;
 import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
+import au.com.cybersearch2.example.v2.PersistenceWorkSubcontext;
 import dagger.Component;
 
 /**
- * ClassyFyComponent
+ * AndroidHelloTwoDbsComponent
  * @author Andrew Bowley
- * 13 Jan 2016
+ * 15 Jan 2016
  */
 @Singleton
-@Component(modules = ClassyFyApplicationModule.class)
-public interface ClassyFyComponent
+@Component(modules = AndroidHelloTwoDbsModule.class)  
+public interface AndroidHelloTwoDbsComponent
 {
+    void inject(HelloTwoDbs helloTwoDbs);
     PersistenceContext persistenceContext();
-    ClassyFySearchEngine classyFySearchEngine();
-    FtsEngine ftsEngine();
-    void inject(MainActivity mainActivity);
-    void inject(TitleSearchResultsActivity titleSearchResultsActivity);
-    ClassyLogicComponent plus(ClassyLogicModule classyLogicModule);
+    ConnectionType connectionType();
     PersistenceWorkSubcontext plus(PersistenceWorkModule persistenceWorkModule);
-    AlfrescoFilePlanSubcomponent plus(AlfrescoFilePlanModule alfrescoFilePlanModule);
 }

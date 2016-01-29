@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014  www.cybersearch2.com.au
+    Copyright (C) 2015  www.cybersearch2.com.au
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,10 @@ package au.com.cybersearch2.classyfy;
 import android.app.Application;
 import android.util.Log;
 import au.com.cybersearch2.classyfy.helper.ConfigureLog4J;
+import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
+import au.com.cybersearch2.classyjpa.entity.PersistenceWork;
+import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
+import au.com.cybersearch2.classytask.Executable;
 
 /**
  * ClassyFyApplication
@@ -25,7 +29,7 @@ import au.com.cybersearch2.classyfy.helper.ConfigureLog4J;
  * @author Andrew Bowley
  * 19 Jun 2015
  */
-public class ClassyFyApplication extends Application //implements ClassyFyComponent
+public class ClassyFyApplication extends Application
 {
     public static final String TAG = "ClassyFyApplication";
     
@@ -89,43 +93,7 @@ public class ClassyFyApplication extends Application //implements ClassyFyCompon
         }
         return classyFyComponent;
     }
-/*    
-    @Override
-    public void inject(MainActivity mainActivity)
-    {
-        getClassyFyComponent().inject(mainActivity);
-    }
-    
-    @Override
-    public void inject(TitleSearchResultsActivity titleSearchResultsActivity)
-    {
-        classyFyComponent.inject(titleSearchResultsActivity);
-    }
-    
-    @Override
-    public ClassyLogicComponent plus(ClassyLogicModule classyLogicModule)
-    {
-        return classyFyComponent.plus(classyLogicModule);
-    }
 
-    @Override
-    public AlfrescoFilePlanSubcomponent plus(AlfrescoFilePlanModule alfrescoFilePlanModule)
-    {
-        return classyFyComponent.plus(alfrescoFilePlanModule);
-    }
-
-    @Override
-    public PersistenceContext persistenceContext()
-    {
-        return classyFyComponent.persistenceContext();
-    }
-
-    @Override
-    public ClassyFySearchEngine classyFySearchEngine()
-    {
-        return classyFyComponent.classyFySearchEngine();
-    }
- */
     protected void onAndroidCreate()
     {
         super.onCreate();
@@ -144,7 +112,9 @@ public class ClassyFyApplication extends Application //implements ClassyFyCompon
             startMonitor.notifyAll();
         }
     }
-
-
-
+    public Executable getExecutable(PersistenceWork persistenceWork)
+    {
+        PersistenceWorkModule persistenceWorkModule = new PersistenceWorkModule(ClassyFyProvider.PU_NAME, true, persistenceWork);
+        return classyFyComponent.plus(persistenceWorkModule).executable();
+    }
 }

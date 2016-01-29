@@ -61,6 +61,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import au.com.cybersearch2.classybean.BeanMap;
+import au.com.cybersearch2.classyfts.FtsEngine;
 import au.com.cybersearch2.classyfy.data.FieldDescriptor;
 import au.com.cybersearch2.classyfy.data.FieldDescriptorSetFactory;
 import au.com.cybersearch2.classyfy.data.Node;
@@ -72,6 +73,7 @@ import au.com.cybersearch2.classyfy.helper.TicketManager;
 import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 import au.com.cybersearch2.classynode.NodeType;
 import au.com.cybersearch2.classywidget.ListItem;
@@ -137,6 +139,19 @@ public class TitleSearchResultsActivityTest
 
         @Override
         public AlfrescoFilePlanSubcomponent plus(AlfrescoFilePlanModule alfrescoFilePlanModule)
+        {
+            return null;
+        }
+
+        @Override
+        public FtsEngine ftsEngine()
+        {
+            return null;
+        }
+
+        @Override
+        public PersistenceWorkSubcontext plus(
+                PersistenceWorkModule persistenceWorkModule)
         {
             return null;
         }

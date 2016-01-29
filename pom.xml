@@ -69,7 +69,6 @@
     <snapshot.repo.url>http://microserver/artifactory/libs-snapshot-local</snapshot.repo.url>
   </properties>
   <modules>
-    <!--<module>compatibility-v7-appcompat</module>-->
     <module>classyfy</module>
     <module>example</module>
   </modules>
@@ -123,7 +122,7 @@
         <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
-          <version>4.11</version>
+          <version>4.12</version>
         </dependency>
         <dependency>
           <groupId>org.apache.ant</groupId>
@@ -133,6 +132,11 @@
         <dependency>
           <groupId>org.robolectric</groupId>
           <artifactId>shadows-core</artifactId>
+          <version>3.0</version>
+        </dependency> 
+        <dependency>
+          <groupId>org.robolectric</groupId>
+          <artifactId>shadows-support-v4</artifactId>
           <version>3.0</version>
         </dependency> 
         <dependency>
