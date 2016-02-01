@@ -65,7 +65,7 @@
           <version>${slf4j-version}</version>
         </dependency>
          -->
-        <!-- Added for Proguard -->
+        <!-- Added for Proguard 
         <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
@@ -88,7 +88,7 @@
           <version>3.2.1</version>
           <scope>provided</scope>
         </dependency> 
-        <!--                    -->
+        -->
      <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -97,7 +97,7 @@
     <dependency>
       <groupId>au.com.cybersearch2</groupId>
       <artifactId>classy_tools_lib</artifactId>
-      <version>${project.version}</version>
+      <version>${classy_tools.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.android.support</groupId>
@@ -223,6 +223,18 @@
         <plugin>
           <groupId>com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
+			<configuration>
+				<manifest>
+					<debuggable>true</debuggable>
+				</manifest>
+                <proguard>
+                  <skip>true</skip>
+                  <config>proguard.cfg</config>
+                  <configs>
+                    <config>${env.ANDROID_HOME}/tools/proguard/proguard-android.txt</config>
+                  </configs>
+                </proguard>
+			</configuration>
     	</plugin>
     	<!-- Set skipTests = "true" to bypass test phase in build -->
     	<plugin>
@@ -233,25 +245,34 @@
     	     <skipTests>false</skipTests>
     	    </configuration>
     	</plugin>
-        <plugin>
-          <groupId>org.bitbucket.komo81</groupId>
-          <artifactId>eclipse-aar-maven-plugin</artifactId>
-          <version>1.0.0</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>clean</goal>
-                <goal>generate</goal>
-              </goals>
-              <configuration>
-                 <androidSdk>${android.platform.version}</androidSdk>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
 	  </plugins>
 	</build>
 	<profiles>
+		<profile>
+		  <id>eclipse</id>
+          <build>
+            <plugins>
+    			<plugin>
+                  <groupId>org.bitbucket.komo81</groupId>
+                  <artifactId>eclipse-aar-maven-plugin</artifactId>
+                  <version>1.0.0</version>
+                  <executions>
+                    <execution>
+                      <goals>
+                        <goal>clean</goal>
+                        <goal>generate</goal>
+                      </goals>
+                      <phase>initialize</phase>
+                      <configuration>
+                         <androidSdk>${android.platform.version}</androidSdk>
+                         <outputDirectory>${basedir}/eclipse-aar</outputDirectory>
+                      </configuration>
+                    </execution>
+                  </executions>
+    			</plugin>
+            </plugins>
+          </build>
+		</profile>
 		<profile>
 			<id>release</id>
             <properties>
