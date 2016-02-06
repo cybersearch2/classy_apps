@@ -38,8 +38,8 @@
     <module>classyfy-application</module>
     <!-- Integration tests disabled because of issue with android-maven-plugin 4.3.0. 
          To enable, refer
-         https://github.com/simpligility/android-maven-plugin/issues/660 
-    <module>classyfy-tests</module> -->
+         https://github.com/simpligility/android-maven-plugin/issues/660 --> 
+    <module>classyfy-tests</module> 
   </modules>
 
   <dependencyManagement>
@@ -50,24 +50,6 @@
           <version>${android.sdk.version}</version>
           <scope>provided</scope>
         </dependency>  
-        <dependency>
-          <groupId>au.com.cybersearch2</groupId>
-          <artifactId>classyjava</artifactId>
-          <version>${classy_tools.version}</version>
-          <type>jar</type>
-        </dependency>
-        <dependency>
-          <groupId>au.com.cybersearch2</groupId>
-          <artifactId>classyandroid</artifactId>
-          <version>${classy_tools.version}</version>
-           <exclusions>
-            <exclusion>
-              <groupId>com.j256.ormlite</groupId>
-              <artifactId>ormlite-jdbc</artifactId>
-            </exclusion>
-          </exclusions>
-          <type>jar</type>
-        </dependency>
         <dependency>
           <groupId>com.j256.ormlite</groupId>
           <artifactId>ormlite-android</artifactId>
@@ -84,6 +66,7 @@
             </activation>
             <modules>
                 <module>classyfy-application</module>
+                <module>classyfy-tests</module>
              </modules>
         </profile>
         <profile>

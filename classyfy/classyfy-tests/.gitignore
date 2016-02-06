@@ -1,4 +1,5 @@
-.classpath
+.classpat
+project.properties
 /.settings/
 /gen/
 /.apt_generated/
