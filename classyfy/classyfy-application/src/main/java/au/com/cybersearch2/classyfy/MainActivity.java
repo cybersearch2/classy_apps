@@ -37,13 +37,8 @@ import android.widget.Toast;
 import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.helper.ViewHelper;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
-import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
-import au.com.cybersearch2.classyjpa.entity.PersistenceWork;
-import au.com.cybersearch2.classyjpa.entity.PersistenceWorkModule;
-import au.com.cybersearch2.classyjpa.persist.PersistenceWorker;
 import au.com.cybersearch2.classytask.AsyncBackgroundTask;
-import au.com.cybersearch2.classytask.Executable;
 
 /**
  * ClassyFy MainActivity
@@ -109,8 +104,9 @@ public class MainActivity extends AppCompatActivity
                 startState = success ? StartState.run : StartState.fail;
                 if (success)
                     displayContent(nodeDetails);
-                else
-                    displayToast(START_FAIL_MESSAGE);
+                // TODO - Cannot display toast inside thread which has not called Looper.prepare()
+                //else
+                //    displayToast(START_FAIL_MESSAGE);
             }
         };
         starter.onStartLoading();

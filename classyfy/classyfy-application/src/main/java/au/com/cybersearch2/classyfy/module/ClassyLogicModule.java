@@ -48,7 +48,8 @@ public class ClassyLogicModule
             @Override
             public void onRollback(Throwable rollbackException)
             {   
-                displayToast("Record not available due to unexpected error");
+                // TODO - Cannot display toast inside thread which has not called Looper.prepare()
+                //displayToast("Record not available due to unexpected error");
                 Log.e(TAG, "Fetch node id " + nodeId + ": failed", rollbackException);
             }
         };
@@ -66,7 +67,7 @@ public class ClassyLogicModule
         catch (InterruptedException e)
         {
         }
-        return node;
+        return node == null ? Node.rootNodeNewInstance() : node;
     }
     
     /**

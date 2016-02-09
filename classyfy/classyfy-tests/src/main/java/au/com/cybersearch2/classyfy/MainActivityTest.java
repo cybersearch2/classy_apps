@@ -29,6 +29,7 @@ import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -115,11 +116,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         final MainActivity mainActivity = getActivity();
         // Block until Dagger application component is available
         ClassyFyApplication.getInstance().getClassyFyComponent();
-        // Check that ContentProvider is available for search operations
-        ContentResolver contentResolver  = mainActivity.getContentResolver();
-        assertThat(contentResolver.getType(ClassyFySearchEngine.CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
         // Wait up to 10 seconds for start completion
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 30; i++)
         {
             if (mainActivity.startState == StartState.run)
                 break;
@@ -128,6 +126,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Thread.sleep(1000);
         }
         assertThat(mainActivity.startState == StartState.run);
+        // Check that ContentProvider is available for search operations
+        ContentResolver contentResolver  = mainActivity.getContentResolver();
+        Uri CONTENT_URI = 
+                Uri.parse("content://au.com.cybersearch2.classyfy.ClassyFyProvider/all_nodes");
+        assertThat(contentResolver.getType(CONTENT_URI)).isEqualTo("vnd.android.cursor.dir/vnd.classyfy.node");
         LinearLayout categoryLayout = (LinearLayout) mainActivity.findViewById(R.id.top_category);
         LinearLayout dynamicLayout = (LinearLayout)categoryLayout.getChildAt(0);
         LinearLayout titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);

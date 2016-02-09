@@ -60,6 +60,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classybean.BeanMap;
 import au.com.cybersearch2.classyfts.FtsEngine;
 import au.com.cybersearch2.classyfy.data.FieldDescriptor;
@@ -155,7 +156,13 @@ public class TitleSearchResultsActivityTest
         {
             return null;
         }
-        
+
+        @Override
+        public ResourceEnvironment resourceEnvironment()
+        {
+            return null;
+        }
+
     }
     
     @Implements(value = SystemClock.class, callThroughByDefault = true)

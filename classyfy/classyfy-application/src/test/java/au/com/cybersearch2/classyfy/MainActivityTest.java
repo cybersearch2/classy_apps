@@ -46,17 +46,16 @@ import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.util.SimpleFuture;
 
-import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.content.AsyncTaskLoader;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classybean.BeanMap;
 import au.com.cybersearch2.classyfts.FtsEngine;
 import au.com.cybersearch2.classyfy.data.FieldDescriptor;
@@ -151,7 +150,13 @@ public class MainActivityTest
         {
             return null;
         }
-        
+
+        @Override
+        public ResourceEnvironment resourceEnvironment()
+        {
+            return null;
+        }
+
     }
     
     @Implements(value = SystemClock.class, callThroughByDefault = true)
@@ -275,7 +280,6 @@ public class MainActivityTest
     {
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
 	@Test
     public void test_createSearchView() throws Exception
