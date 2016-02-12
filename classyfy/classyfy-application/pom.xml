@@ -99,14 +99,16 @@
       <artifactId>classy_tools_lib</artifactId>
       <version>${classy_tools.version}</version>
       <exclusions>
+      <!--
         <exclusion>
           <groupId>com.android.support</groupId>
-          <artifactId>support-v4</artifactId>        
+          <artifactId>cas_support-v4</artifactId>
         </exclusion>
         <exclusion>
           <groupId>com.android.support</groupId>
-          <artifactId>appcompat-v7</artifactId>        
+          <artifactId>cas_support-v4-impl</artifactId>
         </exclusion>
+        -->
         <exclusion>
           <groupId>com.j256.ormlite</groupId>
           <artifactId>ormlite-jdbc</artifactId>
@@ -242,7 +244,7 @@
     	    <artifactId>maven-surefire-plugin</artifactId>
     	    <configuration>
     	     <argLine> -XX:-UseSplitVerifier</argLine>
-    	     <skipTests>false</skipTests>
+    	     <skipTests>true</skipTests>
     	    </configuration>
     	</plugin>
 	  </plugins>

@@ -15,31 +15,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.provider;
 
-import javax.persistence.PersistenceException;
-
-import com.j256.ormlite.dao.DaoManager;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.CancellationSignal;
-import android.support.v4.content.Loader;
 import android.util.Log;
-
-import au.com.cybersearch2.classyfts.FtsEngine;
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.ClassyFyComponent;
-import au.com.cybersearch2.classyfy.DaggerClassyFyComponent;
-import au.com.cybersearch2.classyfy.data.RecordCategory;
-import au.com.cybersearch2.classyfy.data.RecordFolder;
-import au.com.cybersearch2.classyfy.data.RecordModel;
-import au.com.cybersearch2.classyfy.module.ClassyFyApplicationModule;
-import au.com.cybersearch2.classyjpa.persist.PersistenceAdmin;
+import au.com.cybersearch2.classyfy.service.ClassyFyService;
 import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
-import au.com.cybersearch2.classynode.EntityByNodeIdGenerator;
-import au.com.cybersearch2.classynode.Node;
-import au.com.cybersearch2.classytask.AsyncBackgroundTask;
 
 
 /**
@@ -63,9 +48,10 @@ public class ClassyFyProvider extends ContentProvider
     
 	/** The actual ContentProvider implementation - 
 	 * lazily loaded because it is available only when Application startup is completed */
-    ClassyFySearchEngine classyFySearchEngine;
+    protected ClassyFySearchEngine classyFySearchEngine;
     /** Dagger2 Application Component - ClassyFy will not run unless this variable is set */
     protected ClassyFyComponent classyFyComponent;
+    protected ClassyFyService classyFyService;
 
 	/**
 	 * onCreate() called before Application onCreate(), so can do nothing as DI not initialized.
@@ -75,25 +61,26 @@ public class ClassyFyProvider extends ContentProvider
 	public boolean onCreate()
 	{
         final ClassyFyApplication application = ClassyFyApplication.getInstance();
-        AsyncBackgroundTask starter = 
-                new FactoryTask(application, new FactoryTask.MainThreadCallback(){
-
-                    @Override
-                    public void onTaskComplete(
-                            ClassyFyComponent classyFyComponent,
-                            ClassyFySearchEngine classyFySearchEngine)
-                    {
-                        ClassyFyProvider.this.classyFyComponent = classyFyComponent;
-                        ClassyFyProvider.this.classyFySearchEngine = classyFySearchEngine;
-                        application.setComponent(classyFyComponent);
-                    }
-
-                    @Override
-                    public void onTaskFail(String cause)
-                    {
-                        Log.e(TAG, cause);
-                    }});
-        starter.startLoading();
+        classyFyService = new ClassyFyService(new ClassyFyService.ClassyfyServiceCallback()
+        {
+            
+            @Override
+            public void onServiceStart(ClassyFyComponent classyFyComponent,
+                    ClassyFySearchEngine classyFySearchEngine)
+            {
+                ClassyFyProvider.this.classyFyComponent = classyFyComponent;
+                ClassyFyProvider.this.classyFySearchEngine = classyFySearchEngine;
+                application.setComponent(classyFyComponent, classyFyService);
+            }
+            
+            @Override
+            public void onServiceFail(String cause)
+            {
+                Log.e(TAG, cause);
+                application.closeApplication();
+                
+            }
+        });
         return true;
 	}
 
@@ -103,10 +90,11 @@ public class ClassyFyProvider extends ContentProvider
 	@Override
     public void shutdown() 
 	{
-        PersistenceContext persistenceContext =
-                classyFyComponent == null ? null : classyFyComponent.persistenceContext();
-        if (persistenceContext != null)
-            persistenceContext.getDatabaseSupport().close();
+	    classyFyService.shutdown();
+        //PersistenceContext persistenceContext =
+        //        classyFyComponent == null ? null : classyFyComponent.persistenceContext();
+        //if (persistenceContext != null)
+        //    persistenceContext.getDatabaseSupport().close();
 	}
 
    /**

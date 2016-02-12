@@ -58,9 +58,10 @@ public class ClassyLogicModule
     @Provides Node provideNode()
     {
         Node node = null;
-        Executable exe = classyFyApplication.getExecutable(nodeFinder);
+        Executable exe = null;
         try
         {
+            exe = classyFyApplication.getExecutable(nodeFinder);
             if (exe.waitForTask() == WorkStatus.FINISHED)
                 node = nodeFinder.getNode();
         }
