@@ -1,6 +1,5 @@
 .classpath
 .factorypath
-project.properties
 /.settings/
 /gen/
 /.apt_generated/
