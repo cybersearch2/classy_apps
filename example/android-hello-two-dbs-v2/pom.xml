@@ -8,7 +8,7 @@
     </parent>
 	<artifactId>android-hello-two-dbs-v2</artifactId>
 	<packaging>apk</packaging>
-	<name>Hello Two Dbs Android Application shows support for 2 databases</name>
+	<name>Hello Two Dbs Android Application version upgrade</name>
     <description>Classy Sample from Android lightweight Java Persistence API</description>
     <url>http://cybersearch2.com.au</url>
     <licenses>
