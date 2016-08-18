@@ -16,6 +16,7 @@
 package au.com.cybersearch2.classyfy;
 
 import javax.inject.Inject;
+
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity
                 ClassyFyApplication.getInstance();
         final MainActivity activity = this;
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
          // Complete initialization in background
 		AsyncBackgroundTask starter = new AsyncBackgroundTask(getApplication())
         {

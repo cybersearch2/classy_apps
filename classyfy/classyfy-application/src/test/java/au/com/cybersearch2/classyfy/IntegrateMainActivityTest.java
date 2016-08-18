@@ -56,6 +56,7 @@ import au.com.cybersearch2.classywidget.ListItem;
  * 26/05/2014
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(application = TestClassyFyApplication.class)
 public class IntegrateMainActivityTest
 {
     @Implements(value = SystemClock.class, callThroughByDefault = true)

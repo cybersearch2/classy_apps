@@ -118,6 +118,7 @@
         <groupId>com.google.dagger</groupId>
         <artifactId>dagger-compiler</artifactId>
         <version>${dagger.version}</version>
+        <scope>provided</scope>
         <optional>true</optional>
       </dependency>
  	</dependencies>

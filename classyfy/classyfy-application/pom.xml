@@ -137,9 +137,15 @@
       <groupId>com.android.support</groupId>
       <artifactId>appcompat-v7</artifactId>
       <version>${android.support.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.android.support</groupId>
+          <artifactId>support-v4</artifactId>        
+        </exclusion>
+      </exclusions>
       <type>aar</type>
       <scope>compile</scope>
-    </dependency>  
+    </dependency> 
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>support-v4</artifactId>
@@ -167,6 +173,7 @@
       <groupId>com.google.dagger</groupId>
       <artifactId>dagger-compiler</artifactId>
       <version>${dagger.version}</version>
+      <scope>provided</scope>
       <optional>true</optional>
     </dependency>
     <!-- Exclude Support Library as already have android.support:compatibility-v4 above -->

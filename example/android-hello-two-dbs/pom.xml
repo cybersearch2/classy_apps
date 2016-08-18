@@ -112,10 +112,6 @@
             <groupId>junit</groupId>
             <artifactId>junit-dep</artifactId>        
           </exclusion>
-          <exclusion>
-           <groupId>org.apache.maven</groupId>
-           <artifactId>maven-ant-tasks</artifactId>
-          </exclusion>
         </exclusions>
         <scope>test</scope>
       </dependency>  
@@ -137,8 +133,9 @@
       <dependency>
          <groupId>com.google.dagger</groupId>
          <artifactId>dagger-compiler</artifactId>
-         <optional>true</optional>
          <version>${dagger.version}</version>
+         <scope>provided</scope>
+         <optional>true</optional>
       </dependency>
  	</dependencies>
 	<build>

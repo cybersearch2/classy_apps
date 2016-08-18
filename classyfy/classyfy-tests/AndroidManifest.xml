@@ -4,8 +4,9 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="21" />
-
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="23" />
     <instrumentation
         android:name="android.support.test.runner.AndroidJUnitRunner"
         android:targetPackage="au.com.cybersearch2.classyfy" />
