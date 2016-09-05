@@ -38,12 +38,6 @@
 	        <url>file://${env.ANDROID_HOME}/extras/android/m2repository</url>
 	    </repository>
 	</repositories>
-    <pluginRepositories>
-      <pluginRepository>
-        <id>dropbox</id>
-        <url>https://dl.dropboxusercontent.com/u/52711537/maven-repo/</url>
-      </pluginRepository>
-    </pluginRepositories>
 	<dependencies>
         <!-- Uncomment when enabling log4j (OrmLite logging). 
         File ConfureLog4j.java in package au.com.cybersearch2.classyfy.helper must also
@@ -99,16 +93,6 @@
       <artifactId>classy_tools_lib</artifactId>
       <version>${classy_tools.version}</version>
       <exclusions>
-      <!--
-        <exclusion>
-          <groupId>com.android.support</groupId>
-          <artifactId>cas_support-v4</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.android.support</groupId>
-          <artifactId>cas_support-v4-impl</artifactId>
-        </exclusion>
-        -->
         <exclusion>
           <groupId>com.j256.ormlite</groupId>
           <artifactId>ormlite-jdbc</artifactId>
@@ -137,22 +121,9 @@
       <groupId>com.android.support</groupId>
       <artifactId>appcompat-v7</artifactId>
       <version>${android.support.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.android.support</groupId>
-          <artifactId>support-v4</artifactId>        
-        </exclusion>
-      </exclusions>
       <type>aar</type>
       <scope>compile</scope>
     </dependency> 
-    <dependency>
-      <groupId>com.android.support</groupId>
-      <artifactId>support-v4</artifactId>
-      <version>${android.support.version}</version>
-      <type>aar</type>
-      <scope>compile</scope>
-    </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
@@ -181,20 +152,6 @@
       <groupId>org.robolectric</groupId>
       <artifactId>robolectric</artifactId>
       <version>${robolectric.version}</version>
-       <exclusions>
-        <exclusion>
-          <groupId>com.android.support</groupId>
-          <artifactId>support-v4</artifactId>        
-        </exclusion>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit-dep</artifactId>        
-        </exclusion>
-        <exclusion>
-         <groupId>org.apache.maven</groupId>
-         <artifactId>maven-ant-tasks</artifactId>
-        </exclusion>
-      </exclusions>
       <scope>test</scope>
     </dependency>  
     <dependency>
@@ -202,24 +159,6 @@
       <artifactId>shadows-support-v4</artifactId>
       <scope>test</scope>
     </dependency> 
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-ant-tasks</artifactId>
-     <!-- This artefact is a kind of jar-with-dependencies already,
-          we don't need any of its dependencies -->
-      <exclusions>
-         <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>android</groupId>
       <artifactId>android</artifactId>
@@ -230,10 +169,20 @@
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.19.1</version>
+            <configuration>
+            <includes>
+                 <include>au.com.cybersearch2.classyfy.ClassyFyTestSuite.java</include>
+            </includes>            	
+            </configuration>
+        </plugin>
+        <plugin>
           <groupId>com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
 			<configuration>
-				<manifest>
+	            <manifest>
 					<debuggable>true</debuggable>
 				</manifest>
                 <proguard>
@@ -251,7 +200,7 @@
     	    <artifactId>maven-surefire-plugin</artifactId>
     	    <configuration>
     	     <argLine> -XX:-UseSplitVerifier</argLine>
-    	     <skipTests>true</skipTests>
+    	     <skipTests>false</skipTests>
     	    </configuration>
     	</plugin>
 	  </plugins>

@@ -15,6 +15,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="au.com.cybersearch2.classyfy.MainActivity" >
+        <!-- Comment out include to replace Toolbar with ActionBar  -->
         <include 
          	layout="@layout/toolbar_main" 
             android:layout_width="match_parent"

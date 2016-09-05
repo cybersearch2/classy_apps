@@ -62,7 +62,7 @@ public class ClassyLogicModule
         try
         {
             exe = classyFyApplication.getExecutable(nodeFinder);
-            if (exe.waitForTask() == WorkStatus.FINISHED)
+            if ((exe != null) && (exe.waitForTask() == WorkStatus.FINISHED))
                 node = nodeFinder.getNode();
         }
         catch (InterruptedException e)

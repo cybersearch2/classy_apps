@@ -21,6 +21,7 @@ import au.com.cybersearch2.classyfy.helper.ConfigureLog4J;
 import au.com.cybersearch2.classyfy.service.ClassyFyService;
 import au.com.cybersearch2.classyjpa.entity.PersistenceWork;
 import au.com.cybersearch2.classytask.Executable;
+import au.com.cybersearch2.classytask.WorkStatus;
 
 /**
  * ClassyFyApplication
@@ -39,6 +40,8 @@ public class ClassyFyApplication extends Application
     protected ClassyFyComponent classyFyComponent;
     protected ClassyFyService classyFyService;
     protected Object startMonitor;
+    /** Record last executable to monitor activity */
+    private volatile Executable executable;
 
     /**
      * Construct ClassyFyApplication object
@@ -118,9 +121,20 @@ public class ClassyFyApplication extends Application
             startMonitor.notifyAll();
         }
     }
-    
+ 
+    public WorkStatus getWorkStatus() throws InterruptedException
+    {
+        if (executable == null)
+            return WorkStatus.PENDING;
+        WorkStatus workStatus = executable.waitForTask();
+        if (workStatus != WorkStatus.RUNNING)
+            executable = null;
+        return workStatus;
+    }
+
     public Executable getExecutable(PersistenceWork persistenceWork) throws InterruptedException
     {
-        return classyFyService.put(persistenceWork);
+        executable = classyFyService.put(persistenceWork);
+        return executable;
     }
 }

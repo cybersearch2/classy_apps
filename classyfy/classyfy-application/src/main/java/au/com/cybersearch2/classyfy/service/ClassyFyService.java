@@ -28,6 +28,7 @@ import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.DaoManager;
 
 import android.util.Log;
@@ -145,6 +146,8 @@ public class ClassyFyService
                 persistenceWork.notifyAll();
             }
         }
+        // Ensure Ormlite cleanup
+        clearOrmlite();
     }
     
     private void runConsumer() 
@@ -188,6 +191,7 @@ public class ClassyFyService
      */
     protected void notifyTaskCompleted(Executable executable) 
     {
+        if (executable != null)
         synchronized(executable)
         {
             executable.notifyAll();
@@ -200,9 +204,9 @@ public class ClassyFyService
         boolean success = false;
         if (Log.isLoggable(TAG, Log.INFO))
             Log.i(TAG, "Starting Classyfy Service...");
+        clearOrmlite();
         // Get perisistence context to trigger database initialization
         // Build Dagger2 configuration
-        DaoManager.clearCache();
         final ClassyFyApplication application = ClassyFyApplication.getInstance();
         try
         {
@@ -252,5 +256,34 @@ public class ClassyFyService
         EntityByNodeIdGenerator entityByNodeIdGenerator = new EntityByNodeIdGenerator();
         persistenceAdmin.addNamedQuery(RecordCategory.class, CATEGORY_BY_NODE_ID, entityByNodeIdGenerator);
         persistenceAdmin.addNamedQuery(RecordFolder.class, FOLDER_BY_NODE_ID, entityByNodeIdGenerator);
+    }
+
+    private void clearOrmlite()
+    {
+        // From OrmLite OpenHelperManager
+        /*
+         * Filipe Leandro and I worked on this bug for like 10 hours straight. It's a doosey.
+         *
+         * Each ForeignCollection has internal DAO objects that are holding a ConnectionSource. Each Android
+         * ConnectionSource is tied to a particular database connection. What Filipe was seeing was that when all of
+         * his views we closed (onDestroy), but his application WAS NOT FULLY KILLED, the first View.onCreate()
+         * method would open a new connection to the database. Fine. But because he application was still in memory,
+         * the static BaseDaoImpl default cache had not been cleared and was containing cached objects with
+         * ForeignCollections. The ForeignCollections still had references to the DAOs that had been opened with old
+         * ConnectionSource objects and therefore the old database connection. Using those cached collections would
+         * cause exceptions saying that you were trying to work with a database that had already been close.
+         *
+         * Now, whenever we create a new helper object, we must make sure that the internal object caches have been
+         * fully cleared. This is a good lesson for anyone that is holding objects around after they have closed
+         * connections to the database or re-created the DAOs on a different connection somehow.
+         */
+        BaseDaoImpl.clearAllInternalObjectCaches();
+        /*
+         * Might as well do this also since if the helper changes then the ConnectionSource will change so no one is
+         * going to have a cache hit on the old DAOs anyway. All they are doing is holding memory.
+         *
+         * NOTE: we don't want to clear the config map.
+         */
+        DaoManager.clearDaoCache();
     }
 }

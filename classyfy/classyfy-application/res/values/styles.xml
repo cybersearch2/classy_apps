@@ -1,9 +1,15 @@
 <resources>
 
-  <style name="AppTheme" parent="AppTheme.Base"></style>
-
-  <!-- Base theme applied no matter what API -->
-  <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+ <style name="AppTheme.Base" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
     <!-- Set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
@@ -14,9 +20,11 @@
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
     <item name="colorAccent">#FF4081</item>
-  </style>
-  <style name="ToolBarStyle" parent="">
-        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-  </style>
+   </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppTheme.Base">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
 </resources>

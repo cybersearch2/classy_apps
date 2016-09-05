@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014  www.cybersearch2.com.au
+    Copyright (C) 2016  www.cybersearch2.com.au
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,16 +13,24 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
-package au.com.cybersearch2.classyfy.interfaces;
+package au.com.cybersearch2.classyfy;
 
-import au.com.cybersearch2.classytask.WorkStatus;
+import android.app.Application;
+import android.content.Context;
+import android.support.test.runner.AndroidJUnitRunner;
 
 /**
- * ClassyFyLauncher
+ * MockTestRunner
  * @author Andrew Bowley
- * 19 Jun 2015
+ * 3Sep.,2016
  */
-public interface ClassyFyLauncher
+public class MockTestRunner extends AndroidJUnitRunner
 {
-    WorkStatus waitForApplicationSetup();
+    @Override
+    public Application newApplication(ClassLoader cl, String className, Context context)
+        throws InstantiationException, IllegalAccessException, ClassNotFoundException 
+    {
+        return super.newApplication(cl, ClassyFyApplication.class.getName(), context);
+    }
+
 }

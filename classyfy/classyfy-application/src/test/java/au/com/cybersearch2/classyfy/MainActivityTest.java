@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,17 +39,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
-import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.util.SimpleFuture;
 
 import android.content.ContentProvider;
-import android.content.Context;
 import android.net.Uri;
-import android.os.SystemClock;
-import android.support.v4.content.AsyncTaskLoader;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -160,54 +152,6 @@ public class MainActivityTest
 
     }
     
-    @Implements(value = SystemClock.class, callThroughByDefault = true)
-    public static class MyShadowSystemClock {
-        public static long elapsedRealtime() {
-            return 0;
-        }
-    }
-
-    @Implements(AsyncTaskLoader.class)
-    public static class MyShadowAsyncTaskLoader<D> 
-    {
-          @RealObject private AsyncTaskLoader<D> realLoader;
-          private SimpleFuture<D> future;
-
-          public void __constructor__(Context context) {
-            BackgroundWorker worker = new BackgroundWorker();
-            future = new SimpleFuture<D>(worker) {
-              @Override protected void done() {
-                try {
-                  final D result = get();
-                  Robolectric.getForegroundThreadScheduler().post(new Runnable() {
-                    @Override public void run() {
-                      realLoader.deliverResult(result);
-                    }
-                  });
-                } catch (InterruptedException e) {
-                  // Ignore
-                }
-              }
-            };
-          }
-
-          @Implementation
-          public void onForceLoad() {
-              Robolectric.getBackgroundThreadScheduler().post(new Runnable() {
-              @Override
-              public void run() {
-                future.run();
-              }
-            });
-          }
-
-          private final class BackgroundWorker implements Callable<D> {
-            @Override public D call() throws Exception {
-              return realLoader.loadInBackground();
-            }
-          }
-    }
-
     class NodeField
     {
         public int id;
@@ -281,8 +225,7 @@ public class MainActivityTest
     {
     }
     
-    @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
-	@Test
+ 	@Test
     public void test_createSearchView() throws Exception
     {
         MainActivity mainActivity = Robolectric.buildActivity(MainActivity.class).create().get();

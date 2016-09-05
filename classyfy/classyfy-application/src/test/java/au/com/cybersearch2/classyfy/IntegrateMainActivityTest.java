@@ -17,29 +17,21 @@ package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-import java.util.concurrent.Callable;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
-import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowSQLiteConnection;
-import org.robolectric.util.SimpleFuture;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.SystemClock;
-import android.support.v4.content.AsyncTaskLoader;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -48,6 +40,7 @@ import android.widget.TextView;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
 import au.com.cybersearch2.classyfy.provider.ClassyFyProvider;
 import au.com.cybersearch2.classyfy.provider.ClassyFySearchEngine;
+import au.com.cybersearch2.classytask.WorkStatus;
 import au.com.cybersearch2.classywidget.ListItem;
 
 /**
@@ -56,57 +49,9 @@ import au.com.cybersearch2.classywidget.ListItem;
  * 26/05/2014
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(application = TestClassyFyApplication.class)
+@Config(sdk = 23)
 public class IntegrateMainActivityTest
 {
-    @Implements(value = SystemClock.class, callThroughByDefault = true)
-    public static class MyShadowSystemClock {
-        public static long elapsedRealtime() {
-            return 0;
-        }
-    }
-
-    @Implements(AsyncTaskLoader.class)
-    public static class MyShadowAsyncTaskLoader<D> 
-    {
-          @RealObject private AsyncTaskLoader<D> realLoader;
-          private SimpleFuture<D> future;
-
-          public void __constructor__(Context context) {
-            BackgroundWorker worker = new BackgroundWorker();
-            future = new SimpleFuture<D>(worker) {
-              @Override protected void done() {
-                try {
-                  final D result = get();
-                  Robolectric.getForegroundThreadScheduler().post(new Runnable() {
-                    @Override public void run() {
-                      realLoader.deliverResult(result);
-                    }
-                  });
-                } catch (InterruptedException e) {
-                  // Ignore
-                }
-              }
-            };
-          }
-
-          @Implementation
-          public void onForceLoad() {
-              Robolectric.getBackgroundThreadScheduler().post(new Runnable() {
-              @Override
-              public void run() {
-                future.run();
-              }
-            });
-          }
-
-          private final class BackgroundWorker implements Callable<D> {
-            @Override public D call() throws Exception {
-              return realLoader.loadInBackground();
-            }
-          }
-    }
-
     class NodeField
     {
         public int id;
@@ -178,6 +123,7 @@ public class IntegrateMainActivityTest
     };
 
     static final String TITLE = "Corporate Management";
+    private MainActivity mainActivity;
     
     @Before
     public void setUp() throws Exception 
@@ -191,6 +137,16 @@ public class IntegrateMainActivityTest
         ShadowContentResolver.registerProvider(
                 ClassyFySearchEngine.PROVIDER_AUTHORITY, 
                 classyFyProvider);
+        mainActivity = Robolectric.setupActivity(MainActivity.class);
+        while (true) {
+            Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
+            Robolectric.getBackgroundThreadScheduler().advanceToLastPostedRunnable();
+            WorkStatus startStatus = classyfyLauncher.getWorkStatus();
+            if (startStatus == WorkStatus.FINISHED)
+                break;
+            if (startStatus == WorkStatus.FAILED)
+                Assert.fail("Launch of initial node lookup failed");
+        }
     }
     
     @After
@@ -203,33 +159,9 @@ public class IntegrateMainActivityTest
         return new Intent(RuntimeEnvironment.application, MainActivity.class);
     }
 
-    /** Combined with test_parseIntent_action_view() as workaround for https://github.com/robolectric/robolectric/issues/1890
-    *  Robolectric 3.0 has new requirement for SQLite clean up between tests.
-    *  TODO - Fix this issue by improving persistenceContext.getDatabaseSupport().close() 
-    @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
-    @Test
-    public void test_mainActivity_onCreate() throws InterruptedException
-    {
-        // Create MainActivity
-        MainActivity mainActivity = Robolectric.buildActivity(TestMainActivity.class)
-        .create()
-        .start()
-        .visible()
-        .get();
-        mainActivity.startMonitor.waitForTask();
-        assertThat(mainActivity.startMonitor.getStatus()).isEqualTo(WorkStatus.FINISHED);
-    }
-*/    
-    @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
     @Test
     public void test_parseIntent_action_view() throws InterruptedException
     {
-        // Create MainActivity
-        MainActivity mainActivity = Robolectric.buildActivity(MainActivity.class)
-        .create()
-        .start()
-        .visible()
-        .get();
         assertThat(mainActivity).isNotNull();
         assertThat(mainActivity.startState).isEqualTo(StartState.run);
         // Check that ContentProvider is available for search operations
@@ -240,16 +172,24 @@ public class IntegrateMainActivityTest
         intent.setAction(Intent.ACTION_VIEW);
         Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "3");
         intent.setData(actionUri);
-        TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class)
-        .create()
-        .start()
-        .visible()
-        .get();
-        Robolectric.getForegroundThreadScheduler().pause();
-        Robolectric.getBackgroundThreadScheduler().pause();
-        titleSearchResultsActivity.parseIntent(intent);
-        Robolectric.getBackgroundThreadScheduler().runOneTask();
+        TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class, intent).setup().get();
+        while (true)
+        {
+            Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
+            Robolectric.getBackgroundThreadScheduler().advanceToLastPostedRunnable();
+            WorkStatus startStatus = TestClassyFyApplication.getTestInstance().getWorkStatus();
+            if (startStatus == WorkStatus.FINISHED)
+                break;
+            if (startStatus == WorkStatus.FAILED)
+                Assert.fail("Launch of TitleSearchResults failed");
+        }
+        // Wait up to 10 seconds for TicketManager to release intent
+        synchronized(intent)
+        {
+            intent.wait(10000);
+        }
         Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        Robolectric.getBackgroundThreadScheduler().advanceToLastPostedRunnable();
         assertThat(titleSearchResultsActivity.progressFragment.getSpinner().getVisibility()).isEqualTo(View.GONE);
         TextView tv1 = (TextView)titleSearchResultsActivity.findViewById(R.id.node_detail_title);
         assertThat(tv1.getText()).isEqualTo("Category: " + NODE_FIELDS[2].title);

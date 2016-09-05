@@ -16,7 +16,9 @@
 package au.com.cybersearch2.classyfy;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -28,7 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -39,26 +40,20 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
-import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.util.SimpleFuture;
 
 import android.app.SearchManager;
 import android.content.ContentProvider;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.SystemClock;
-import android.support.v4.content.AsyncTaskLoader;
 import android.view.View;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 import au.com.cybersearch2.classybean.BeanMap;
@@ -86,10 +81,41 @@ import au.com.cybersearch2.classywidget.ListItem;
  * 29/04/2014
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 23)
 public class TitleSearchResultsActivityTest
 {
+    class TestTicketManager extends TicketManager
+    {
+        Intent currentIntent;
+        
+        @Override
+        public int addIntent(Intent intent)
+        {
+            currentIntent = intent;
+            return super.addIntent(intent);
+        }
+
+        public Intent getCurrentIntent()
+        {
+            return currentIntent;
+        }
+        
+    }
+    
     class TestClassyFyComponent implements ClassyFyComponent
     {
+        ClassyfyLogic classyfyLogic = mock(ClassyfyLogic.class);
+        TestTicketManager ticketManager = new TestTicketManager();
+
+        public ClassyfyLogic getClassyfyLogic()
+        {
+            return classyfyLogic;
+        }
+
+        public TestTicketManager getTicketManager()
+        {
+            return ticketManager;
+        }
 
         @Override
         public PersistenceContext persistenceContext()
@@ -107,8 +133,8 @@ public class TitleSearchResultsActivityTest
         @Override
         public void inject(TitleSearchResultsActivity titleSearchResultsActivity)
         {
-            titleSearchResultsActivity.ticketManager = new TicketManager();
-            titleSearchResultsActivity.classyfyLogic = mock(ClassyfyLogic.class);
+            titleSearchResultsActivity.ticketManager = ticketManager;
+            titleSearchResultsActivity.classyfyLogic = classyfyLogic;
             nodeDetails = getNodeDetails(testNode);
             when(titleSearchResultsActivity.classyfyLogic.getNodeDetails(testNode)).thenReturn(nodeDetails);
        }
@@ -165,54 +191,6 @@ public class TitleSearchResultsActivityTest
 
     }
     
-    @Implements(value = SystemClock.class, callThroughByDefault = true)
-    public static class MyShadowSystemClock {
-        public static long elapsedRealtime() {
-            return 0;
-        }
-    }
-
-    @Implements(AsyncTaskLoader.class)
-    public static class MyShadowAsyncTaskLoader<D> 
-    {
-          @RealObject private AsyncTaskLoader<D> realLoader;
-          private SimpleFuture<D> future;
-
-          public void __constructor__(Context context) {
-            BackgroundWorker worker = new BackgroundWorker();
-            future = new SimpleFuture<D>(worker) {
-              @Override protected void done() {
-                try {
-                  final D result = get();
-                  Robolectric.getForegroundThreadScheduler().post(new Runnable() {
-                    @Override public void run() {
-                      realLoader.deliverResult(result);
-                    }
-                  });
-                } catch (InterruptedException e) {
-                  // Ignore
-                }
-              }
-            };
-          }
-
-          @Implementation
-          public void onForceLoad() {
-              Robolectric.getBackgroundThreadScheduler().post(new Runnable() {
-              @Override
-              public void run() {
-                future.run();
-              }
-            });
-          }
-
-          private final class BackgroundWorker implements Callable<D> {
-            @Override public D call() throws Exception {
-              return realLoader.loadInBackground();
-            }
-          }
-    }
-
     class NodeField
     {
         public int id;
@@ -280,18 +258,20 @@ public class TitleSearchResultsActivityTest
     private static final long NODE_ID = 34L;
     private Node testNode;
     private NodeDetailsBean nodeDetails;
+    private TestClassyFyComponent testClassyFyComponent;
 
     @Before
     public void setUp() throws Exception 
     {
         testNode = getTestNode();
         TestClassyFyApplication testClassyFyApplication = TestClassyFyApplication.getTestInstance();
-        testClassyFyApplication.setTestClassyFyComponent(new TestClassyFyComponent());
+        testClassyFyComponent = new TestClassyFyComponent();
+        testClassyFyApplication.setTestClassyFyComponent(testClassyFyComponent);
         // Register the ContentProvider
         ContentProvider provider = mock(ContentProvider.class);
         when(provider.getType(ClassyFySearchEngine.CONTENT_URI)).thenReturn(ClassyFySearchEngine.CONTENT_URI.toString());
         ShadowContentResolver.registerProvider(ClassyFySearchEngine.PROVIDER_AUTHORITY, provider);
-    }
+}
 
     @After
     public void tearDown() 
@@ -303,7 +283,6 @@ public class TitleSearchResultsActivityTest
         return new Intent(RuntimeEnvironment.application, TitleSearchResultsActivity.class);
     }
     
-    @Config(shadows = { MyShadowSystemClock.class, MyShadowAsyncTaskLoader.class })
     @Test 
     public void test_onCreate() throws Exception
     {
@@ -415,7 +394,115 @@ public class TitleSearchResultsActivityTest
             assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
         }
      }
- 
+
+    @Test
+    public void test_search() throws Exception
+    {
+        // Navigate doSearchQuery() and onLoadComplete()
+        ArrayList<ListItem> singletonList = new ArrayList<ListItem>();
+        ListItem listItem = new ListItem(RECORD_NAME, RECORD_VALUE, NODE_ID);
+        singletonList.add(listItem);
+        ClassyfyLogic classyfyLogic = testClassyFyComponent.getClassyfyLogic();
+        when(classyfyLogic.doSearchQuery(SEARCH_TEXT)).thenReturn(singletonList);
+        final Intent intent = getNewIntent();
+        // Test search suggesion initiated by intent
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.putExtra(SearchManager.QUERY, SEARCH_TEXT);
+        final TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class, intent).setup().get();
+        Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        Robolectric.getBackgroundThreadScheduler().advanceToLastPostedRunnable();
+        ShadowActivity activity = Shadows.shadowOf(titleSearchResultsActivity);
+        TextView tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
+        assertThat(tv1.getText()).isEqualTo("Search: " + SEARCH_TEXT);
+        // Scenario: search success and select item
+        LinearLayout propertiesLayout = (LinearLayout)activity.findViewById(R.id.node_properties);
+        LinearLayout dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(0);
+        LinearLayout titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        TextView titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Titles");
+        ListView itemList = (ListView)dynamicLayout.getChildAt(1);
+        ListAdapter adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(1);
+        assertThat((ListItem)adapter.getItem(0)).isEqualTo(listItem);
+        final OnItemClickListener onItemClickListener = itemList.getOnItemClickListener();
+
+        // Test item selection by activating the onItemClickListener
+        final ProgressBar spinner = titleSearchResultsActivity.progressFragment.getSpinner();
+        activity.runOnUiThread(new Runnable(){
+
+            @Override
+            public void run()
+            {
+                onItemClickListener.onItemClick(null, null, 0, NODE_ID);
+                assertThat(spinner.getVisibility()).isEqualTo(View.VISIBLE);
+            }});
+        // Wait up to 10 seconds for TicketManager to release intent
+        final Intent viewIntent = testClassyFyComponent.getTicketManager().getCurrentIntent();
+        synchronized(viewIntent)
+        {
+            viewIntent.wait(10000);
+        }
+        verify(classyfyLogic).getNodeDetails(testNode);
+        Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        Robolectric.getBackgroundThreadScheduler().advanceToLastPostedRunnable();
+        assertThat(spinner.getVisibility()).isEqualTo(View.GONE);
+        tv1 = (TextView)activity.findViewById(R.id.node_detail_title);
+        assertThat(tv1.getText()).isEqualTo(nodeDetails.getHeading());
+        propertiesLayout = (LinearLayout)activity.findViewById(R.id.node_properties);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(0);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Hierarchy");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[0].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[0].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[1].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[1].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(1);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Categories");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[3].id + 2);
+        assertThat(listItem.getValue()).isEqualTo("Category " + NODE_FIELDS[3].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[4].id + 2);
+        assertThat(listItem.getValue()).isEqualTo("Category " + NODE_FIELDS[4].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(2);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Folders");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(2);
+        listItem = (ListItem)adapter.getItem(0);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[3].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[3].title);
+        listItem = (ListItem)adapter.getItem(1);
+        assertThat(listItem.getId()).isEqualTo(NODE_FIELDS[4].id);
+        assertThat(listItem.getValue()).isEqualTo(NODE_FIELDS[4].title);
+        dynamicLayout = (LinearLayout)propertiesLayout.getChildAt(3);
+        titleLayout = (LinearLayout)dynamicLayout.getChildAt(0);
+        titleView = (TextView) titleLayout.getChildAt(0);
+        assertThat(titleView.getText()).isEqualTo("Details");
+        itemList = (ListView)dynamicLayout.getChildAt(1);
+        adapter = itemList.getAdapter();
+        assertThat(adapter.getCount()).isEqualTo(RECORD_DETAILS_ARRAY.length);
+        for (int i = 0; i < RECORD_DETAILS_ARRAY.length; i++)
+        {
+            ListItem item = (ListItem)adapter.getItem(i);
+            assertThat(item.getName().equals(RECORD_DETAILS_ARRAY[i][0]));
+            assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
+        }
+    }
+
     @Test
     public void test_parseIntent_action_view_invalid_uri()
     {

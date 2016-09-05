@@ -77,9 +77,11 @@ public class MainActivity extends AppCompatActivity
                 ClassyFyApplication.getInstance();
         final MainActivity activity = this;
         setContentView(R.layout.activity_main);
+        // Comment out if using ActionBar in place of Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-         // Complete initialization in background
+        /////////////////////////////
+        // Complete initialization in background
 		AsyncBackgroundTask starter = new AsyncBackgroundTask(getApplication())
         {
             NodeDetailsBean nodeDetails;
