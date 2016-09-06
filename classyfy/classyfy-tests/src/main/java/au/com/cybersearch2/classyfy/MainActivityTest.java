@@ -49,7 +49,10 @@ import au.com.cybersearch2.classywidget.PropertiesListAdapter;
 import au.com.cybersearch2.classywidget.ListItem;
 
 /**
- * MainActivityTest
+ * MainActivityTest uses new ActivityTestRule 
+ * FAILS with Andmore
+ * Warning: No instrumentation runner found for the launch...
+ * Failed to launch test
  * @author Andrew Bowley
  * 23/07/2014
  */
@@ -168,5 +171,5 @@ public class MainActivityTest
             assertThat(INF_LIST[i][1]).isEqualTo(listItem.getValue());
         }
     }
-
+    
 }
