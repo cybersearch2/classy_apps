@@ -52,6 +52,7 @@ public class TitleSearchResultsActivity extends FragmentActivity
 {
     public static final String TAG = "TitleSearchResults";
     private static final String RECORD_NOT_FOUND = "Record not found";
+	private static final Object ROOT_HEADING = Node.ROOT + ": " + Node.ROOT;
 
     /** Refine search message displayed when too many records are retrieved by a search */
     protected String REFINE_SEARCH_MESSAGE;
@@ -271,8 +272,10 @@ public class TitleSearchResultsActivity extends FragmentActivity
             return null;
         // Get first node, which is root of records tree
         NodeDetailsBean nodeDetails = classyfyLogic.getNodeDetails(node);
-        // TODO - investigate why CategoryTitles is mandatory
-        if ((nodeDetails == null)/* || nodeDetails.getCategoryTitles().isEmpty()*/)
+        // Check for no record returned or ROOT which indicates record not found
+        if (nodeDetails == null)
+            return null;
+        if (nodeDetails.getHeading().equals(ROOT_HEADING))
             return null;
         return  nodeDetails;
     }

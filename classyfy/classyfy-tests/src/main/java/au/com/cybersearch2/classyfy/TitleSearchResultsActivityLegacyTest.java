@@ -19,24 +19,21 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import au.com.cybersearch2.classyfy.data.NodeEntity;
@@ -49,7 +46,7 @@ import au.com.cybersearch2.classywidget.ListItem;
  * 24/07/2014
  */
 @RunWith(AndroidJUnit4.class)
-public class TitleSearchResultsActivityTest
+public class TitleSearchResultsActivityLegacyTest extends ActivityInstrumentationTestCase2<TitleSearchResultsActivity>
 {
     class NodeField
     {
@@ -91,13 +88,14 @@ public class TitleSearchResultsActivityTest
     }
 
     NodeField[] NODE_FIELDS = new NodeField[]
-            {
-                    new NodeField(1,1,"cybersearch2_records","Cybersearch2 Records",1,1),
-                    new NodeField(2,1,"administration","Administration",1,2),
-                    new NodeField(3,2,"premises","Premises",1,3),
-                    new NodeField(4,3,"maintenance","Maintenance",2,4),
-                    new NodeField(5,3,"rent","Rent",2,4)
-            };
+    {
+            new NodeField(1,1,"cybersearch2_records","Cybersearch2 Records",1,1),
+            new NodeField(2,1,"administration","Administration",1,2),
+            new NodeField(3,2,"premises","Premises",1,3),
+            new NodeField(4,3,"maintenance","Maintenance",2,4),
+            new NodeField(5,3,"rent","Rent",2,4)
+    };
+
     private static final String[][] RECORD_DETAILS_ARRAY =
     {
         { "description", "" },
@@ -107,25 +105,22 @@ public class TitleSearchResultsActivityTest
         { "modifier", "admin" },
         { "identifier", "2014-1392163053802" }
     };
- 
-    protected Instrumentation instrumentation;
-
-    @Rule
-    public UiThreadTestRule uiThreadTestRule = new UiThreadTestRule();
-
-    @Rule
-    public ActivityTestRule<TitleSearchResultsActivity> activityRule = 
-        new ActivityTestRule<TitleSearchResultsActivity>(
-        		TitleSearchResultsActivity.class,
-            true,  // initialTouchMode
-            false); // launchActivity
+    
+    /**
+     * 
+     */
+    public TitleSearchResultsActivityLegacyTest()
+    {
+        super(TitleSearchResultsActivity.class);
+    }
 
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         // Injecting the Instrumentation instance is required
         // for your test to run with AndroidJUnitRunner.
-        instrumentation = InstrumentationRegistry.getInstrumentation();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         // Block until Dagger application component is available
         ClassyFyApplication.getInstance().getClassyFyComponent();
     }
@@ -133,6 +128,7 @@ public class TitleSearchResultsActivityTest
     @After
     public void tearDown() throws Exception
     {
+        super.tearDown();
     }
 
     @Test
@@ -142,7 +138,8 @@ public class TitleSearchResultsActivityTest
         intent.setAction(Intent.ACTION_VIEW);
         Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "3");
         intent.setData(actionUri);
-        final TitleSearchResultsActivity activity = activityRule.launchActivity(intent);
+        setActivityIntent(intent);
+        final TitleSearchResultsActivity activity = getActivity();
         synchronized(intent)
         {
             intent.wait(10000);
@@ -193,7 +190,7 @@ public class TitleSearchResultsActivityTest
             assertThat(item.getValue().equals(RECORD_DETAILS_ARRAY[i][1]));
         }
     }
-
+    
     @Test
     public void test_action_view_no_nodeid() throws Throwable
     {
@@ -222,8 +219,12 @@ public class TitleSearchResultsActivityTest
 
     protected void do_action_view_bad_url(Uri uri) throws Throwable
     {
-        final TitleSearchResultsActivity activity =  activityRule.launchActivity(new Intent());
-        uiThreadTestRule.runOnUiThread(new Runnable() {
+        final Intent intent = getNewIntent();
+        intent.setAction(Intent.ACTION_VIEW);
+        //intent.putExtra(SearchManager.QUERY, Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, ).toString());
+        setActivityIntent(intent);
+        final TitleSearchResultsActivity activity = getActivity();
+        runTestOnUiThread(new Runnable() {
             public void run() {
                 TextView tv1 = (TextView) activity.findViewById(R.id.node_detail_title);
                 // Populate fields to test they are cleared when the error occurs
@@ -233,17 +234,15 @@ public class TitleSearchResultsActivityTest
                 propertiesLayout.addView(createDynamicLayout("Categories", activity));
             }
         });
-        final Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
         intent.setData(uri);
-        uiThreadTestRule.runOnUiThread(new Runnable() {
+        runTestOnUiThread(new Runnable() {
             public void run() {
                 activity.onNewIntent(intent);
             }});
         synchronized (intent) {
             intent.wait(10000);
         }
-        uiThreadTestRule.runOnUiThread(new Runnable() {
+        runTestOnUiThread(new Runnable() {
             public void run() {
 		        ProgressBar spinner = activity.progressFragment.getSpinner();
 		        assertThat(spinner).isNotNull();
@@ -258,8 +257,9 @@ public class TitleSearchResultsActivityTest
     protected void do_action_search_fail(String searchQuery) throws Throwable {
         final Intent intent = getNewIntent();
         intent.setAction(Intent.ACTION_VIEW);
-        final TitleSearchResultsActivity activity =  activityRule.launchActivity(intent);
-        uiThreadTestRule.runOnUiThread(new Runnable() {
+        setActivityIntent(intent);
+        final TitleSearchResultsActivity activity = getActivity();
+        runTestOnUiThread(new Runnable() {
             public void run() {
                 TextView tv1 = (TextView) activity.findViewById(R.id.node_detail_title);
                 // Populate fields to test they are cleared when the error occurs
@@ -271,7 +271,7 @@ public class TitleSearchResultsActivityTest
         });
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, searchQuery);
-        uiThreadTestRule.runOnUiThread(new Runnable() {
+        runTestOnUiThread(new Runnable() {
             public void run() {
                 activity.onNewIntent(intent);
             }
@@ -279,7 +279,7 @@ public class TitleSearchResultsActivityTest
         synchronized (intent) {
             intent.wait(10000);
         }
-        uiThreadTestRule.runOnUiThread(new Runnable() {
+        runTestOnUiThread(new Runnable() {
             public void run() {
 		        ProgressBar spinner = activity.progressFragment.getSpinner();
 		        assertThat(spinner).isNotNull();
@@ -295,8 +295,8 @@ public class TitleSearchResultsActivityTest
     private View createDynamicLayout(String title, Activity activity) {
         LinearLayout dynamicLayout = new LinearLayout(activity);
         dynamicLayout.setOrientation(LinearLayout.VERTICAL);
-        //int layoutHeight = LinearLayout.LayoutParams.MATCH_PARENT;
-        //int layoutWidth = LinearLayout.LayoutParams.MATCH_PARENT;
+        int layoutHeight = LinearLayout.LayoutParams.MATCH_PARENT;
+        int layoutWidth = LinearLayout.LayoutParams.MATCH_PARENT;
         TextView titleView = new TextView(activity);
         titleView.setText(title);
         titleView.setTextColor(Color.BLUE);
