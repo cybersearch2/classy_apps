@@ -21,7 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Rule;
-import org.junit.Assert;
+import static org.junit.Assert;
 import org.junit.runner.RunWith;
 
 import android.app.Instrumentation;
@@ -110,12 +110,12 @@ public class MainActivityTest
         // Block until Dagger application component is available
         ClassyFyApplication.getInstance().getClassyFyComponent();
         // Wait up to 10 seconds for start completion
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 10; i++)
         {
             if (mainActivity.startState == StartState.run)
                 break;
             if (mainActivity.startState == StartState.fail)
-                Assert.fail("MainActivity failed on start");
+                fail("MainActivity failed on start");
             Thread.sleep(1000);
         }
         assertThat(mainActivity.startState == StartState.run);
