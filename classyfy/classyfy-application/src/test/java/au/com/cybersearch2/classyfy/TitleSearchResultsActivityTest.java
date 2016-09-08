@@ -510,11 +510,8 @@ public class TitleSearchResultsActivityTest
         intent.setAction(Intent.ACTION_VIEW);
         Uri actionUri = ClassyFySearchEngine.CONTENT_URI;
         intent.setData(actionUri);
-        Robolectric.buildActivity(TitleSearchResultsActivity.class).withIntent(intent)
-        .create()
-        .start()
-        .visible()
-        .get();
+        TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class, intent).setup().get();
+        assertThat(titleSearchResultsActivity.getIntent()).isEqualTo(intent);
         ShadowToast.showedToast("Invalid resource address: \"" + ClassyFySearchEngine.CONTENT_URI.toString() + "\"");
     }
     
@@ -525,11 +522,8 @@ public class TitleSearchResultsActivityTest
         intent.setAction(Intent.ACTION_VIEW);
         Uri actionUri = Uri.withAppendedPath(ClassyFySearchEngine.CONTENT_URI, "x4");
         intent.setData(actionUri);
-        Robolectric.buildActivity(TitleSearchResultsActivity.class).withIntent(intent)
-        .create()
-        .start()
-        .visible()
-        .get();
+        TitleSearchResultsActivity titleSearchResultsActivity = Robolectric.buildActivity(TitleSearchResultsActivity.class, intent).setup().get();
+        assertThat(titleSearchResultsActivity.getIntent()).isEqualTo(intent);
         ShadowToast.showedToast("Resource address has invalid ID: \"" + actionUri.toString() + "\"");
     }
 

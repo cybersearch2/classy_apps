@@ -77,10 +77,7 @@ public class MainActivity extends AppCompatActivity
                 ClassyFyApplication.getInstance();
         final MainActivity activity = this;
         setContentView(R.layout.activity_main);
-        // Comment out if using ActionBar in place of Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        /////////////////////////////
+        setupToolBar();
         // Complete initialization in background
 		AsyncBackgroundTask starter = new AsyncBackgroundTask(getApplication())
         {
@@ -118,6 +115,14 @@ public class MainActivity extends AppCompatActivity
         starter.onStartLoading();
 	}
 
+	protected void setupToolBar()
+	{
+        // Comment out if using ActionBar in place of Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        /////////////////////////////
+	}
+	
     private NodeDetailsBean getNodeDetailsBean(ClassyFyApplication classyFyApplication, int nodeId)
     {   
         MainActivity activity = this;
