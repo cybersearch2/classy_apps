@@ -168,7 +168,8 @@
 	<build>
 	  <finalName>${project.artifactId}</finalName>
 	  <plugins>
-        <plugin>
+    	<!-- Set skipTests = "true" to bypass test phase in build -->
+       <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.19.1</version>
@@ -176,8 +177,11 @@
             <includes>
                  <include>au.com.cybersearch2.classyfy.ClassyFyTestSuite.java</include>
             </includes>            	
-            </configuration>
-        </plugin>
+     	     <!-- Uncomment if using Java 7 --> 
+    	     <!--<argLine> -XX:-UseSplitVerifier</argLine>-->
+    	     <skipTests>false</skipTests>
+           </configuration>
+       </plugin>
         <plugin>
           <groupId>com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
@@ -193,15 +197,6 @@
                   </configs>
                 </proguard>
 			</configuration>
-    	</plugin>
-    	<!-- Set skipTests = "true" to bypass test phase in build -->
-    	<plugin>
-    	    <groupId>org.apache.maven.plugins</groupId>
-    	    <artifactId>maven-surefire-plugin</artifactId>
-    	    <configuration>
-    	     <argLine> -XX:-UseSplitVerifier</argLine>
-    	     <skipTests>false</skipTests>
-    	    </configuration>
     	</plugin>
 	  </plugins>
 	</build>

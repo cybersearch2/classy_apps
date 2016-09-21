@@ -56,7 +56,7 @@
   </repositories>-->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <classy_tools.version>1.3-SNAPSHOT</classy_tools.version>
+    <classy_tools.version>1.3</classy_tools.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.4.3</android.plugin.version>
@@ -74,9 +74,9 @@
     <slf4j-version>1.7.2</slf4j-version>
     <dagger.version>2.6.1</dagger.version>
     <release.repo.id>artifactory</release.repo.id>
-    <release.repo.url>http://microserver/artifactory/libs-release-local</release.repo.url>
+    <release.repo.url>http://build.cybersearch2.local/artifactory/libs-release-local</release.repo.url>
     <snapshot.repo.id>artifactory</snapshot.repo.id>
-    <snapshot.repo.url>http://microserver/artifactory/libs-snapshot-local</snapshot.repo.url>
+    <snapshot.repo.url>http://build.cybersearch2.local/artifactory/libs-snapshot-local</snapshot.repo.url>
   </properties>
   <modules>
     <module>classyfy</module>
