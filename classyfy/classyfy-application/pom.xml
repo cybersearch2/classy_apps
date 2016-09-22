@@ -318,8 +318,7 @@
 								<versionCodeAutoIncrement>true</versionCodeAutoIncrement>
 							</manifest>
 				            <proguard>
-                              <!-- ProGuard disabled for 1.3 release due to time constraints to fix 3 errors -->
-				              <skip>true</skip>
+ 				              <skip>false</skip>
 				              <config>proguard.cfg</config>
 				               <configs>
 				                  <config>${env.ANDROID_HOME}/tools/proguard/proguard-android.txt</config>
