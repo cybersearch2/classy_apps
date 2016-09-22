@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
     </parent>
 	<artifactId>classyfy_parent</artifactId>
     <packaging>pom</packaging>
@@ -36,8 +36,10 @@
   <!-- Modules arranged according to android-maven-plugin convention -->
   <modules>
     <module>classyfy-application</module>
-    <!-- Integration tests disabled because dex crashes on build server --> 
-    <!--<module>classyfy-tests</module>--> 
+    <!-- Integration tests disabled because of issue with android-maven-plugin 4.3.0. 
+         To enable, refer
+         https://github.com/simpligility/android-maven-plugin/issues/660 --> 
+    <module>classyfy-tests</module> 
   </modules>
 
   <dependencyManagement>
