@@ -164,6 +164,12 @@
       <artifactId>android</artifactId>
       <scope>provided</scope>
     </dependency>  
+    <!-- ProGuard complains Intellij dependency missing for unknown reason (Linux only) -->
+    <dependency>
+      <groupId>com.intellij</groupId>
+      <artifactId>annotations</artifactId>
+      <version>12.0</version>
+    </dependency>  
 	</dependencies>
 	<build>
 	  <finalName>${project.artifactId}</finalName>
