@@ -4,10 +4,10 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.3.1-SNAPSHOT</version>
+        <version>1.3.2-SHAPSHOT</version>
     </parent>
 	<artifactId>example_parent</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
+    <version>1.3.2-SHAPSHOT</version>
     <packaging>pom</packaging>
 
   <name>ClassyFy Parent</name>
