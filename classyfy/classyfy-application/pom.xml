@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classyfy_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.2-SHAPSHOT</version>
     </parent>
 	<artifactId>classyfy</artifactId>
 	<packaging>apk</packaging>
@@ -160,9 +160,15 @@
       <scope>test</scope>
     </dependency> 
     <dependency>
-      <groupId>android</groupId>
+      <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
       <scope>provided</scope>
+    </dependency>  
+    <!-- ProGuard complains Intellij dependency missing for unknown reason (Linux only) -->
+    <dependency>
+      <groupId>com.intellij</groupId>
+      <artifactId>annotations</artifactId>
+      <version>12.0</version>
     </dependency>  
 	</dependencies>
 	<build>
@@ -318,7 +324,7 @@
 								<versionCodeAutoIncrement>true</versionCodeAutoIncrement>
 							</manifest>
 				            <proguard>
-				              <skip>false</skip>
+ 				              <skip>false</skip>
 				              <config>proguard.cfg</config>
 				               <configs>
 				                  <config>${env.ANDROID_HOME}/tools/proguard/proguard-android.txt</config>
