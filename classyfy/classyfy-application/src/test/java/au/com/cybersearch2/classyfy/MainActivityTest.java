@@ -71,7 +71,7 @@ import au.com.cybersearch2.classywidget.ListItem;
  * 14/05/2014
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(application = TestClassyFyApplication.class)
+@Config(sdk = 23, application = TestClassyFyApplication.class)
 public class MainActivityTest
 {
     class TestClassyFyComponent implements ClassyFyComponent
