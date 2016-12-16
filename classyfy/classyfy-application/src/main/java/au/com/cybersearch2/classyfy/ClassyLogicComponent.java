@@ -15,8 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy;
 
-import javax.inject.Singleton;
-
 import au.com.cybersearch2.classyfy.data.Node;
 import au.com.cybersearch2.classyfy.module.ClassyLogicModule;
 import dagger.Subcomponent;
