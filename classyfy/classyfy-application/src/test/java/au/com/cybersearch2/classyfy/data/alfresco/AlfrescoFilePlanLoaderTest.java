@@ -17,7 +17,6 @@ import org.robolectric.RobolectricTestRunner;
 import com.j256.ormlite.support.DatabaseConnection;
 
 import android.net.Uri;
-import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.ClassyFyResourceEnvironment;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
 import au.com.cybersearch2.classyfy.data.TestDataStreamParser;

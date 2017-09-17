@@ -15,8 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/> */
 package au.com.cybersearch2.classyfy.data.alfresco;
 
-import javax.inject.Singleton;
-
 import au.com.cybersearch2.classyfy.module.AlfrescoFilePlanModule;
 import dagger.Subcomponent;
 

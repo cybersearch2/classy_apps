@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import com.example.hellotwodbs.v2.HelloTwoDbsApplication;
-
 import android.content.Context;
 import au.com.cybersearch2.classyapp.ResourceEnvironment;
 

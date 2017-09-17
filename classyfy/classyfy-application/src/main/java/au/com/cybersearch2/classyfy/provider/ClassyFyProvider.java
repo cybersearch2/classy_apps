@@ -24,7 +24,6 @@ import android.util.Log;
 import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.ClassyFyComponent;
 import au.com.cybersearch2.classyfy.service.ClassyFyService;
-import au.com.cybersearch2.classyjpa.persist.PersistenceContext;
 
 
 /**

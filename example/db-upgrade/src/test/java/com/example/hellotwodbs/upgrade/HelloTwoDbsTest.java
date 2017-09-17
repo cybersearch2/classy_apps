@@ -22,9 +22,6 @@ import org.robolectric.RobolectricTestRunner;
 
 import com.example.hellotwodbs.upgrade.HelloTwoDbs;
 
-import au.com.cybersearch2.classytask.InternalHandler;
-import au.com.cybersearch2.classytask.ResultMessage;
-
 /**
  * HelloTwoDebsTest
  * @author Andrew Bowley

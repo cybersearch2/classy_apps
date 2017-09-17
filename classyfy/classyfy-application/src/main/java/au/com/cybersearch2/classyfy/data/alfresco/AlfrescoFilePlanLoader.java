@@ -34,7 +34,6 @@ import com.j256.ormlite.support.DatabaseConnection;
 import android.net.Uri;
 import au.com.cybersearch2.classydb.SqlParser;
 import au.com.cybersearch2.classydb.SqlParser.StatementCallback;
-import au.com.cybersearch2.classyfy.ClassyFyApplication;
 import au.com.cybersearch2.classyfy.data.DataLoader;
 import au.com.cybersearch2.classyfy.data.DataStreamParser;
 import au.com.cybersearch2.classyfy.data.SqlFromNodeGenerator;
