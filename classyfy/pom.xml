@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>classy_apps</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.4-SNAPSHOT</version>
+        <version>3.4.1-SNAPSHOT</version>
     </parent>
 	<artifactId>classyfy_parent</artifactId>
     <packaging>pom</packaging>

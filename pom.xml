@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.cybersearch2</groupId>
   <artifactId>classy_apps</artifactId>
-  <version>1.4-SNAPSHOT</version>
+  <version>3.4.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Classy Apps Parent</name>
   <description>Android applications built with ClassyTools</description>
@@ -45,11 +45,15 @@
     </developer>
   </developers>
   <properties>
+    <!-- Java version and Character encoding - VERY IMPORTANT -->
+    <project.java.version>1.7</project.java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <classy_tools.version>1.4-SNAPSHOT</classy_tools.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!--                                                      -->
+    <classy_data.version>2.0.1</classy_data.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
-    <android.plugin.version>4.4.3</android.plugin.version>
+    <android.plugin.version>4.5.0</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
     <android.platform.version>24</android.platform.version>
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
@@ -177,9 +181,9 @@
 		  </plugin>
 		  <plugin>
 			  <artifactId>maven-resources-plugin</artifactId>
-			  <version>2.7</version>
+			  <version>3.0.2</version>
 			  <configuration>
-				  <encoding>UTF-8</encoding>
+                <encoding>${project.build.sourceEncoding}</encoding>
 			  </configuration>
 		  </plugin>
 		  <plugin>
@@ -200,19 +204,23 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.5</version>
+            <version>3.5.1</version>
             <configuration>
-                <source>1.7</source>
-                <target>1.7</target>
-                <testSource>1.7</testSource>
-                <testTarget>1.7</testTarget>
-           </configuration>
+              <source>${project.java.version}</source>
+              <target>${project.java.version}</target>
+              <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-install-plugin</artifactId>
             <version>2.5.2</version>
            </plugin>
+    	   <plugin>
+    	     <groupId>org.codehaus.mojo</groupId>  
+    		 <artifactId>versions-maven-plugin</artifactId>  
+    	     <version>2.4</version>  
+    	   </plugin>     
            <plugin>
             <groupId>com.simpligility.maven.plugins</groupId>
             <artifactId>android-maven-plugin</artifactId>

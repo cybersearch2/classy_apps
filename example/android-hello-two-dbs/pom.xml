@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>example_parent</artifactId>
         <groupId>au.com.cybersearch2</groupId>
-        <version>1.4-SNAPSHOT</version>
+        <version>3.4.1-SNAPSHOT</version>
     </parent>
 	<artifactId>android-hello-two-dbs</artifactId>
 	<packaging>apk</packaging>
@@ -47,8 +47,8 @@
       </dependency>
       <dependency>
         <groupId>au.com.cybersearch2</groupId>
-        <artifactId>classy_tools_lib</artifactId>
-        <version>${classy_tools.version}</version>
+        <artifactId>classy_data_lib</artifactId>
+        <version>${classy_data.version}</version>
         <exclusions>
         <exclusion>
           <groupId>com.j256.ormlite</groupId>
@@ -79,7 +79,7 @@
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
-        <version>${classy_tools.version}</version>
+        <version>${classy_data.version}</version>
       </dependency>
       <dependency>
         <groupId>com.j256.ormlite</groupId>
