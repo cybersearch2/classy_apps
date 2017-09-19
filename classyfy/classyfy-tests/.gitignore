@@ -7,6 +7,5 @@ project.properties
 /test-libs/
 /target/
 /pom.xml.*
-/.factorypath
 /aar-libs/
-/eclipse-aar/
+

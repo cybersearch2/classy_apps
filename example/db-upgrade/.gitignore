@@ -1,7 +1,7 @@
 .classpath
-.factorypath
 /.settings/
 bin
 /gen/
 /target/
 /pom.xml.releaseBackup
+/.apt_generated/

@@ -207,30 +207,6 @@
 	</build>
 	<profiles>
 		<profile>
-		  <id>eclipse</id>
-          <build>
-            <plugins>
-    			<plugin>
-                  <groupId>org.bitbucket.komo81</groupId>
-                  <artifactId>eclipse-aar-maven-plugin</artifactId>
-                  <version>1.0.0</version>
-                  <executions>
-                    <execution>
-                      <goals>
-                        <goal>clean</goal>
-                        <goal>generate</goal>
-                      </goals>
-                      <configuration>
-                         <androidSdk>${android.platform.version}</androidSdk>
-                         <outputDirectory>${basedir}/eclipse-aar</outputDirectory>
-                      </configuration>
-                    </execution>
-                  </executions>
-    			</plugin>
-            </plugins>
-          </build>
-		</profile>
-		<profile>
 			<id>release</id>
             <properties>
                 <sign.keystore>${android.sdk.path}/keystore/c2.keystore</sign.keystore>
