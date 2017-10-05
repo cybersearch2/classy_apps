@@ -53,6 +53,8 @@
     <classy_data.version>2.0.2</classy_data.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
+	<!-- Absolute Android jar location in SDK -->
+	<sdk.android.jar.path>${android.sdk.path}/platforms/android-${android.platform.version}/android.jar</sdk.android.jar.path>
     <android.plugin.version>4.5.0</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
     <android.platform.version>25</android.platform.version>
@@ -63,6 +65,7 @@
     <!-- Roboletric Android API Level. Must be equal to or less than Platform API Level.  -->
     <robolectric.platform.version>25</robolectric.platform.version>
     <robolectric.version>3.3.2</robolectric.version>
+    <robolectric.all.version>7.1.0_r7-robolectric-0</robolectric.all.version>
     <ormlite.version>5.0</ormlite.version>
     <slf4j-version>1.7.2</slf4j-version>
     <dagger.version>2.6.1</dagger.version>
@@ -339,6 +342,68 @@
                         </manifestMerger>
                     </configuration>
                 </plugin>
+            </plugins>
+        </build>
+    </profile>
+    <profile>
+        <id>install</id>
+	   <dependencies>
+	   <!-- For each Android version, there is a VERY LARGE "Android all" jar dependency. 
+			RobolectricTestRunner will install this jar in the local repository if required.
+			It is better to let Maven handle all dependencies for consistency. -->
+			<dependency>
+			  <groupId>org.robolectric</groupId>
+			  <artifactId>shadows-core</artifactId>
+		      <version>${robolectric.version}</version>
+			</dependency> 
+			<dependency>
+			  <groupId>org.robolectric</groupId>
+			  <artifactId>android-all</artifactId>
+			  <version>${robolectric.all.version}</version>
+			</dependency>
+		</dependencies>
+        <build>
+            <plugins>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+					<executions>
+					  <execution>
+						 <id>android</id>
+						 <goals>
+							<goal>install-file</goal>
+						 </goals>
+						 <phase>initialize</phase>
+						 <configuration>
+						   <packaging>jar</packaging>
+						   <file>${sdk.android.jar.path}</file>
+						   <generatePom>true</generatePom>
+						   <groupId>com.google.android</groupId>
+						   <artifactId>android</artifactId>
+						   <version>${android.sdk.version}</version>
+						 </configuration>
+					  </execution>
+					</executions>
+				</plugin>
+			   <!-- Install RobolectricTestRunner Maven dependencies now rather than wait for first
+			   test run. These dependencies are inserted in the TestRunner's classpath, hence
+			   the use of maven-dependency-plugin "build-classpath" goal which does the same thing as the TestRunner. 
+			   See dependencies listed below and source for org.robolectric.internal.SdkConfig for more information. -->
+               <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-dependency-plugin</artifactId>
+                 <executions>
+                  <execution>
+                    <id>robolectric-classpath-dependencies</id>
+                    <phase>initialize</phase>
+	                 <goals>
+	                    <goal>build-classpath</goal>
+	                 </goals>
+                  </execution>
+                </executions>
+               </plugin>
             </plugins>
         </build>
     </profile>
