@@ -31,12 +31,6 @@
       <timezone>+10</timezone>
     </developer>
   </developers>
-  <repositories>
-     <repository>
-        <id>android-support</id>
-        <url>file://${env.ANDROID_HOME}/extras/android/m2repository</url>
-     </repository>
-  </repositories>
   <dependencies>
     <dependency>
        <groupId>au.com.cybersearch2</groupId>
