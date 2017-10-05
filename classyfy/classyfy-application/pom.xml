@@ -32,12 +32,6 @@
           <timezone>+10</timezone>
         </developer>
     </developers>
-	<repositories>
-	    <repository>
-	        <id>android-support</id>
-	        <url>file://${env.ANDROID_HOME}/extras/android/m2repository</url>
-	    </repository>
-	</repositories>
 	<dependencies>
         <!-- Uncomment when enabling log4j (OrmLite logging). 
         File ConfureLog4j.java in package au.com.cybersearch2.classyfy.helper must also
