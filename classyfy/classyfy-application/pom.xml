@@ -151,7 +151,6 @@
     <dependency>
       <groupId>org.robolectric</groupId>
       <artifactId>robolectric</artifactId>
-      <version>${robolectric.version}</version>
       <scope>test</scope>
     </dependency>  
     <dependency>

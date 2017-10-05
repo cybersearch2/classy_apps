@@ -1,9 +1,7 @@
 .classpath
-/.settings/
 /gen/
 /.apt_generated/
 /bin/
 /test-libs/
 /target/
-/pom.xml.*
 /dependency-reduced-pom.xml

@@ -26,9 +26,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowSQLiteConnection;
 
+import android.content.pm.ProviderInfo;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -49,7 +49,7 @@ import au.com.cybersearch2.classywidget.ListItem;
  * 26/05/2014
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 23)
+@Config(sdk = 25)
 public class IntegrateMainActivityTest
 {
     class NodeField
@@ -134,9 +134,14 @@ public class IntegrateMainActivityTest
         classyfyLauncher.startApplication();
         ClassyFyProvider classyFyProvider = new ClassyFyProvider();
         classyFyProvider.onCreate();
-        ShadowContentResolver.registerProvider(
-                ClassyFySearchEngine.PROVIDER_AUTHORITY, 
-                classyFyProvider);
+        // ShadowContentResolver.registerProvider() Deprecated version 3.2
+        // Register the ContentProvider
+        //ContentProvider provider = mock(ContentProvider.class);
+        //when(provider.getType(ClassyFySearchEngine.CONTENT_URI)).thenReturn(ClassyFySearchEngine.CONTENT_URI.toString());
+        //ShadowContentResolver.registerProvider(ClassyFySearchEngine.PROVIDER_AUTHORITY, provider);
+        ProviderInfo providerInfo = new ProviderInfo();
+        providerInfo.authority = ClassyFySearchEngine.PROVIDER_AUTHORITY;
+        Robolectric.buildContentProvider(ClassyFyProvider.class).create(providerInfo).get();
         mainActivity = Robolectric.setupActivity(MainActivity.class);
         while (true) {
             Robolectric.getForegroundThreadScheduler().advanceToLastPostedRunnable();

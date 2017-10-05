@@ -50,19 +50,19 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!--                                                      -->
-    <classy_data.version>2.0.1</classy_data.version>
+    <classy_data.version>2.0.2</classy_data.version>
     <!-- ANDROID_HOME environment variable -->
     <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     <android.plugin.version>4.5.0</android.plugin.version>
     <!-- Android API Level. Aim for highest available, but check Support Library does not break -->
-    <android.platform.version>24</android.platform.version>
+    <android.platform.version>25</android.platform.version>
     <!-- Specific Android SDK release - version + "_r" + release. Used to identify Android jar. -->
-    <android.sdk.version>7.0.0_r2</android.sdk.version>
+    <android.sdk.version>7.1.1_r3</android.sdk.version>
     <!-- Android Suport Library version - always 3-part -->
-    <android.support.version>24.2.1</android.support.version>
+    <android.support.version>25.3.1</android.support.version>
     <!-- Roboletric Android API Level. Must be equal to or less than Platform API Level.  -->
-    <robolectric.platform.version>23</robolectric.platform.version>
-    <robolectric.version>3.1.2</robolectric.version>
+    <robolectric.platform.version>25</robolectric.platform.version>
+    <robolectric.version>3.3.2</robolectric.version>
     <ormlite.version>5.0</ormlite.version>
     <slf4j-version>1.7.2</slf4j-version>
     <dagger.version>2.6.1</dagger.version>
@@ -129,7 +129,7 @@
         </dependency>
         <dependency>
           <groupId>org.robolectric</groupId>
-          <artifactId>shadows-core</artifactId>
+          <artifactId>robolectric</artifactId>
           <version>${robolectric.version}</version>
         </dependency> 
         <dependency>
