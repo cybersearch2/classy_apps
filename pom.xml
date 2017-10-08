@@ -74,6 +74,16 @@
     <snapshot.repo.id>artifactory</snapshot.repo.id>
     <snapshot.repo.url>http://build.cybersearch2.local/artifactory/libs-snapshot-local</snapshot.repo.url>
   </properties>
+  <repositories>
+    <repository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>bintray-cybersearch2-maven</id>
+        <name>bintray</name>
+        <url>https://dl.bintray.com/cybersearch2/maven</url>
+    </repository>
+  </repositories>  
   <modules>
     <module>classyfy</module>
     <module>example</module>

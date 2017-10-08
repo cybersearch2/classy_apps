@@ -1,13 +1,15 @@
 classy_apps
 ===========
 
-Classy Tools "ClassyFy" Android Sample Application in Maven project suite
+Classy Data "ClassyFy" Android Sample Application in Maven project suite. Targets Eclipse Andmore development.
 
-For information on Classy Apps and install instructions, go to our support site at www.cybersearch2.com.au/develop/classytools.html.
+Make sure associated project - [classyfy](https://github.com/cybersearch2/classyfy.git) is installed before launching Eclipse.
+
+For information on Classy Apps and install instructions, go to our support site at www.cybersearch2.com.au/develop/classydata.html.
 
 
 "ClassFy" is a working Android application which searches data structured as a tree.
-It showcases Classy Tools separate Android library which provides an Android SQLite adapter 
+It showcases the classy_data_lib AAR which provides an Android SQLite adapter 
 and other features including an Android-specific Persistence Container 
 and a Fast Text Search engine to support automatic search suggestions.
 
